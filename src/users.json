@@ -1,0 +1,35 @@
+[
+    {
+      "id": 1,
+      "username": "Agung",
+      "createby": "ADMIN",
+      "reviewedby": "SYSADMIN",
+      "userStatus":"ACTIVE",
+      "status": "APPROVED"
+    },
+    {
+      "id": 2,
+      "username": "John Doe",
+      "createby": "agung",
+      "reviewedby": "",
+      "userStatus":"ACTIVE",
+      "status": "PENDING"
+    },
+    {
+      "id": 3,
+      "username": "Arya",
+      "createby": "ADMIN",
+      "reviewedby": "SYSADMIN",
+      "userStatus":"INACTIVE",
+      "status": "BLOCKED"
+    },
+    {
+      "id": 4,
+      "username": "AMIN",
+      "createby": "ADMIN",
+      "reviewedby": "SYSADMIN",
+      "userStatus":"INACTIVE",
+      "status": "INACTIVE"
+    }
+]
+  

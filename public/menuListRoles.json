@@ -1,0 +1,21 @@
+{
+    "menuListRoles" : [
+        {
+            "id": 1,
+            "role_id": 1,
+            "menuAccess": [
+                { "menuId": 1, "menuName": "Dashboard", "access": true, "create": true, "update": true, "delete": true, "verify": true, "auth": true },
+                { "menuId": 2, "menuName": "Users", "access": true, "create": false, "update": true, "delete": true, "verify": true, "auth": true }
+            ]
+        },
+        {
+            "id": 2,
+            "role_id": 2,
+            "menuAccess": [
+                { "menuId": 1, "menuName": "Dashboard", "access": false, "create": true, "update": true, "delete": true, "verify": true, "auth": true },
+                { "menuId": 2, "menuName": "Users", "access": false, "create": true, "update": true, "delete": true, "verify": true, "auth": true }
+            ]
+        }
+    ]
+
+}

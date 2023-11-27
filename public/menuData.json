@@ -1,0 +1,52 @@
+{
+  "menu": [
+    {
+      "id": 1,
+      "title": "Home",
+      "icon": "nav-icon fas fa-home",
+      "url": "/"
+    },
+    {
+      "id": 4,
+      "title": "Administration",
+      "icon": "nav-icon fas fa-user-shield",
+      "submenu": [
+        {
+          "id": 5,
+          "title": "Maintenance User",
+          "icon": "nav-icon fas fa-user-alt",
+          "url": "/user"
+        },
+        {
+          "id": 6,
+          "title": "Group Management",
+          "icon": "nav-icon fa fa-cogs",
+          "url": "/group"
+        },
+        {
+          "id": 7,
+          "title": "Role Management",
+          "icon": "nav-icon fa fa-cogs",
+          "url": "/role"
+        },
+        {
+          "id": 8,
+          "title": "Maintenance Module",
+          "icon": "nav-icon fa fa-cogs",
+          "url": "/modules"
+        },{
+          "id": 9,
+          "title": "Authorization Matrix",
+          "icon": "nav-icon fa fa-cogs",
+          "url": "/matrix"
+        },
+        {
+          "id": 10,
+          "title": "Audit Trail",
+          "icon": "nav-icon fa fa-database",
+          "url": "/audit"
+        }
+      ]
+    }
+  ]
+}

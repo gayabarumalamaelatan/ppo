@@ -1,0 +1,26 @@
+{
+    "module" : [
+        {
+            "module_id" : 1,
+            "module_name" : "Home"
+        },
+        {
+            "module_id" : 4,
+            "module_name" : "Administration",
+            "menu" : [
+                {
+                    "menu_id": 5,
+                    "menu_name": "Maintenance User"
+                },
+                {
+                    "menu_id": 6,
+                    "menu_name": "Maintenance Role"
+                },
+                {
+                    "menu_id": 7,
+                    "menu_name": "Maintenance Role"
+                }
+            ]
+        }
+    ]
+}
