@@ -1,5 +1,5 @@
 import React from 'react';
-const PageDown = React.lazy(() => import('../content/PageDown'));
+import PageDown from '../content/PageDown';
 
 const dynamicImportMap = {
   BifastDashboard: () => import('gritbifastmodule/BifastDashboard'),

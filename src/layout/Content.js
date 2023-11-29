@@ -123,7 +123,7 @@ export default function Content() {
   };
 
   const generateRoutesModules = (menuData) => {
-    console.log(menuData);
+    //console.log(menuData);
     return menuData.map((module) => {
       return (
         <Fragment key={module.url}>

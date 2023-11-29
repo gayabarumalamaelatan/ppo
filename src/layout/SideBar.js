@@ -48,8 +48,8 @@ export default function SideBar() {
   };
 
   useEffect(() => {
-    const trees = window.$('[data-widget="treeview"]');
-    trees.Treeview('init');
+    // const trees = window.$('[data-widget="treeview"]');
+    // trees.Treeview('init');
     fetchData();
   }, []);
 

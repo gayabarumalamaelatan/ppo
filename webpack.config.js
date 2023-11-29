@@ -20,7 +20,7 @@ module.exports = {
     mode: "development",
     output: {
         //... existing output configuration
-        path: path.resolve(__dirname, 'build'),
+        path: path.resolve(__dirname, 'gritcoredev'),
         publicPath: '/', // Set the publicPath to root
       },
     devServer: {
