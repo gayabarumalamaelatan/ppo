@@ -49,7 +49,7 @@ export const MENU_SERVICE_BASE = process.env.REACT_APP_API_MENU_SERVICE_BASE;
     // MODULE CONTROLLER
     export const MENU_SERVICE_MODULES = `${MENU_SERVICE_BASE}/menu-service/core-module/module-with-menu`;
     export const MENU_SERVICE_ALL_MODULES = `${MENU_SERVICE_BASE}/menu-service/core-module/list-all-modules`;
-    export const MENU_SERVICE_ALL_MENU = `${MENU_SERVICE_BASE}/menu-service/menus`;
+    export const MENU_SERVICE_ALL_MENU = `${MENU_SERVICE_BASE}/menu-service/core-menu/menus`;
     export const MENU_SERVICE_ADD_MENU_PERMISSION = `${MENU_SERVICE_BASE}/menu-service/core-permission/add`;
     export const MENU_SERVICE_MENU_PERMISSION = `${MENU_SERVICE_BASE}/menu-service/menu-permission`;
     export const MENU_SERVICE_CORE_MODULE = `${MENU_SERVICE_BASE}/menu-service/core-module/modules`;

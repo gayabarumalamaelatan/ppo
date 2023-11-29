@@ -50,7 +50,7 @@ const ModulesTable = ({ editPermission, deletePermission, refreshTableStatus }) 
     const handleView = async (data) => {
         try {
             const headers = { Authorization: `Bearer ${token}` };
-            const response = await axios.get(`${MENU_SERVICE_CORE_MODULE_GET_ID}?moduleId=${data.id}`, { headers });
+            const response = await axios.get(`${MENU_SERVICE_CORE_MODULE_GET_ID}?id=${data.id}`, { headers });
             setSelectedModule(response.data);
             setShowModal(true);
 

@@ -36,7 +36,7 @@ const EditModuleModal = ({ showEdit, handleClose, dataModule ,reloadData}) => {
             try {
                 // Replace 'YOUR_API_ENDPOINT' with the actual API endpoint to fetch user details
                 const headers = { Authorization: `Bearer ${token}` };
-                const response = await axios.get(`${MENU_SERVICE_CORE_MODULE_GET_ID}?moduleId=${dataModule.id}`, { headers });
+                const response = await axios.get(`${MENU_SERVICE_CORE_MODULE_GET_ID}?id=${dataModule.id}`, { headers });
                 const moduleData = response.data;
 
                 console.log('moduleData',moduleData);
