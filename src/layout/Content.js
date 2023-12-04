@@ -82,6 +82,10 @@ export default function Content() {
         componentName: 'BifastDashboard'
       },
       {
+        moduleName: 'gritbifastmodule',
+        componentName: 'RtgsDashboard'
+      },
+      {
         moduleName: 'gritswiftmodule',
         componentName: 'MicroFrontendComponent'
       },
@@ -92,6 +96,10 @@ export default function Content() {
       {
         moduleName: 'gritsmartinmodule',
         componentName: 'SmartinEndpoints'
+      },
+      {
+        moduleName: 'gritsmartinmodule',
+        componentName: 'SmartinUpload'
       },
       // ... other components SmartinEndpoints
     ]

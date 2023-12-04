@@ -3,9 +3,11 @@ import PageDown from '../content/PageDown';
 
 const dynamicImportMap = {
   BifastDashboard: () => import('gritbifastmodule/BifastDashboard'),
+  RtgsDashboard: () => import('gritbifastmodule/RtgsDashboard'),
   MicroFrontendComponent: () => import('gritswiftmodule/MicroFrontendComponent'),
   AllServerDashboard: () => import('gritsmartinmodule/AllServerDashboard'),
   SmartinEndpoints: () => import('gritsmartinmodule/SmartinEndpoints'),
+  SmartinUpload: () => import('gritsmartinmodule/SmartinUpload'),
   // Tambahkan lebih banyak mapping sesuai kebutuhan
 };
 

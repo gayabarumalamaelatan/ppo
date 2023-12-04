@@ -6,6 +6,7 @@ import { USER_SERVICE_MAPPING_ROLE_GROUP_ADD } from '../config/ConfigApi';
 const { token } = require('../config/Constants');
 
 const RoleMapping = ({ selectedGroup, allRoles, setMappedRoles, groupRoleData,editPermission }) => {
+  console.log("groupRoleData",groupRoleData);
   const [mappedRoles, setMappedRolesLocal] = useState([]);
   const [editMode, setEditMode] = useState(false);
   const [isLoading, setIsLoading] = useState(false);

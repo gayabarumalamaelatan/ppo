@@ -4,6 +4,7 @@ const path = require('path');
 const Dotenv = require('dotenv-webpack');
 const webpack = require('webpack');
 const dotenv = require('dotenv');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 
 // Call dotenv and it will return an Object with a parsed key 
@@ -21,6 +22,7 @@ module.exports = {
     output: {
         //... existing output configuration
         path: path.resolve(__dirname, 'gritcoredev'),
+        filename: '[name].bundle.js',
         publicPath: '/', // Set the publicPath to root
       },
     devServer: {
@@ -62,10 +64,19 @@ module.exports = {
                 'publicPath': '/' // you can also use an environment variable or a dynamic value
               },
             template: "./public/index.html",
+            filename: './index.html',
+            favicon: './public/favicon.ico',
 
         }),
         new Dotenv(),
         new webpack.DefinePlugin(envKeys),
+        new CopyWebpackPlugin({
+            patterns: [
+              { from: 'public/dist', to: 'dist' },
+              { from: 'public/plugins', to: 'plugins' },
+              // You can add more patterns here if needed
+            ]
+          }),
         
         // Menambahkan plugin ModuleFederationPlugin
         new ModuleFederationPlugin({

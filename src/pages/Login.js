@@ -103,24 +103,16 @@ function LoginPage() {
               <hr></hr>
               <div className="row">
                 <div className="col-8">
-                  <div className="icheck-primary">
-                    <input type="checkbox" id="remember" />
-                    <label htmlFor="remember">Remember Me</label>
-                  </div>
                 </div>
+               
                 <div className="col-4">
                   <button type="submit" className="btn btn-primary btn-block">
                     Sign In
                   </button>
                 </div>
+                <hr></hr>
               </div>
             </form>
-            <hr></hr>
-            <p className="mb-0">
-              <a href="/sign-up" className="text-center">
-                Register a new membership
-              </a>
-            </p>
           </div>
         </div>
       </div>
