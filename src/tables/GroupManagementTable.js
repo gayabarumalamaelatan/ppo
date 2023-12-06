@@ -7,6 +7,7 @@ import { USER_SERVICE_GROUP_ROLE_UPDATE, USER_SERVICE_GROUP_ROLE_UPDATE_STATUS }
 import axios from 'axios';
 import { showErrorToast, showSuccessToast } from '../toast/toast';
 import { async } from 'q';
+import { showDynamicSweetAlert } from '../toast/Swal';
 
 const { token, inactive } = require('../config/Constants');
 
@@ -75,11 +76,12 @@ const GroupManagementTable = ({ groups, selectedGroup, handleGroupSelect, handle
                 setEditModalVisible(false);
                 setIsLoading(false);
                 refetchCallback();
-                showSuccessToast('Group name updated successfully!');
+                //showSuccessToast('Group name updated successfully!');
+                showDynamicSweetAlert('Success!', 'Group name updated successfully!', 'success');
             }, 1000);
         } catch (error) {
             console.error('Error updating group:', error);
-            showErrorToast('Error updating group!');
+            showDynamicSweetAlert('Error!',error, 'error');
             setIsLoading(false);
             // Handle errors that occur during the API call
         }
@@ -110,11 +112,11 @@ const GroupManagementTable = ({ groups, selectedGroup, handleGroupSelect, handle
                 setDeleteModalVisible(false);
                 setIsLoading(false);
                 refetchCallback();
-                showSuccessToast('Group name updated successfully!');
+                showDynamicSweetAlert('Success!', 'Group name deleted successfully!', 'success');
             }, 1000);
         } catch (error) {
             console.error('Error updating group:', error);
-            showErrorToast('Error updating group!');
+            showDynamicSweetAlert('Error!',error, 'error'); 
             setIsLoading(false);
             // Handle errors that occur during the API call
         }

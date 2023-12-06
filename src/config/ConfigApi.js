@@ -5,6 +5,7 @@ export const AUTH_SERVICE_BASE = process.env.REACT_APP_API_AUTH_SERVICE_BASE;
     export const AUTH_SERVICE_LOGOUT =`${AUTH_SERVICE_BASE}/auth-service/logout`;
     export const AUTH_SERVICE_REFRESH_TOKEN = `${AUTH_SERVICE_BASE}/auth-service/token/refreshtoken`;
     export const AUTH_SERVICE_VALIDATE_TOKEN = `${AUTH_SERVICE_BASE}/auth-service/token/validate-token`;
+    export const AUTH_SERVICE_VALIDATE_LOGIN = `${AUTH_SERVICE_BASE}/auth-service/test-login`;
    
     // USER CONTROLLER
     
@@ -48,7 +49,7 @@ export const USER_SERVICE_BASE = process.env.REACT_APP_API_USER_SERVICE_BASE;
 export const MENU_SERVICE_BASE = process.env.REACT_APP_API_MENU_SERVICE_BASE;
     // MODULE CONTROLLER
     export const MENU_SERVICE_MODULES = `${MENU_SERVICE_BASE}/menu-service/core-module/module-with-menu`;
-    export const MENU_SERVICE_ALL_MODULES = `${MENU_SERVICE_BASE}/menu-service/core-module/list-all-modules`;
+    export const MENU_SERVICE_ALL_MODULES = `${MENU_SERVICE_BASE}/menu-service/core-modules/list-all-modules`;
     export const MENU_SERVICE_ALL_MENU = `${MENU_SERVICE_BASE}/menu-service/core-menu/menus`;
     export const MENU_SERVICE_ADD_MENU_PERMISSION = `${MENU_SERVICE_BASE}/menu-service/core-permission/add`;
     export const MENU_SERVICE_MENU_PERMISSION = `${MENU_SERVICE_BASE}/menu-service/menu-permission`;

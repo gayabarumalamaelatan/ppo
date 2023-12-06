@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSave, faSyncAlt, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { showSuccessToast } from '../../toast/toast';
 import axios from 'axios';
+import { showDynamicSweetAlert } from '../../toast/Swal';
 
 const FormEdit = ({ isOpen, onClose, columns, menuName, getFormCode, data, keyCol, refecthCallBack }) => {
     const headers = { Authorization: `Bearer ${token}` };
@@ -131,7 +132,8 @@ const FormEdit = ({ isOpen, onClose, columns, menuName, getFormCode, data, keyCo
                         // Call the successCallback function to close the modal
                         successCallback();
                         // Show a success toast with the API response message
-                        showSuccessToast(data.message);
+                        //showSuccessToast(data.message);
+                        showDynamicSweetAlert('Success!', data.message, 'success');
 
                         refecthCallBack();
                         const resetData = { ...initialFormValues };
@@ -149,6 +151,7 @@ const FormEdit = ({ isOpen, onClose, columns, menuName, getFormCode, data, keyCo
             .catch((error) => {
                 // Handle any errors that occurred during the fetch
                 console.error('Error sending data to API:', error);
+                showDynamicSweetAlert('Error!', error.message, 'error');
             });
     };
 

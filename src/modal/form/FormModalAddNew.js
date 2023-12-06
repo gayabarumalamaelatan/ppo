@@ -5,6 +5,7 @@ import { FORM_SERVICE_INSERT_DATA, FORM_SERVICE_LOAD_DATA } from '../../config/C
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSave, faSyncAlt, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { showSuccessToast } from '../../toast/toast';
+import { showDynamicSweetAlert } from '../../toast/Swal';
 
 const FormModalAddNew = ({ isOpen, onClose, columns, menuName, formCode, reFormfetchCallback }) => {
   const headers = { Authorization: `Bearer ${token}` };
@@ -89,8 +90,8 @@ const FormModalAddNew = ({ isOpen, onClose, columns, menuName, formCode, reFormf
             // Call the successCallback function to close the modal
           successCallback();
           // Show a success toast with the API response message
-          showSuccessToast(data.message);
-
+          // showSuccessToast(data.message);
+          showDynamicSweetAlert('Success', data.message, 'success');
           reFormfetchCallback();
           const resetData = { ...initialFormValues };
           // Update the form data state to trigger a re-render with the reset values
@@ -107,6 +108,7 @@ const FormModalAddNew = ({ isOpen, onClose, columns, menuName, formCode, reFormf
       .catch((error) => {
         // Handle any errors that occurred during the fetch
         console.error('Error sending data to API:', error);
+        showDynamicSweetAlert('Error', error.message, 'error');
       });
   };
 

@@ -6,6 +6,7 @@ import { Button, Form, Modal, Row } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSave, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { showErrorToast, showSuccessToast } from "../toast/toast";
+import { showDynamicSweetAlert } from "../toast/Swal";
 
 const { token, active } = require('../config/Constants');
 
@@ -84,16 +85,19 @@ const NewMenuModal = ({isOpen, onClose, handleSubmit}) => {
                 setIsLoading(false);
                 onClose();
                 handleSubmit();
-                showSuccessToast('Menu updated successfully')
+                //showSuccessToast('Menu updated successfully')
+                showDynamicSweetAlert('Success!', 'Menu updated successfully.', 'success');
                 setFormData(initialFormData);
             }, 500)
 
         } catch (error) {
             console.error('Error Update Menu Data', error)
             if (formData.parent === false && formData.parentCode === '' ) {
-                showErrorToast('Please Fill Parent Code!')
+                //showErrorToast('Please Fill Parent Code!')
+                showDynamicSweetAlert('Warning!', 'Please Fill Parent Code!.', 'warning')
             } else (
-                showErrorToast('Error creating new menu!')
+                //showErrorToast('Error creating new menu!')
+                showDynamicSweetAlert('Error!', error, 'error')
             )
             setIsLoading(false);
         }

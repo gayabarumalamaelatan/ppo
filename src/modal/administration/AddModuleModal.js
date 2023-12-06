@@ -49,14 +49,15 @@ const AddModuleModal = ({ show, handleClose, reloadData}) => {
                 handleClose();
                 setFormData(initialUserData);
                 setIsLoading(false);
-                showSuccessToast('Module Update successfully!');
+                //showSuccessToast('Module Update successfully!');
+                showDynamicSweetAlert('Success!', 'Module Inserted successfully!', 'success');
                 reloadData();
             }, 1000);
             
         } catch (error) {
             console.error('Error adding module:', error);
             setIsLoading(false);
-            showErrorToast('An error occurred. Please try again later.');
+            showDynamicSweetAlert('Error!',error, 'error');
         }
     };
 

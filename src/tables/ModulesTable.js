@@ -84,13 +84,15 @@ const ModulesTable = ({ editPermission, deletePermission, refreshTableStatus }) 
             setTimeout(() => {
                 setShowDeleteModal(false);
                 setModuleToDelete(null);
-                showSuccessToast('User has been deleted successfully.');
+                //showSuccessToast('User has been deleted successfully.');
+                showDynamicSweetAlert('Success!', 'Module has been deleted successfully!.', 'success');
                 setIsLoading(false);
                 reloadData();
             }, 1000);
 
         } catch (error) {
             console.error('Error Deleted modules :', error);
+            showDynamicSweetAlert('Error!',error, 'error');
             // Tambahkan logika lain sesuai dengan kebutuhan Anda untuk menangani kesalahan
         }
     };

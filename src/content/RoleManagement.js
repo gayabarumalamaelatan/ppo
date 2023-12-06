@@ -9,6 +9,7 @@ import { Modal } from 'react-bootstrap';
 import { showErrorToast, showSuccessToast } from '../toast/toast';
 import {  useRecoilValue } from 'recoil';
 import { permissionsState } from '../store/Permission';
+import { showDynamicSweetAlert } from '../toast/Swal';
 
 const { token } = require('../config/Constants');
 
@@ -40,7 +41,7 @@ const RoleManagement = () => {
       })
       .catch(error => {
         console.error('Error fetching data:', error);
-        showErrorToast('Error loading role data. Please try again.');
+        showDynamicSweetAlert('Error!',error, 'error'); 
       })
   }
 
@@ -85,13 +86,14 @@ const RoleManagement = () => {
         setShowNewRoleModal(false);
         setIsLoading(false); // Stop loading
         fetchData();
-        showSuccessToast('Success Create New Role, Please Edit New Permission');
+        showDynamicSweetAlertmicSweetAlert('Success!', 'Success Create New Role, Please Edit New Permission.', 'success');
+        //showSuccessToast('Success Create New Role, Please Edit New Permission');
     }, 1000);
 
     } catch (error) {
       console.log('Error creating new role:', error);
       setRoleName('');
-      showErrorToast('An error occurred.');
+      showDynamicSweetAlert('Error!',error, 'error'); 
     }
   };
 
@@ -100,7 +102,7 @@ const RoleManagement = () => {
     console.log('Load mapping for group:', role);
     setSelectedRole(role);
     if (!selectedRole) {
-      showErrorToast('Please select a group first!');
+      showDynamicSweetAlert('Warning!', 'Please select a group first!', 'warning');
     } else {
       setIsLoading(true);
       setTimeout(() => {

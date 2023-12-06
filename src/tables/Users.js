@@ -1,26 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useTable } from 'react-table';
-import { AUTH_SERVICE_FORCE_RESET_PASSWORD, AUTH_SERVICE_LIST_USER, AUTH_SERVICE_UPDATE_STATUS_USER, USER_SERVICE_USER_DETAIL } from '../config/ConfigApi';
+import { AUTH_SERVICE_FORCE_RESET_PASSWORD, AUTH_SERVICE_LIST_USER, AUTH_SERVICE_UPDATE_STATUS_USER, AUTH_SERVICE_VALIDATE_LOGIN, USER_SERVICE_USER_DETAIL } from '../config/ConfigApi';
 import { Fragment } from 'react';
-import { Modal, Button, Pagination } from 'react-bootstrap';
+import { Modal, Button, Pagination, Form } from 'react-bootstrap';
 import { showSuccessToast, showErrorToast } from '../toast/toast';
 import { faCheck, faSpinner, faTrash, faUnlock } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import 'font-awesome/css/font-awesome.min.css';
-import { faSyncAlt,faTimes, faLock } from '@fortawesome/free-solid-svg-icons';
+import { faSyncAlt, faTimes, faLock } from '@fortawesome/free-solid-svg-icons';
+
 
 
 import { flushSync } from 'react-dom';
 import EditUserModal from '../modal/EditUserModal';
 import { isTokenExpired, refreshToken } from '../config/TokenHandler';
+import { showDynamicSweetAlert } from '../toast/Swal';
 
 
 // Ganti dengan URL API yang sesuai
 
 const { pendingApproval, active, pendingDelete, inactive, disabled, expired, lock, userLoggin, token, expiredPass } = require('../config/Constants');
 
-const Users = ({editPermission,delPermission,authPermission}) => {
+const Users = ({ editPermission, delPermission, authPermission }) => {
     const [data, setData] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [totalItem, setTotalItem] = useState(0);
@@ -38,9 +40,11 @@ const Users = ({editPermission,delPermission,authPermission}) => {
     const [showUnlockModal, setShowUnlockModal] = useState(false);
     const [userToUnlock, setUserToUnlock] = useState(null);
     const [showApproveModal, setShowApproveModal] = useState(false);
+    const [showTestLoginModal, setShowTestLoginModal] = useState(false);
     const [userToApprove, setUserToApprove] = useState(null);
     const [showModalReset, setShowModalReset] = useState(false);
     const [responseMessage, setResponseMessage] = useState('');
+    const [password, setPassword] = useState('');
 
     const handleEditUser = (user) => {
 
@@ -68,6 +72,13 @@ const Users = ({editPermission,delPermission,authPermission}) => {
             console.error('Error fetching user details:', error);
         }
     };
+    const handleTestLogin = async (user) => {
+        // Simpan data pengguna yang akan dikunci pada state userToLock
+        setUserToLock(user);
+        // Tampilkan modal konfirmasi
+        setShowTestLoginModal(true);
+
+    }
 
     const handleLockUser = async (user) => {
         // Simpan data pengguna yang akan dikunci pada state userToLock
@@ -75,6 +86,32 @@ const Users = ({editPermission,delPermission,authPermission}) => {
         // Tampilkan modal konfirmasi
         setShowModalLock(true);
     };
+
+    const confirmTestLogin = async () => {
+        try { // Ganti dengan akses token yang sesuai
+            const headers = { Authorization: `Bearer ${token}` };// Ganti dengan endpoint URL yang sesuai
+
+            // Objek data yang akan dikirim sebagai body permintaan PUT
+            const data = {
+                userPass: password, // Ganti dengan status yang sesuai untuk mengunci pengguna
+                userName: userToLock.userName,// Dapatkan username dari objek user yang diberikan
+            };
+            console.log(data);
+
+            const response = await axios.put(`${AUTH_SERVICE_VALIDATE_LOGIN}`, data, { headers });
+
+            console.log('successfully:', response.data);
+
+            handleCloseModal();
+            setUserToLock(null);
+            showDynamicSweetAlert('Success!', 'Credentials validated.', 'success');
+        } catch (error) {
+            console.error('Error Test Login:', error);
+            showDynamicSweetAlert('Error!',error, 'error');
+            // Tambahkan logika lain sesuai dengan kebutuhan Anda untuk menangani kesalahan
+        }
+
+    }
 
     const confirmLockUser = async () => {
         try { // Ganti dengan akses token yang sesuai
@@ -93,10 +130,12 @@ const Users = ({editPermission,delPermission,authPermission}) => {
 
             setShowModalLock(false);
             setUserToLock(null);
-            showSuccessToast('User locked successfully. ');
+            showDynamicSweetAlert('Success!', 'User locked successfull', 'success');
+            //showSuccessToast('User locked successfully. ');
             fetchData();
         } catch (error) {
             console.error('Error locking user:', error);
+            showDynamicSweetAlert('Error!',error, 'error');
             // Tambahkan logika lain sesuai dengan kebutuhan Anda untuk menangani kesalahan
         }
     };
@@ -106,8 +145,15 @@ const Users = ({editPermission,delPermission,authPermission}) => {
         setUserToLock(null);
         setShowModalLock(false);
         setShowModalReset(false);
+        setShowTestLoginModal(false);
         setResponseMessage('');
+        setPassword('');
     };
+
+    const handlePasswordChange = (e) => {
+        // Update the password state as the user types
+        setPassword(e.target.value);
+      };
 
     const handleShowUnlockModal = (user) => {
         setUserToUnlock(user);
@@ -130,12 +176,13 @@ const Users = ({editPermission,delPermission,authPermission}) => {
 
             setShowUnlockModal(false);
             setUserToUnlock(null);
-
-            showSuccessToast('User Unlocked successfully.');
+            showDynamicSweetAlert('Success!', 'User Unlocked successfully.', 'success');
+            //showSuccessToast('User Unlocked successfully.');
             // Tambahkan logika lain sesuai dengan kebutuhan Anda setelah penguncian pengguna berhasil
             fetchData();
         } catch (error) {
             console.error('Error locking user:', error);
+            showDynamicSweetAlert('Error!',error, 'error');
             // Tambahkan logika lain sesuai dengan kebutuhan Anda untuk menangani kesalahan
         }
     };
@@ -155,23 +202,24 @@ const Users = ({editPermission,delPermission,authPermission}) => {
                 userName: userToDelete.userName, // Dapatkan username dari objek user yang diberikan
             };
 
-           // console.log(data);
+            // console.log(data);
 
             const response = await axios.put(`${AUTH_SERVICE_UPDATE_STATUS_USER}`, data, { headers });
 
-           // console.log('User locked successfully:', response.data);
+            // console.log('User locked successfully:', response.data);
 
-             // Tutup modal konfirmasi
-             setShowDeleteModal(false);
-             // Reset userToLock menjadi null
-             setUserToDelete(null);
-             // Tambahkan logika 
-
-             showSuccessToast('User has been deleted successfully.');
+            // Tutup modal konfirmasi
+            setShowDeleteModal(false);
+            // Reset userToLock menjadi null
+            setUserToDelete(null);
+            // Tambahkan logika 
+            showDynamicSweetAlert('Success!', 'User has been deleted successfully.', 'success');
+            //showSuccessToast('User has been deleted successfully.');
             // Tambahkan logika lain sesuai dengan kebutuhan Anda setelah penguncian pengguna berhasil
             fetchData();
         } catch (error) {
             console.error('Error locking user:', error);
+            showDynamicSweetAlert('Error!',error, 'error');
             // Tambahkan logika lain sesuai dengan kebutuhan Anda untuk menangani kesalahan
         }
     };
@@ -195,9 +243,10 @@ const Users = ({editPermission,delPermission,authPermission}) => {
                 setShowModalReset(true);
                 console.log(response.data);
                 fetchData(); // Assuming this function fetches updated data
-              }
+            }
         } catch (error) {
             console.error('Error locking user:', error);
+            showDynamicSweetAlert('Error!',error, 'error');
             // Tambahkan logika lain sesuai dengan kebutuhan Anda untuk menangani kesalahan
         }
     };
@@ -230,11 +279,13 @@ const Users = ({editPermission,delPermission,authPermission}) => {
             // Reset userToLock menjadi null
             setUserToApprove(null);
             // Tambahkan logika 
-
-            showSuccessToast('User is approved successfully.');
+            showDynamicSweetAlert('Success!', 'User is approved successfully.', 'success');
+           // showSuccessToast('User is approved successfully.');
+            
             fetchData();
         } catch (error) {
             console.error('Error locking user:', error);
+            showDynamicSweetAlert('Error!',error, 'error');
             // Tambahkan logika lain sesuai dengan kebutuhan Anda untuk menangani kesalahan
         }
     };
@@ -258,6 +309,7 @@ const Users = ({editPermission,delPermission,authPermission}) => {
             fetchData();
         } catch (error) {
             console.error('Error locking user:', error);
+            showDynamicSweetAlert('Error!',error, 'error');
             // Tambahkan logika lain sesuai dengan kebutuhan Anda untuk menangani kesalahan
         }
     };
@@ -280,6 +332,7 @@ const Users = ({editPermission,delPermission,authPermission}) => {
             fetchData();
         } catch (error) {
             console.error('Error locking user:', error);
+            showDynamicSweetAlert('Error!',error, 'error');
             // Tambahkan logika lain sesuai dengan kebutuhan Anda untuk menangani kesalahan
         }
     };
@@ -307,6 +360,7 @@ const Users = ({editPermission,delPermission,authPermission}) => {
             }, 1000);
         } catch (error) {
             console.error('Error fetching data:', error);
+            showDynamicSweetAlert('Error!',error, 'error');
             setIsLoadingTable(false);
         }
     };
@@ -349,13 +403,13 @@ const Users = ({editPermission,delPermission,authPermission}) => {
                                     <div className="dropdown-menu" role="menu">
                                         <a className="dropdown-item" onClick={() => handleViewUser(row.original)}>View User</a>
                                         {editPermission && (
-                                        <a className="dropdown-item" onClick={() => handleLockUser(row.original)}>Lock User</a>
+                                            <a className="dropdown-item" onClick={() => handleLockUser(row.original)}>Lock User</a>
                                         )}
                                         {delPermission && (
-                                        <a className="dropdown-item" onClick={() => handleShowDeleteModal(row.original)}>Delete User</a>
+                                            <a className="dropdown-item" onClick={() => handleShowDeleteModal(row.original)}>Delete User</a>
                                         )}
                                         {editPermission && (
-                                        <a className="dropdown-item" onClick={() => handleResetUser(row.original)}>Reset Password</a>
+                                            <a className="dropdown-item" onClick={() => handleResetUser(row.original)}>Reset Password</a>
                                         )}
                                     </div>
                                 </div>
@@ -373,7 +427,7 @@ const Users = ({editPermission,delPermission,authPermission}) => {
                                     <div className="dropdown-menu" role="menu">
                                         <a className="dropdown-item" onClick={() => handleViewUser(row.original)}>View User</a>
                                         {editPermission && (
-                                        <a className="dropdown-item" onClick={() => handleActiveUser(row.original)}>Actived User</a>
+                                            <a className="dropdown-item" onClick={() => handleActiveUser(row.original)}>Actived User</a>
                                         )}
                                     </div>
                                 </div>
@@ -392,13 +446,13 @@ const Users = ({editPermission,delPermission,authPermission}) => {
                                 <div className="dropdown-menu" role="menu">
                                     <a className="dropdown-item" onClick={() => handleViewUser(row.original)}>View User</a>
                                     {editPermission && (
-                                    <a className="dropdown-item" onClick={() => handleShowUnlockModal(row.original)}>Unlock User</a>
+                                        <a className="dropdown-item" onClick={() => handleShowUnlockModal(row.original)}>Unlock User</a>
                                     )}
                                     {delPermission && (
-                                    <a className="dropdown-item" onClick={() => handleShowDeleteModal(row.original)}>Delete User</a>
+                                        <a className="dropdown-item" onClick={() => handleShowDeleteModal(row.original)}>Delete User</a>
                                     )}
                                     {editPermission && (
-                                    <a className="dropdown-item" onClick={() => handleResetUser(row.original)}>Reset Password</a>
+                                        <a className="dropdown-item" onClick={() => handleResetUser(row.original)}>Reset Password</a>
                                     )}
                                 </div>
                             </div>
@@ -409,9 +463,15 @@ const Users = ({editPermission,delPermission,authPermission}) => {
             {
                 Header: 'Actions',
                 Cell: ({ row }) => {
-                    if (row.original.createdBy === userLoggin && authPermission === false && row.original.status  !== active) {
-                        return null;
-                    } else if (row.original.status === pendingApproval && row.original.createdBy !== userLoggin) {
+                    if (row.original.status === 'ACTIVE') {
+                        return (
+                            <div>
+                                <Button variant="outline-primary" onClick={() => handleEditUser(row.original)}><i className="fas fa-edit"></i></Button>&nbsp;
+                                <Button variant="outline-success" onClick={() => handleTestLogin(row.original)}><i className="fas fa-sign-in"></i></Button>
+                            </div>
+                        );
+                    }
+                    else if (row.original.status === pendingApproval && row.original.createdBy !== userLoggin) {
                         return (
                             <div>
                                 <Button variant="outline-success" onClick={() => handleShowApproveModal(row.original)}><i className="fas fa-check"></i></Button>&nbsp;
@@ -426,15 +486,10 @@ const Users = ({editPermission,delPermission,authPermission}) => {
                             </div>
                         );
                     }
-                    else if (row.original.status === active) {
-                        return (
-                            <div>
-                                {editPermission.editPermission && (
-                                <Button variant="outline-primary" onClick={() => handleEditUser(row.original)}><i className="fas fa-edit"></i></Button>
-                                )}
-                            </div>
-                        );
+                    else if (row.original.createdBy === userLoggin && authPermission === false && row.original.status !== active) {
+                        return null;
                     }
+
                 },
             },
         ],
@@ -470,7 +525,7 @@ const Users = ({editPermission,delPermission,authPermission}) => {
     const handlePageSizeChange = (event) => {
         setPageSize(parseInt(event.target.value, 10));
         setCurrentPage(0); // Kembalikan ke halaman pertama setelah mengubah ukuran halaman
-    };  
+    };
 
     const handleSearchSubmit = (event) => {
         event.preventDefault();
@@ -479,74 +534,74 @@ const Users = ({editPermission,delPermission,authPermission}) => {
     };
 
 
-    
+
     // Pagination Logic
 
     const renderPaginationItems = () => {
         const paginationItems = [];
-      
-        if (pageCount <= 5) {
-          // If there are less than or equal to 5 pages, render all page numbers.
-          for (let i = 0; i < pageCount; i++) {
-            paginationItems.push(
-              <Pagination.Item
-                key={i}
-                active={i === currentPage}
-                onClick={() => handlePageChange(i)}
-              >
-                {i + 1}
-              </Pagination.Item>
-            );
-          }
-        } else {
-          // If there are more than 5 pages, include ellipsis.
-          const startPage = Math.max(0, currentPage - 2);
-          const endPage = Math.min(pageCount - 1, currentPage + 2);
-      
-          if (startPage > 0) {
-            paginationItems.push(
-              <Pagination.Item key="start" onClick={() => handlePageChange(0)}>
-                1
-              </Pagination.Item>
-            );
-      
-            if (startPage > 1) {
-              paginationItems.push(<Pagination.Ellipsis key="start-ellipsis" />);
-            }
-          }
-      
-          for (let i = startPage; i <= endPage; i++) {
-            paginationItems.push(
-              <Pagination.Item
-                key={i}
-                active={i === currentPage}
-                onClick={() => handlePageChange(i)}
-              >
-                {i + 1}
-              </Pagination.Item>
-            );
-          }
-      
-          if (endPage < pageCount - 1) {
-            if (endPage < pageCount - 2) {
-              paginationItems.push(<Pagination.Ellipsis key="end-ellipsis" />);
-            }
-      
-            paginationItems.push(
-              <Pagination.Item
-                key="end"
-                onClick={() => handlePageChange(pageCount - 1)}
-              >
-                {pageCount}
-              </Pagination.Item>
-            );
-          }
-        }
-      
-        return paginationItems;
-      };
 
-   
+        if (pageCount <= 5) {
+            // If there are less than or equal to 5 pages, render all page numbers.
+            for (let i = 0; i < pageCount; i++) {
+                paginationItems.push(
+                    <Pagination.Item
+                        key={i}
+                        active={i === currentPage}
+                        onClick={() => handlePageChange(i)}
+                    >
+                        {i + 1}
+                    </Pagination.Item>
+                );
+            }
+        } else {
+            // If there are more than 5 pages, include ellipsis.
+            const startPage = Math.max(0, currentPage - 2);
+            const endPage = Math.min(pageCount - 1, currentPage + 2);
+
+            if (startPage > 0) {
+                paginationItems.push(
+                    <Pagination.Item key="start" onClick={() => handlePageChange(0)}>
+                        1
+                    </Pagination.Item>
+                );
+
+                if (startPage > 1) {
+                    paginationItems.push(<Pagination.Ellipsis key="start-ellipsis" />);
+                }
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                paginationItems.push(
+                    <Pagination.Item
+                        key={i}
+                        active={i === currentPage}
+                        onClick={() => handlePageChange(i)}
+                    >
+                        {i + 1}
+                    </Pagination.Item>
+                );
+            }
+
+            if (endPage < pageCount - 1) {
+                if (endPage < pageCount - 2) {
+                    paginationItems.push(<Pagination.Ellipsis key="end-ellipsis" />);
+                }
+
+                paginationItems.push(
+                    <Pagination.Item
+                        key="end"
+                        onClick={() => handlePageChange(pageCount - 1)}
+                    >
+                        {pageCount}
+                    </Pagination.Item>
+                );
+            }
+        }
+
+        return paginationItems;
+    };
+
+
 
     return (
         <Fragment>
@@ -616,7 +671,7 @@ const Users = ({editPermission,delPermission,authPermission}) => {
                                 rows.map(row => {
                                     prepareRow(row);
                                     return (
-                                        <tr {...row.getRowProps() } className="table-row-hover">
+                                        <tr {...row.getRowProps()} className="table-row-hover">
 
                                             {row.cells.map(cell => (
                                                 <td {...cell.getCellProps()} >{cell.render('Cell')}</td>
@@ -629,13 +684,13 @@ const Users = ({editPermission,delPermission,authPermission}) => {
                     </table>
                 </div>
                 <div className="d-flex justify-content-between align-items-center">
-                <div>Showing {startIndex} to {endIndex} of {totalItem} entries</div>
-                  <Pagination>
-                      <Pagination.Prev
-                          onClick={() => handlePageChange(currentPage - 1)}
-                          disabled={currentPage === 0}
-                      />
-                      {/* {Array.from({ length: pageCount }).map((_, index) => (
+                    <div>Showing {startIndex} to {endIndex} of {totalItem} entries</div>
+                    <Pagination>
+                        <Pagination.Prev
+                            onClick={() => handlePageChange(currentPage - 1)}
+                            disabled={currentPage === 0}
+                        />
+                        {/* {Array.from({ length: pageCount }).map((_, index) => (
                           <Pagination.Item
                               key={index}
                               active={index === currentPage}
@@ -644,13 +699,13 @@ const Users = ({editPermission,delPermission,authPermission}) => {
                               {index + 1}
                           </Pagination.Item>
                       ))} */}
-                      {renderPaginationItems()}
-                      <Pagination.Next
-                          onClick={() => handlePageChange(currentPage + 1)}
-                          disabled={currentPage === pageCount - 1}
-                      />
-                  </Pagination>
-              </div>
+                        {renderPaginationItems()}
+                        <Pagination.Next
+                            onClick={() => handlePageChange(currentPage + 1)}
+                            disabled={currentPage === pageCount - 1}
+                        />
+                    </Pagination>
+                </div>
 
             </div>
 
@@ -713,109 +768,142 @@ const Users = ({editPermission,delPermission,authPermission}) => {
 
             {/* Modal konfirmasi penghapusan */}
             <Modal show={showApproveModal} onHide={() => setShowApproveModal(false)}>
-             <Modal.Header>
-                <Modal.Title>Confirmation</Modal.Title>
-                {/* Ganti ikon tombol close (X) */}
-                <Button variant="link default" onClick={handleShowApproveModal}>
-                    <FontAwesomeIcon icon={faTimes} />
-                </Button>
-            </Modal.Header>
+                <Modal.Header>
+                    <Modal.Title>Confirmation</Modal.Title>
+                    {/* Ganti ikon tombol close (X) */}
+                    <Button variant="link default" onClick={handleShowApproveModal}>
+                        <FontAwesomeIcon icon={faTimes} />
+                    </Button>
+                </Modal.Header>
                 <Modal.Body>
                     Are you sure you want to approve the user: {userToApprove && userToApprove.userName}?
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={() => setShowApproveModal(false)}>
-                    <FontAwesomeIcon icon={faTimes} />   Cancel
+                        <FontAwesomeIcon icon={faTimes} />   Cancel
                     </Button>
                     <Button variant="primary" onClick={handlePendingApproval}>
-                    <FontAwesomeIcon icon={faCheck} />  Approval
+                        <FontAwesomeIcon icon={faCheck} />  Approval
                     </Button>
                 </Modal.Footer>
             </Modal>
 
             {/* Modal konfirmasi penghapusan */}
             <Modal show={showUnlockModal} onHide={() => setShowUnlockModal(false)}>
-             <Modal.Header>
-                <Modal.Title>Confirmation</Modal.Title>
-                {/* Ganti ikon tombol close (X) */}
-                <Button variant="link default" onClick={handleCloseModal}>
-                    <FontAwesomeIcon icon={faTimes} />
-                </Button>
-            </Modal.Header>
+                <Modal.Header>
+                    <Modal.Title>Confirmation</Modal.Title>
+                    {/* Ganti ikon tombol close (X) */}
+                    <Button variant="link default" onClick={handleCloseModal}>
+                        <FontAwesomeIcon icon={faTimes} />
+                    </Button>
+                </Modal.Header>
                 <Modal.Body>
                     Are you sure you want to unlock the user: {userToUnlock && userToUnlock.userName}?
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={() => setShowUnlockModal(false)}>
-                    <FontAwesomeIcon icon={faTimes} />   Cancel
+                        <FontAwesomeIcon icon={faTimes} />   Cancel
                     </Button>
                     <Button variant="primary" onClick={handleUnlockUser}>
-                    <FontAwesomeIcon icon={faUnlock} />  Unlock
+                        <FontAwesomeIcon icon={faUnlock} />  Unlock
                     </Button>
                 </Modal.Footer>
             </Modal>
 
-             {/* Modal konfirmasi penghapusan */}
-             <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
-             <Modal.Header>
-                <Modal.Title>Confirmation</Modal.Title>
-                {/* Ganti ikon tombol close (X) */}
-                <Button variant="link default" onClick={handleCloseModal}>
-                    <FontAwesomeIcon icon={faTimes} />
-                </Button>
-            </Modal.Header>
+            {/* Modal konfirmasi penghapusan */}
+            <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
+                <Modal.Header>
+                    <Modal.Title>Confirmation</Modal.Title>
+                    {/* Ganti ikon tombol close (X) */}
+                    <Button variant="link default" onClick={handleCloseModal}>
+                        <FontAwesomeIcon icon={faTimes} />
+                    </Button>
+                </Modal.Header>
                 <Modal.Body>
                     Are you sure you want to delete the user: {userToDelete && userToDelete.userName}?
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
-                    <FontAwesomeIcon icon={faTimes} />   Cancel
+                        <FontAwesomeIcon icon={faTimes} />   Cancel
                     </Button>
                     <Button variant="danger" onClick={handleDeleteUser}>
-                    <FontAwesomeIcon icon={faTrash} />   Delete
+                        <FontAwesomeIcon icon={faTrash} />   Delete
                     </Button>
                 </Modal.Footer>
             </Modal>
 
             {/* Modal konfirmasi */}
             <Modal show={showModalLock} onHide={handleCloseModal}>
-            <Modal.Header>
-                <Modal.Title>Confirmation</Modal.Title>
-                {/* Ganti ikon tombol close (X) */}
-                <Button variant="link default" onClick={handleCloseModal}>
-                    <FontAwesomeIcon icon={faTimes} />
-                </Button>
-            </Modal.Header>
-            <Modal.Body>
-                Are you sure you want to lock the user: {userToLock && userToLock.userName}?
-            </Modal.Body>
-            <Modal.Footer>
-                <Button variant="secondary" onClick={handleCloseModal}>
-                    <FontAwesomeIcon icon={faTimes} /> Cancel
-                </Button>
-                <Button variant="primary" onClick={confirmLockUser}>
-                    <FontAwesomeIcon icon={faLock} /> Lock User
-                </Button>
-            </Modal.Footer>
-        </Modal>
+                <Modal.Header>
+                    <Modal.Title>Confirmation</Modal.Title>
+                    {/* Ganti ikon tombol close (X) */}
+                    <Button variant="link default" onClick={handleCloseModal}>
+                        <FontAwesomeIcon icon={faTimes} />
+                    </Button>
+                </Modal.Header>
+                <Modal.Body>
+                    Are you sure you want to lock the user: {userToLock && userToLock.userName}?
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleCloseModal}>
+                        <FontAwesomeIcon icon={faTimes} /> Cancel
+                    </Button>
+                    <Button variant="primary" onClick={confirmLockUser}>
+                        <FontAwesomeIcon icon={faLock} /> Lock User
+                    </Button>
+                </Modal.Footer>
+            </Modal>
 
-        <Modal show={showModalReset} onHide={handleCloseModal}>
-            <Modal.Header>
-                <Modal.Title>New Password</Modal.Title>
-                {/* Ganti ikon tombol close (X) */}
-                <Button variant="link default" onClick={handleCloseModal}>
-                    <FontAwesomeIcon icon={faTimes} />
-                </Button>
-            </Modal.Header>
-            <Modal.Body>
-                This the New Password : <strong>{responseMessage && responseMessage.newPass}</strong>
-            </Modal.Body>
-            <Modal.Footer>
-                <Button variant="primary" onClick={handleCloseModal}>
-                    <FontAwesomeIcon icon={faTimes} /> Close
-                </Button>
-            </Modal.Footer>
-        </Modal>
+            {/* Modal konfirmasi */}
+            <Modal show={showTestLoginModal} onHide={handleCloseModal}>
+                <Modal.Header>
+                    <Modal.Title>Confirmation</Modal.Title>
+                    {/* Ganti ikon tombol close (X) */}
+                    <Button variant="link default" onClick={handleCloseModal}>
+                        <FontAwesomeIcon icon={faTimes} />
+                    </Button>
+                </Modal.Header>
+                <Modal.Body>
+                    {/* Are you sure you want to lock the user: {userToLock && userToLock.userName}? */}
+                    <Form.Group controlId="formPassword">
+                        <Form.Label>Password:</Form.Label>
+                        <Form.Control
+                            type="password"
+                            placeholder="Enter your password"
+                            value={password}
+                            onChange={handlePasswordChange}
+                            autoComplete="new-password"
+                            required
+                        />
+                    </Form.Group>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleCloseModal}>
+                        <FontAwesomeIcon icon={faTimes} /> Cancel
+                    </Button>
+                    <Button variant="success" type="submit" onClick={confirmTestLogin}>
+                        <FontAwesomeIcon icon={faCheck} /> Test
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
+            <Modal show={showModalReset} onHide={handleCloseModal}>
+                <Modal.Header>
+                    <Modal.Title>New Password</Modal.Title>
+                    {/* Ganti ikon tombol close (X) */}
+                    <Button variant="link default" onClick={handleCloseModal}>
+                        <FontAwesomeIcon icon={faTimes} />
+                    </Button>
+                </Modal.Header>
+                <Modal.Body>
+                    This the New Password : <strong>{responseMessage && responseMessage.newPass}</strong>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="primary" onClick={handleCloseModal}>
+                        <FontAwesomeIcon icon={faTimes} /> Close
+                    </Button>
+                </Modal.Footer>
+            </Modal>
             {selectedUser && (
                 <EditUserModal
                     showEdit={showEditModal}

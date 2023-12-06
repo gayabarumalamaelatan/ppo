@@ -6,6 +6,7 @@ import { Button, Form, Modal } from 'react-bootstrap';
 import { useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSave, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { showDynamicSweetAlert } from '../../toast/Swal';
 
 const { userLoggin, token, active } = require('../../config/Constants');
 
@@ -85,7 +86,7 @@ const EditModuleModal = ({ showEdit, handleClose, dataModule ,reloadData}) => {
                 handleClose();
                 setFormData(initialUserData);
                 setIsLoading(false);
-                showSuccessToast('Module Edited successfully!');
+                showDynamicSweetAlert('Success!', 'Module Edited successfully!', 'success');
                 reloadData();
                 reloadData();
             }, 1000);
@@ -94,7 +95,7 @@ const EditModuleModal = ({ showEdit, handleClose, dataModule ,reloadData}) => {
         } catch (error) {
             console.error('Error edit module:', error);
             setIsLoading(false);
-            showErrorToast('An error occurred. Please try again later.');
+            showDynamicSweetAlert('Error!',error, 'error');
         }
     };
 

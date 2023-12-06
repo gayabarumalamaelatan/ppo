@@ -4,6 +4,7 @@ import { SMARTIN_SERVICE_UPLOAD_FILE } from '../../config/ConfigApi';
 import { showSuccessToast, showErrorToast } from '../../toast/toast';
 import { Button, Form, Modal } from 'react-bootstrap';
 import { upload } from '@testing-library/user-event/dist/upload';
+import { showDynamicSweetAlert } from '../../toast/Swal';
 
 const { userLoggin, token, active } = require('../../config/Constants');
 
@@ -58,12 +59,14 @@ const UploadSmartinModal = ({ show, handleClose : handleCloseModal, reloadData }
                     setText('');
                     setFile(null);
                     setIsLoading(false);
-                    showSuccessToast('File berhasil diunggah!');
+                    //showSuccessToast('File berhasil diunggah!');
+                    showDynamicSweetAlert('Success!', 'Files uploaded!', 'success');
                     reloadData();
                 }, 1000);
                 console.log('File berhasil diunggah!');
             } else {
                 console.error('Terjadi kesalahan saat mengunggah file.');
+                showDynamicSweetAlert('Error!',error, 'error');
             }
 
 

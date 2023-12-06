@@ -9,6 +9,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSave, faTimes, faTrash } from '@fortawesome/free-solid-svg-icons';
 import {  useRecoilValue } from 'recoil';
 import { permissionsState } from '../store/Permission';
+import { showDynamicSweetAlert } from '../toast/Swal';
 
 const { userLoggin, token } = require('../config/Constants');
 
@@ -48,7 +49,7 @@ const GroupManagement = () => {
             })
             .catch(error => {
                 console.error('Error fetching group data:', error);
-                showErrorToast('Error loading group data. Please try again.');
+                showDynamicSweetAlert('Error!',error, 'error');
             });
     };
 
@@ -63,7 +64,7 @@ const GroupManagement = () => {
             })
             .catch(error => {
                 console.error('Error fetching group data:', error);
-                showErrorToast('Error loading group data. Please try again.');
+                showDynamicSweetAlert('Error!',error, 'error');
             });
     };
 
@@ -76,7 +77,7 @@ const GroupManagement = () => {
             })
             .catch(error => {
                 console.error('Error fetching role data:', error);
-                showErrorToast('Error loading role data. Please try again.');
+                showDynamicSweetAlert('Error!',error, 'error');
             });
     };
 
@@ -97,7 +98,7 @@ const GroupManagement = () => {
     const handleLoadMapping = (group) => {
         setSelectedGroup(group);
         if (!selectedGroup) {
-            showErrorToast('Please select a group first!');
+            showDynamicSweetAlert('Warning!', 'Please select a group first!', 'warning');
         } else {
             setIsLoading(true);
             setTimeout(() => {
@@ -124,12 +125,13 @@ const GroupManagement = () => {
                 setNewGroupName("");
                 setIsLoading(false); // Stop loading
                 loadGroupsData();
-                showSuccessToast('Group created successfully.');
+                showDynamicSweetAlert('Success!', 'Group created successfully.', 'success');
+                //showSuccessToast('Group created successfully.');
             }, 1000);
         } catch (error) {
             console.error('Error creating group:', error);
             setNewGroupName("");
-            showErrorToast('An error occurred. Please try again later.');
+            showDynamicSweetAlert('Error!',error, 'error');
 
         }
     };

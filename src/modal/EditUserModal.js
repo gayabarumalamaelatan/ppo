@@ -4,6 +4,7 @@ import axios from 'axios';
 
 import AUTH_SERVICE_UPDATE_USER, { USER_SERVICE_UPDATE_USER, USER_SERVICE_USER_DETAIL } from '../config/ConfigApi';
 import { showSuccessToast, showErrorToast } from '../toast/toast';
+import { showDynamicSweetAlert } from '../toast/Swal';
 
 
 const { userLoggin, token } = require('../config/Constants');
@@ -77,12 +78,13 @@ const EditFormModal = ({ showEdit, handleClose, username, handleSubmit }) => {
 
         // Tutup modal dan reset formulir
         handleModalClose();
-        showSuccessToast('User updated successfully!');
+        //showSuccessToast('User updated successfully!');
+        showDynamicSweetAlert('Success!', 'User updated successfully!', 'success');
       }, 1000);
 
     } catch (error) {
       console.error('Error updating user:', error);
-      showErrorToast('Error updating user!');
+      showDynamicSweetAlert('Error!',error, 'error');
       setIsLoading(false);
       // Tangani kesalahan yang terjadi selama panggilan API
     }

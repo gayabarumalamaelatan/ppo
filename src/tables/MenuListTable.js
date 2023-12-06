@@ -9,6 +9,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { showSuccessToast, showErrorToast } from "../toast/toast";
 import UpdateMenuModal from "../modal/UpdateMenuModal";
+import { showDynamicSweetAlert } from "../toast/Swal";
 
 const { token, inactive } = require('../config/Constants');
 
@@ -179,11 +180,13 @@ const MenuListTable = ({ editPermission, deletePermission, refreshTableStatus })
             setMenuToDelete(null);
             // Tambahkan logika 
 
-            showSuccessToast('Menu has been deleted successfully.');
+            // showSuccessToast('Menu has been deleted successfully.');
+            showDynamicSweetAlert('Success', 'Menu has been deleted successfully.', 'success');
             // Tambahkan logika lain sesuai dengan kebutuhan Anda setelah penguncian pengguna berhasil
             fetchData();
         } catch (error) {
             console.error('Error Delete menus :', error);
+            showDynamicSweetAlert('Error', error, 'error');
             // Tambahkan logika lain sesuai dengan kebutuhan Anda untuk menangani kesalahan
         }
     }

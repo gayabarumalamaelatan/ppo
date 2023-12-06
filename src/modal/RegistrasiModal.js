@@ -4,6 +4,7 @@ import { AUTH_SERVICE_CHECK_USER, USER_SERVICE_ADD_USER, USER_SERVICE_GROUP_LIST
 import { showSuccessToast, showErrorToast } from '../toast/toast';
 
 import { hasMinimumLength, hasNumber, hasUppercaseLetter, hasSpecialCharacter } from '../config/PasswordRules';
+import { showDynamicSweetAlert } from '../toast/Swal';
 
 const { userLoggin, token } = require('../config/Constants');
 
@@ -131,7 +132,8 @@ const RegisterModal = ({ show, handleClose }) => {
             setTimeout(() => {
                 setUserData(initialUserData);
                 setIsLoading(false);
-                showSuccessToast('Registration successful!');
+                showDynamicSweetAlert('Success!', 'Registration Successfully.', 'success');
+                //showSuccessToast('Registration successful!');
             }, 1000);
 
         } catch (error) {
@@ -139,7 +141,9 @@ const RegisterModal = ({ show, handleClose }) => {
                 console.error('Error registering member:', error);;
                 setIsLoading(false);
                 // Tambahkan logika lain sesuai dengan kebutuhan Anda untuk menangani kesalahan
-                showErrorToast('An error occurred. Please try again later.');
+                showDynamicSweetAlert('Error!', 'An error occurred. Please try again later.', 'error');
+                //showErrorToast('An error occurred. Please try again later.');
+
             }, 1000);
 
 

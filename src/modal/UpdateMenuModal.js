@@ -1,4 +1,4 @@
-import { useState } from "react"
+import React,{ useState } from "react";
 import { MENU_SERVICE_ALL_MODULES, MENU_SERVICE_DETAIL, MENU_SERVICE_UPDATE_MENU } from "../config/ConfigApi";
 import axios from "axios";
 import { useEffect } from "react";
@@ -6,6 +6,7 @@ import { Button, Form, Modal, Row } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSave, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { showErrorToast, showSuccessToast } from "../toast/toast";
+import { showDynamicSweetAlert } from "../toast/Swal";
 
 const { token } = require('../config/Constants');
 
@@ -104,14 +105,15 @@ const UpdateMenuModal = ({isOpen, menu, handleSubmit, onClose}) => {
                 console.log('Response', response.data);
                 setIsLoading(false);
                 onClose();
-                showSuccessToast('Menu updated successfully');
+                // showSuccessToast('Menu updated successfully');
+                showDynamicSweetAlert('Success!', 'Menu updated successfully.', 'success');
                 handleSubmit();
                 setFormData(initialFormData);
             }, 500)
 
         } catch (error) {
             console.error('Error Update Menu Data', error)
-            showErrorToast('Error updating menu data!')
+            showDynamicSweetAlert('Error!', error, 'error');
             setIsLoading(false);
         }
     }

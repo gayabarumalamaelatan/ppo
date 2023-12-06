@@ -7,6 +7,7 @@ import { faSave, faTimes, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { USER_SERVICE_EDIT_ROLE, USER_SERVICE_UPDATE_STATUS_ROLE } from '../config/ConfigApi';
 import axios from 'axios';
 import { showErrorToast, showSuccessToast } from '../toast/toast';
+import { showDynamicSweetAlert } from '../toast/Swal';
 
 const { token } = require('../config/Constants');
 
@@ -67,11 +68,12 @@ const RoleListTable = ({ roles,  handleRoleSelect, handleLoadMapping, selectedGr
         setEditModalVisible(false);
         setIsLoading(false);
         refetchCallback();
-        showSuccessToast('Role name updated successfully!');
+        //showSuccessToast('Role name updated successfully!');
+        showDynamicSweetAlert('Success!', 'Role name updated successfully!', 'success');
       }, 1000)
     } catch (error) {
       console.error('Error updating role:', error);
-      showErrorToast('Error updating group!');
+      showDynamicSweetAlert('Error!',error, 'error');
       setIsLoading(false);
     }
   };
@@ -94,12 +96,13 @@ const RoleListTable = ({ roles,  handleRoleSelect, handleLoadMapping, selectedGr
         setDeleteModalVisible(false);
         setIsLoading(false);
         refetchCallback();
-        showSuccessToast('Role deleted successfully!');
+        //showSuccessToast('Role deleted successfully!');
+        showDynamicSweetAlert('Success!', 'Role deleted successfully!', 'success');
       }, 1000)
       console.log('Role deleted successfully', response.data);
     } catch (error) {
       console.error('Error deleting role:', error);
-      showErrorToast('Error updating group!');
+      showDynamicSweetAlert('Error!',error, 'error');
       setIsLoading(false);
     }
     
