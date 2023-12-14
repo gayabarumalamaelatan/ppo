@@ -4,6 +4,7 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import axios from 'axios'; // Import axios
 import { AUTH_SERVICE_LOGIN } from '../config/ConfigApi';
 import { active, expired, expiredPass } from '../config/Constants';
+import { Form } from 'react-bootstrap';
 
 
 function LoginPage() {
@@ -12,13 +13,14 @@ function LoginPage() {
   const [loginError, setLoginError] = useState(false);
   const navigate = useNavigate();
   const [hashedPassword, setHashedPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
 
   useEffect(() => {
     // Check if the session is still active when the LoginPage component is rendered
     const isLoggedIn = sessionStorage.getItem('isLoggedIn');
     if (isLoggedIn === 'true') {
-      navigate('/Dashboard');
+      navigate('/');
     }
   }, [navigate]);
 
@@ -30,24 +32,24 @@ function LoginPage() {
         userName: userId,
         userPass: userPass,
       },
-      {
-        timeout: 15000, // Set the timeout to 15000 milliseconds (15 seconds)
-      }
+        {
+          timeout: 15000, // Set the timeout to 15000 milliseconds (15 seconds)
+        }
       );
-      
+
       if (response.status === 200 && response.data.status === active) {
         sessionStorage.setItem('isLoggedIn', 'true');
         sessionStorage.setItem('userId', response.data.userName);
-        sessionStorage.setItem('accessToken',response.data.accessToken);
+        sessionStorage.setItem('accessToken', response.data.accessToken);
         sessionStorage.setItem('id', response.data.id);
         navigate('/');
       } else if (response.status === 200 && response.data.status === expiredPass) {
-        sessionStorage.setItem('accessToken',response.data.accessToken);
+        sessionStorage.setItem('accessToken', response.data.accessToken);
         sessionStorage.setItem('id', response.data.id);
         window.location.href = '/reset';
       } else {
         setLoginError(true); // Set login error state to true
-        
+
       }
     } catch (error) {
       console.error('Error:', error);
@@ -88,7 +90,7 @@ function LoginPage() {
               </div>
               <div className="input-group mb-3">
                 <input
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   className="form-control"
                   placeholder="Password"
                   value={userPass}
@@ -96,7 +98,11 @@ function LoginPage() {
                 />
                 <div className="input-group-append">
                   <div className="input-group-text">
-                    <span className="fas fa-lock"></span>
+                    <span
+                      className={`fas ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`}
+                      onClick={() => setShowPassword(!showPassword)}
+                      style={{ cursor: 'pointer' }}
+                    ></span>
                   </div>
                 </div>
               </div>
@@ -104,7 +110,7 @@ function LoginPage() {
               <div className="row">
                 <div className="col-8">
                 </div>
-               
+
                 <div className="col-4">
                   <button type="submit" className="btn btn-primary btn-block">
                     Sign In

@@ -5,6 +5,7 @@ import axios from 'axios';
 import AUTH_SERVICE_UPDATE_USER, { USER_SERVICE_UPDATE_USER, USER_SERVICE_USER_DETAIL } from '../config/ConfigApi';
 import { showSuccessToast, showErrorToast } from '../toast/toast';
 import { showDynamicSweetAlert } from '../toast/Swal';
+import { Button, Modal } from 'react-bootstrap';
 
 
 const { userLoggin, token } = require('../config/Constants');
@@ -15,6 +16,7 @@ const EditFormModal = ({ showEdit, handleClose, username, handleSubmit }) => {
     lastName: '',
     email: '',
     phoneNumber: '',
+    authBy: '',
   };
 
   const [formData, setFormData] = useState(initialFormData);
@@ -28,6 +30,7 @@ const EditFormModal = ({ showEdit, handleClose, username, handleSubmit }) => {
         const headers = { Authorization: `Bearer ${token}` };
         const response = await axios.get(`${USER_SERVICE_USER_DETAIL}?userId=${username}`, { headers });
         const userData = response.data;
+        console.log(userData);
         // Update the form data with fetched user details
         setFormData({
           firstName: userData.firstName,
@@ -35,6 +38,7 @@ const EditFormModal = ({ showEdit, handleClose, username, handleSubmit }) => {
           email: userData.email,
           phoneNumber: userData.phoneNumber,
           id: userData.id,
+          authBy: userData.authBy,
         });
       } catch (error) {
         console.error('Error fetching user details:', error);
@@ -64,6 +68,7 @@ const EditFormModal = ({ showEdit, handleClose, username, handleSubmit }) => {
         lastName: formData.lastName,
         phoneNumber: formData.phoneNumber,
         id: formData.id,
+        authBy: formData.authBy,
       };
 
       setIsLoading(true);
@@ -84,7 +89,7 @@ const EditFormModal = ({ showEdit, handleClose, username, handleSubmit }) => {
 
     } catch (error) {
       console.error('Error updating user:', error);
-      showDynamicSweetAlert('Error!',error, 'error');
+      showDynamicSweetAlert('Error!', error, 'error');
       setIsLoading(false);
       // Tangani kesalahan yang terjadi selama panggilan API
     }
@@ -97,89 +102,96 @@ const EditFormModal = ({ showEdit, handleClose, username, handleSubmit }) => {
   };
 
   return (
-    <div className={`modal ${showEdit ? 'd-block' : ''}`} tabIndex="-1" role="dialog" style={{ display: showEdit ? 'block' : 'none' }}>
-      <div className="modal-dialog modal-dialog-scrollable= modal-lg">
-        <div className="modal-content">
-          <div className="modal-header">
-            <h4 className="modal-title">Edit User</h4>
-            <button type="button" className="close" onClick={handleModalClose}>
-              &times;
-            </button>
-          </div>
-          {isLoading && (
-                        <div className="full-screen-overlay">
-                            <i className="fa-solid fa-spinner fa-spin full-screen-spinner"></i>
-                        </div>
-                    )}
-          <form onSubmit={handleFormSubmit}>
-            <div className="modal-body">
-              {/* Render your form fields here */}
-              <div className="form-group">
-                <label>ID</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={formData.id}
-                  readOnly
-                />
-              </div>
-              <div className="form-group">
-                <label>First Name</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  name="firstName"
-                  value={formData.firstName}
-                  onChange={handleFormChange}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Last Name</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  name="lastName"
-                  value={formData.lastName}
-                  onChange={handleFormChange}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Email</label>
-                <input
-                  type="email"
-                  className="form-control"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleFormChange}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Phone Number</label>
-                <input
-                  type="tel"
-                  className="form-control"
-                  name="phoneNumber"
-                  value={formData.phoneNumber}
-                  onChange={handleFormChange}
-                  required
-                />
-              </div>
-            </div>
-            <div className="modal-footer">
-              <button type="button" className="btn btn-default" onClick={handleModalClose}>
-                Close
-              </button>
-              <button type="submit" className="btn btn-primary">
-                Save Changes
-              </button>
-            </div>
-          </form>
+    <Modal show={showEdit} onHide={handleModalClose}>
+      <Modal.Header closeButton>
+        <Modal.Title>Edit User</Modal.Title>
+      </Modal.Header>
+      {isLoading && (
+        <div className="full-screen-overlay">
+          <i className="fa-solid fa-spinner fa-spin full-screen-spinner"></i>
         </div>
-      </div>
-    </div>
+      )}
+      <form onSubmit={handleFormSubmit}>
+        <Modal.Body>
+          {/* Render your form fields here */}
+          <div className="form-group">
+            <label>ID</label>
+            <input
+              type="text"
+              className="form-control"
+              value={formData.id}
+              readOnly
+            />
+          </div>
+          <div className="form-group">
+            <label>Authentication Method</label>
+            <select
+              className="form-control"
+              name="authBy"
+              value={formData.authBy}
+              onChange={handleFormChange}
+              required
+            >
+              <option value="" disabled>Select an Authentication Method</option>
+              <option value="DIRECT">DIRECT</option>
+              <option value="LDAP">LDAP</option>
+            </select>
+          </div>
+          <div className="form-group">
+            <label>First Name</label>
+            <input
+              type="text"
+              className="form-control"
+              name="firstName"
+              value={formData.firstName}
+              onChange={handleFormChange}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label>Last Name</label>
+            <input
+              type="text"
+              className="form-control"
+              name="lastName"
+              value={formData.lastName}
+              onChange={handleFormChange}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label>Email</label>
+            <input
+              type="email"
+              className="form-control"
+              name="email"
+              value={formData.email}
+              onChange={handleFormChange}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label>Phone Number</label>
+            <input
+              type="tel"
+              className="form-control"
+              name="phoneNumber"
+              value={formData.phoneNumber}
+              onChange={handleFormChange}
+              required
+            />
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleModalClose}>
+            Close
+          </Button>
+          <Button variant="primary" type="submit">
+            Save Changes
+          </Button>
+        </Modal.Footer>
+      </form>
+    </Modal>
   );
 };
 

@@ -39,8 +39,11 @@ export default function SideBar() {
           };
         });
       });
-      //console.log('Permissions:', newPermissions);
+      console.log('Permissions:', newPermissions);
+      const accessPermissions = JSON.stringify(newPermissions);
+
       setPermissions(newPermissions);
+      sessionStorage.setItem('permisions', accessPermissions);
 
     } catch (error) {
       console.log('Error fetching data:', error);
@@ -48,8 +51,8 @@ export default function SideBar() {
   };
 
   useEffect(() => {
-    // const trees = window.$('[data-widget="treeview"]');
-    // trees.Treeview('init');
+    const trees = window.$('[data-widget="treeview"]');
+    trees.Treeview('init');
     fetchData();
   }, []);
 

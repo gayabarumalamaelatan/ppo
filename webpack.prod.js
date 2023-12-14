@@ -22,7 +22,7 @@ module.exports = {
     output: {
         //... existing output configuration
         path: path.resolve(__dirname, 'gritcore'),
-        filename: '[name].bundle.js',
+        filename: '[name].[contenthash].bundle.js',
         clean: true,
     },
     devServer: {

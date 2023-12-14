@@ -24,11 +24,13 @@ const RegisterModal = ({ show, handleClose }) => {
         lastName: '',
         phoneNumber: '',
         group: '',
+        authenticationMethod: '',
     };
 
     const [userData, setUserData] = useState(initialUserData);
     const [validationErrors, setValidationErrors] = useState({});
     const [groupList, setGroupList] = useState([]);
+    
 
     useEffect(() => {
         // Fetch the list of groups from the API
@@ -119,15 +121,16 @@ const RegisterModal = ({ show, handleClose }) => {
             lastName: userData.lastName,
             phoneNumber: userData.phoneNumber,
             groupId: parseInt(userData.group, 10),
+            authBy: userData.authenticationMethod,
         };
         try {
             setIsLoading(true);
-            // Kirim permintaan POST ke API
-            console.log('POST DATA', postData);
+           // Kirim permintaan POST ke API
+            //console.log('POST DATA', postData);
             const response = await axios.post(`${USER_SERVICE_ADD_USER}`, postData, { headers });
             console.log('API Response:', response.data);
 
-            
+
             handleClose();
             setTimeout(() => {
                 setUserData(initialUserData);
@@ -219,6 +222,21 @@ const RegisterModal = ({ show, handleClose }) => {
                                         {validationErrors.passwordUppercase && <div className="invalid-feedback">{validationErrors.passwordUppercase}</div>}
                                         {validationErrors.passwordNumber && <div className="invalid-feedback">{validationErrors.passwordNumber}</div>}
                                         {validationErrors.passwordSpecial && <div className="invalid-feedback">{validationErrors.passwordSpecial}</div>}
+                                    </div>
+
+                                    <div className="form-group">
+                                        <label>Authentication Method</label>
+                                        <select
+                                            className="form-control"
+                                            name="authenticationMethod"
+                                            value={userData.authenticationMethod}
+                                            onChange={handleChange}
+                                            required
+                                        >
+                                            <option value="" disabled>Select a Authentication Method</option>
+                                            <option value="DIRECT">DIRECT</option>
+                                            <option value="LDAP">LDAP</option>
+                                        </select>
                                     </div>
 
                                     <div className="form-group">

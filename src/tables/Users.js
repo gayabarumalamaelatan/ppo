@@ -45,6 +45,7 @@ const Users = ({ editPermission, delPermission, authPermission }) => {
     const [showModalReset, setShowModalReset] = useState(false);
     const [responseMessage, setResponseMessage] = useState('');
     const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
 
     const handleEditUser = (user) => {
 
@@ -98,7 +99,7 @@ const Users = ({ editPermission, delPermission, authPermission }) => {
             };
             console.log(data);
 
-            const response = await axios.put(`${AUTH_SERVICE_VALIDATE_LOGIN}`, data, { headers });
+            const response = await axios.post(`${AUTH_SERVICE_VALIDATE_LOGIN}`, data, { headers });
 
             console.log('successfully:', response.data);
 
@@ -107,7 +108,7 @@ const Users = ({ editPermission, delPermission, authPermission }) => {
             showDynamicSweetAlert('Success!', 'Credentials validated.', 'success');
         } catch (error) {
             console.error('Error Test Login:', error);
-            showDynamicSweetAlert('Error!',error, 'error');
+            showDynamicSweetAlert('Error!', error, 'error');
             // Tambahkan logika lain sesuai dengan kebutuhan Anda untuk menangani kesalahan
         }
 
@@ -135,7 +136,7 @@ const Users = ({ editPermission, delPermission, authPermission }) => {
             fetchData();
         } catch (error) {
             console.error('Error locking user:', error);
-            showDynamicSweetAlert('Error!',error, 'error');
+            showDynamicSweetAlert('Error!', error, 'error');
             // Tambahkan logika lain sesuai dengan kebutuhan Anda untuk menangani kesalahan
         }
     };
@@ -153,7 +154,7 @@ const Users = ({ editPermission, delPermission, authPermission }) => {
     const handlePasswordChange = (e) => {
         // Update the password state as the user types
         setPassword(e.target.value);
-      };
+    };
 
     const handleShowUnlockModal = (user) => {
         setUserToUnlock(user);
@@ -182,7 +183,7 @@ const Users = ({ editPermission, delPermission, authPermission }) => {
             fetchData();
         } catch (error) {
             console.error('Error locking user:', error);
-            showDynamicSweetAlert('Error!',error, 'error');
+            showDynamicSweetAlert('Error!', error, 'error');
             // Tambahkan logika lain sesuai dengan kebutuhan Anda untuk menangani kesalahan
         }
     };
@@ -219,7 +220,7 @@ const Users = ({ editPermission, delPermission, authPermission }) => {
             fetchData();
         } catch (error) {
             console.error('Error locking user:', error);
-            showDynamicSweetAlert('Error!',error, 'error');
+            showDynamicSweetAlert('Error!', error, 'error');
             // Tambahkan logika lain sesuai dengan kebutuhan Anda untuk menangani kesalahan
         }
     };
@@ -246,7 +247,7 @@ const Users = ({ editPermission, delPermission, authPermission }) => {
             }
         } catch (error) {
             console.error('Error locking user:', error);
-            showDynamicSweetAlert('Error!',error, 'error');
+            showDynamicSweetAlert('Error!', error, 'error');
             // Tambahkan logika lain sesuai dengan kebutuhan Anda untuk menangani kesalahan
         }
     };
@@ -280,12 +281,12 @@ const Users = ({ editPermission, delPermission, authPermission }) => {
             setUserToApprove(null);
             // Tambahkan logika 
             showDynamicSweetAlert('Success!', 'User is approved successfully.', 'success');
-           // showSuccessToast('User is approved successfully.');
-            
+            // showSuccessToast('User is approved successfully.');
+
             fetchData();
         } catch (error) {
             console.error('Error locking user:', error);
-            showDynamicSweetAlert('Error!',error, 'error');
+            showDynamicSweetAlert('Error!', error, 'error');
             // Tambahkan logika lain sesuai dengan kebutuhan Anda untuk menangani kesalahan
         }
     };
@@ -309,7 +310,7 @@ const Users = ({ editPermission, delPermission, authPermission }) => {
             fetchData();
         } catch (error) {
             console.error('Error locking user:', error);
-            showDynamicSweetAlert('Error!',error, 'error');
+            showDynamicSweetAlert('Error!', error, 'error');
             // Tambahkan logika lain sesuai dengan kebutuhan Anda untuk menangani kesalahan
         }
     };
@@ -332,7 +333,7 @@ const Users = ({ editPermission, delPermission, authPermission }) => {
             fetchData();
         } catch (error) {
             console.error('Error locking user:', error);
-            showDynamicSweetAlert('Error!',error, 'error');
+            showDynamicSweetAlert('Error!', error, 'error');
             // Tambahkan logika lain sesuai dengan kebutuhan Anda untuk menangani kesalahan
         }
     };
@@ -360,7 +361,7 @@ const Users = ({ editPermission, delPermission, authPermission }) => {
             }, 1000);
         } catch (error) {
             console.error('Error fetching data:', error);
-            showDynamicSweetAlert('Error!',error, 'error');
+            showDynamicSweetAlert('Error!', error, 'error');
             setIsLoadingTable(false);
         }
     };
@@ -371,6 +372,7 @@ const Users = ({ editPermission, delPermission, authPermission }) => {
             { Header: 'Username', accessor: 'userName' },
             { Header: 'Created By', accessor: 'createdBy', },
             { Header: 'Reviewed By', accessor: 'reviewedBy', },
+            { Header: 'Auth By', accessor: 'authBy', Hidden: true },
             {
                 Header: 'Status', accessor: 'status',
                 Cell: ({ value }) => {
@@ -463,11 +465,17 @@ const Users = ({ editPermission, delPermission, authPermission }) => {
             {
                 Header: 'Actions',
                 Cell: ({ row }) => {
-                    if (row.original.status === 'ACTIVE') {
+                    if (row.original.status === 'ACTIVE' && row.original.authBy === 'LDAP') {
                         return (
                             <div>
                                 <Button variant="outline-primary" onClick={() => handleEditUser(row.original)}><i className="fas fa-edit"></i></Button>&nbsp;
                                 <Button variant="outline-success" onClick={() => handleTestLogin(row.original)}><i className="fas fa-sign-in"></i></Button>
+                            </div>
+                        );
+                    } else if (row.original.status === 'ACTIVE' && row.original.authBy !== 'LDAP') {
+                        return (
+                            <div>
+                                <Button variant="outline-primary" onClick={() => handleEditUser(row.original)}><i className="fas fa-edit"></i></Button>
                             </div>
                         );
                     }
@@ -475,7 +483,7 @@ const Users = ({ editPermission, delPermission, authPermission }) => {
                         return (
                             <div>
                                 <Button variant="outline-success" onClick={() => handleShowApproveModal(row.original)}><i className="fas fa-check"></i></Button>&nbsp;
-                                <Button variant="outline-danger" onClick={() => handledisabled(row.original)}><i className="fas fa-x"></i></Button>&nbsp;
+                                
                             </div>
                         );
                     } else if (row.original.status === pendingDelete && row.original.createdBy !== userLoggin) {
@@ -867,14 +875,34 @@ const Users = ({ editPermission, delPermission, authPermission }) => {
                     {/* Are you sure you want to lock the user: {userToLock && userToLock.userName}? */}
                     <Form.Group controlId="formPassword">
                         <Form.Label>Password:</Form.Label>
-                        <Form.Control
+                        {/* <Form.Control
                             type="password"
                             placeholder="Enter your password"
                             value={password}
                             onChange={handlePasswordChange}
                             autoComplete="new-password"
                             required
-                        />
+                        /> */}
+                        <div className="input-group mb-3">
+                            <input
+                                type={showPassword ? 'text' : 'password'}
+                                className="form-control"
+                                placeholder="Password"
+                                value={password}
+                                onChange={handlePasswordChange}
+                                autoComplete="new-password"
+                                required
+                            />
+                            <div className="input-group-append">
+                                <div className="input-group-text">
+                                    <span
+                                        className={`fas ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`}
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        style={{ cursor: 'pointer' }}
+                                    ></span>
+                                </div>
+                            </div>
+                        </div>
                     </Form.Group>
                 </Modal.Body>
                 <Modal.Footer>
