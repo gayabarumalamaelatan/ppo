@@ -13,10 +13,12 @@ const RoleMapping = ({ selectedGroup, allRoles, setMappedRoles, groupRoleData,ed
   const [isLoading, setIsLoading] = useState(false);
   const [showSubmitModal, setShowSubmitModal] = useState(false); // State for the modal
 
+  console.log("selectedGroup",selectedGroup.id);
+
   const headers = { Authorization: `Bearer ${token}` };
 
   useEffect(() => {
-    const mappedRolesForGroup = groupRoleData.find(group => group.id === selectedGroup.id)?.mappedRoles || [];
+    const mappedRolesForGroup = (groupRoleData.find(group => group.id === selectedGroup.id) || {}).mappedRoles || [];
     setMappedRolesLocal(mappedRolesForGroup);
   }, [selectedGroup, groupRoleData]);
 

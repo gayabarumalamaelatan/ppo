@@ -7,7 +7,7 @@ import { permissionsState } from '../store/Permission';
 const User = () => {
     const [showModal, setShowModal] = useState(false);
     const permissions = useRecoilValue(permissionsState);
-
+    const [refreshTable, setRefreshTable] = useState(false); 
     console.log('permissions ',permissions);
 
     const canCreateUsers = permissions["Administration"]["Maintenance Users"]["create"];
@@ -60,6 +60,7 @@ const User = () => {
                                     editPermission={canUpdateUsers} 
                                     delPermission={canDeleteUsers} 
                                     authPermission={canAuthUsers} 
+                                    refreshTableStatus={refreshTable} 
                                 />
                             </div>
                         </div>
@@ -67,7 +68,7 @@ const User = () => {
                 </div>
             </section>
       
-            <RegisterModal show={showModal} handleClose={handleCloseModal} />
+            <RegisterModal show={showModal} handleClose={handleCloseModal} reloadData={() => setRefreshTable(!refreshTable)}/>
 
         </Fragment>
     );

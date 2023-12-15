@@ -8,6 +8,8 @@ import 'font-awesome/css/font-awesome.min.css';
 import { faSyncAlt, faTimes, faLock } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 
+const { token } = require('../config/Constants');
+
 
 export default function Nav() {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
@@ -31,10 +33,11 @@ export default function Nav() {
   const logoutUser = async () => {
     try {
       // Menggunakan Axios untuk melakukan permintaan POST ke API logout
-      const response = await axios.post(`${AUTH_SERVICE_LOGOUT}`, {
+      const headers = { Authorization: `Bearer ${token}` };
+      const response = await axios.post(`${AUTH_SERVICE_LOGOUT}`,{
         // Jika Anda memerlukan data tambahan untuk logout, tambahkan di sini
         userId: sessionStorage.getItem('userId')
-      });
+      },{ headers });
 
       // Cek status respons untuk menentukan apakah logout berhasil
       console.log(response.status);

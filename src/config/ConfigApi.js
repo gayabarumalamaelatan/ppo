@@ -2,7 +2,7 @@
 export const AUTH_SERVICE_BASE = process.env.REACT_APP_API_AUTH_SERVICE_BASE;
     // AUTH CONTROLLER
     export const AUTH_SERVICE_LOGIN = `${AUTH_SERVICE_BASE}/auth-service/login`;
-    export const AUTH_SERVICE_LOGOUT =`${AUTH_SERVICE_BASE}/auth-service/logout`;
+    export const AUTH_SERVICE_LOGOUT =`${AUTH_SERVICE_BASE}/auth-service/user-logout`;
     export const AUTH_SERVICE_REFRESH_TOKEN = `${AUTH_SERVICE_BASE}/auth-service/token/refreshtoken`;
     export const AUTH_SERVICE_VALIDATE_TOKEN = `${AUTH_SERVICE_BASE}/auth-service/token/validate-token`;
     export const AUTH_SERVICE_VALIDATE_LOGIN = `${AUTH_SERVICE_BASE}/auth-service/test-login`;
@@ -86,3 +86,8 @@ export const SMARTIN_SERVICE_BASE = process.env.REACT_APP_API_SMARTIN_SERVICE_BA
     export const SMARTIN_SERVICE_UPLOAD_FILE_LIST = `${SMARTIN_SERVICE_BASE}/integration-service/uploaded-files`;
     export const INTEGRATION_SERVICE_GET_GRAPHIC = `${SMARTIN_SERVICE_BASE}/integration-service/graphics`;
     export const INTEGRATION_SERVICE_GET_GRAPHIC_POSITION = `${SMARTIN_SERVICE_BASE}/integration-service/graphic-position`;
+
+// LICENSE-SERVICE
+export const LICENSE_SERVICE_BASE = process.env.REACT_APP_API_LICENSE_SERVICE_BASE;
+    //LICESE-CONTROLLER
+    export const LICENSE_SERVICE_CHECK = `${LICENSE_SERVICE_BASE}/license-service/check-license`;

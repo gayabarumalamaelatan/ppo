@@ -10,7 +10,7 @@ import { Button, Modal } from 'react-bootstrap';
 
 const { userLoggin, token } = require('../config/Constants');
 
-const EditFormModal = ({ showEdit, handleClose, username, handleSubmit }) => {
+const EditFormModal = ({ showEdit, handleClose, username, handleSubmit,reloadData }) => {
   const initialFormData = {
     firstName: '',
     lastName: '',
@@ -85,6 +85,7 @@ const EditFormModal = ({ showEdit, handleClose, username, handleSubmit }) => {
         handleModalClose();
         //showSuccessToast('User updated successfully!');
         showDynamicSweetAlert('Success!', 'User updated successfully!', 'success');
+        reloadData();
       }, 1000);
 
     } catch (error) {

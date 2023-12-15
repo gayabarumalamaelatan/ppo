@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import axios from 'axios'; // Import axios
-import { AUTH_SERVICE_LOGIN } from '../config/ConfigApi';
+import { AUTH_SERVICE_LOGIN, LICENSE_SERVICE_CHECK } from '../config/ConfigApi';
 import { active, expired, expiredPass } from '../config/Constants';
 import { Form } from 'react-bootstrap';
+import { showDynamicSweetAlert } from '../toast/Swal';
 
 
 function LoginPage() {
@@ -24,6 +25,39 @@ function LoginPage() {
     }
   }, [navigate]);
 
+
+  const checkLicense = async () => {
+    try {
+      const response = await axios.get(`${LICENSE_SERVICE_CHECK}`);
+  
+      const remainingDaysString = response.data.remainingDays;
+      const expiryDate = response.data.expiryDate;
+  
+      if (remainingDaysString) {
+          // Extract numeric value from the remaining days string
+          const remainingDays = parseInt(remainingDaysString);
+  
+          console.log(`Remaining days: ${remainingDays}`);
+          console.log(`Expiry date: ${expiryDate}`);
+  
+          // Check if remaining days are less than 30 for a warning
+          const daysThreshold = 30;
+          if (remainingDays < daysThreshold) {
+            const alertMessage = `License will expire soon. Remaining days: ${remainingDays}. Renew it as soon as possible!`;
+            showDynamicSweetAlert('Warning', alertMessage, 'warning');
+              console.warn("Warning: License will expire soon. Renew it as soon as possible!");
+          }
+          } else {
+          console.log("No license information found.");
+          showDynamicSweetAlert('Success!', 'No license information found', 'success');
+          }
+  } catch (error) {
+      console.error("Error fetching license data:", error);
+  }
+  
+    
+
+  }
   const handleLogin = async (event) => {
     event.preventDefault();
 
@@ -42,6 +76,10 @@ function LoginPage() {
         sessionStorage.setItem('userId', response.data.userName);
         sessionStorage.setItem('accessToken', response.data.accessToken);
         sessionStorage.setItem('id', response.data.id);
+         checkLicense();
+        // const remainingDays = 29;
+        // const alertMessage = `License will expire soon. Remaining days: ${remainingDays}. Renew it as soon as possible!`;
+        //     showDynamicSweetAlert('Warning', alertMessage, 'warning');
         navigate('/');
       } else if (response.status === 200 && response.data.status === expiredPass) {
         sessionStorage.setItem('accessToken', response.data.accessToken);
@@ -57,6 +95,7 @@ function LoginPage() {
     }
   };
 
+  
   // Function to reset the error message when the user tries to log in again
   const handleResetError = () => {
     setLoginError(false);

@@ -22,7 +22,7 @@ import { showDynamicSweetAlert } from '../toast/Swal';
 
 const { pendingApproval, active, pendingDelete, inactive, disabled, expired, lock, userLoggin, token, expiredPass } = require('../config/Constants');
 
-const Users = ({ editPermission, delPermission, authPermission }) => {
+const Users = ({ editPermission, delPermission, authPermission,refreshTableStatus }) => {
     const [data, setData] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [totalItem, setTotalItem] = useState(0);
@@ -159,6 +159,9 @@ const Users = ({ editPermission, delPermission, authPermission }) => {
     const handleShowUnlockModal = (user) => {
         setUserToUnlock(user);
         setShowUnlockModal(true);
+    };
+    const reloadData = () => {
+        fetchData();
     };
 
     const handleUnlockUser = async (user) => {
@@ -344,7 +347,7 @@ const Users = ({ editPermission, delPermission, authPermission }) => {
 
     useEffect(() => {
         fetchData();
-    }, [currentPage, pageSize, searchUsername]); // Panggil fetchData setiap kali currentPage berubah
+    }, [currentPage, pageSize, searchUsername,refreshTableStatus]); // Panggil fetchData setiap kali currentPage berubah
 
     const fetchData = async () => {
         try {
@@ -938,6 +941,7 @@ const Users = ({ editPermission, delPermission, authPermission }) => {
                     handleClose={() => setShowEditModal(false)}
                     username={selectedUser}
                     handleSubmit={handleFormSubmit}
+                    reloadData={reloadData}
                 />
             )}
         </Fragment>
