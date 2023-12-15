@@ -4,35 +4,49 @@ import { AUTH_SERVICE_BASE, AUTH_SERVICE_LOGOUT } from "./ConfigApi";
 import { refreshToken } from "./TokenHandler";
 import { showDynamicSweetAlert } from "../toast/Swal";
 
+const { token } = require('../config/Constants');
+
 function SessionTimeout() {
   let timeout; // Declare the timeout variable outside of useEffect
 
-  const logoutUser = async () => {
-    try {
-    // Menggunakan Axios untuk melakukan permintaan POST ke API logout
-    const response = await axios.post(`${AUTH_SERVICE_LOGOUT}`, {
-      // Jika Anda memerlukan data tambahan untuk logout, tambahkan di sini
-      userId: sessionStorage.getItem('userId')
-    });
-    showDynamicSweetAlert('Success!', 'Logout Successfully.', 'success');
-    // Cek status respons untuk menentukan apakah logout berhasil
-    console.log(response.status);
-    if (response.status === 200) {
-      sessionStorage.clear();
-    }
+//   const logoutUser = async () => {
+//     try {
+//     // Menggunakan Axios untuk melakukan permintaan POST ke API logout
+//     const response = await axios.post(`${AUTH_SERVICE_LOGOUT}`, {
+//       // Jika Anda memerlukan data tambahan untuk logout, tambahkan di sini
+//       userId: sessionStorage.getItem('userId')
+//     });
+//     showDynamicSweetAlert('Success!', 'Logout Successfully.', 'success');
+//     // Cek status respons untuk menentukan apakah logout berhasil
+//     console.log(response.status);
+//     if (response.status === 200) {
+//       sessionStorage.clear();
+//     }
 
-    console.log('Response:', response);
-  } catch (error) {
-    console.error('Error:', error);
-    // Handle error jika permintaan logout gagal
-  }
-};
+//     console.log('Response:', response);
+//   } catch (error) {
+//     console.error('Error:', error);
+//     // Handle error jika permintaan logout gagal
+//   }
+// };
 
   // Function to reset the session timeout
-  const resetTimeout = () => {
+  const resetTimeout =  () => {
     clearTimeout(timeout); // Clear the previous timeout
     timeout = setTimeout(() => {
-      logoutUser();
+      try {
+        // Menggunakan Axios untuk melakukan permintaan POST ke API logout
+        const headers = { Authorization: `Bearer ${token}` };
+        const response = axios.post(`${AUTH_SERVICE_LOGOUT}`,{
+          // Jika Anda memerlukan data tambahan untuk logout, tambahkan di sini
+          userId: sessionStorage.getItem('userId')
+        },{ headers });
+  
+        console.log('Response:', response);
+      } catch (error) {
+        console.error('Error:', error);
+        // Handle error jika permintaan logout gagal
+      }
       sessionStorage.clear();
       console.log("timeout called");
       window.location.href = '/login';

@@ -85,9 +85,10 @@ function LoginPage() {
         sessionStorage.setItem('accessToken', response.data.accessToken);
         sessionStorage.setItem('id', response.data.id);
         window.location.href = '/reset';
+      } else if (response.status === 403 ){
+        showDynamicSweetAlert('Error', 'License expired! Please contact your administrator', 'error');
       } else {
         setLoginError(true); // Set login error state to true
-
       }
     } catch (error) {
       console.error('Error:', error);

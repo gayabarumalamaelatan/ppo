@@ -86,7 +86,7 @@ const RoleManagement = () => {
         setShowNewRoleModal(false);
         setIsLoading(false); // Stop loading
         fetchData();
-        showDynamicSweetAlertmicSweetAlert('Success!', 'Success Create New Role, Please Edit New Permission.', 'success');
+        showDynamicSweetAlert('Success!', 'Success Create New Role, Please Edit New Permission.', 'success');
         //showSuccessToast('Success Create New Role, Please Edit New Permission');
     }, 1000);
 
