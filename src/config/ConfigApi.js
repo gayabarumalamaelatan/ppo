@@ -86,3 +86,4 @@ export const SMARTIN_SERVICE_BASE = process.env.REACT_APP_API_SMARTIN_SERVICE_BA
     export const SMARTIN_SERVICE_UPLOAD_FILE_LIST = `${SMARTIN_SERVICE_BASE}/integration-service/uploaded-files`;
     export const INTEGRATION_SERVICE_GET_GRAPHIC = `${SMARTIN_SERVICE_BASE}/integration-service/graphics`;
     export const INTEGRATION_SERVICE_GET_GRAPHIC_POSITION = `${SMARTIN_SERVICE_BASE}/integration-service/graphic-position`;
+    export const INTEGRATION_SERVICE_WSO_SOCKET = `${SMARTIN_SERVICE_BASE}/integration-service/wso/socket-manager`;
