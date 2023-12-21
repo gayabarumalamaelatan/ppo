@@ -51,6 +51,22 @@ const MenuAccessTable = ({ selectedRole, menuRolesData, menuData,editPermission 
     setUpdatedMenuRolesData(updatedData);
   };
 
+  const handleRowPermissionChange = (menuId, value) => {
+    const updatedData = updatedMenuRolesData.map((item) =>
+      item.id === menuId
+        ? {
+            ...item,
+            create: value,
+            update: value,
+            delete: value,
+            verify: value,
+            auth: value,
+          }
+        : item
+    );
+    setUpdatedMenuRolesData(updatedData);
+  };
+
   const handleCancelEdit = () => {
     setEditMode(false);
     loadDataMapping();
@@ -116,6 +132,12 @@ const MenuAccessTable = ({ selectedRole, menuRolesData, menuData,editPermission 
         <thead>
           <tr>
             <th>Menu Name</th>
+            <th>
+              <input
+                type='checkbox'
+                disabled='true'
+              />
+            </th>
             <th>Create</th>
             <th>Update</th>
             <th>Delete</th>
@@ -127,6 +149,14 @@ const MenuAccessTable = ({ selectedRole, menuRolesData, menuData,editPermission 
           {updatedMenuRolesData.map((menu) => (
             <tr key={menu.id}>
               <td>{menu.menuName}</td>
+              <td>
+                <input
+                    type="checkbox"
+                    checked={menu.create && menu.update && menu.delete && menu.verify && menu.auth}
+                    onChange={(e) => handleRowPermissionChange(menu.id, e.target.checked)}
+                    disabled={!editMode}
+                  />
+              </td>
               <td>
                 <input
                   type="checkbox"
