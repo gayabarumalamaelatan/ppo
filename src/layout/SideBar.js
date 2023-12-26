@@ -45,14 +45,24 @@ export default function SideBar() {
       setPermissions(newPermissions);
       sessionStorage.setItem('permisions', accessPermissions);
 
+      loadTreeview();
+
     } catch (error) {
       console.log('Error fetching data:', error);
     }
   };
 
+  const loadTreeview = () => {
+    console.log("Load Treeview")
+    window.$('[data-widget="treeview"]').each(function () {
+        if ($(this).data('treeview-init') === undefined) {
+            $(this).Treeview('init');
+            $(this).data('treeview-init', true);
+        }
+    });
+}
+  
   useEffect(() => {
-    // const trees = window.$('[data-widget="treeview"]');
-    // trees.Treeview('init');
     fetchData();
   }, []);
 
