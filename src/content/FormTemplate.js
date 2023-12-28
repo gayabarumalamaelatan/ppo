@@ -56,14 +56,14 @@ const FormTemplate = () => {
 
     const fetchHeader = async () => {
         try {
-            console.log('Exec Fetch Header');
+           // console.log('Exec Fetch Header');
             const response = await axios.get(`${FORM_SERVICE_LOAD_FIELD}?formId=${idForm}`, { headers });
             const formCode = response.data.map(getFormcode => getFormcode.formCode);
             console.log('Get Form code',formCode);
             setGetFormCode(formCode[0]);
 
             // setPrimaryKeyColumn(response.data[0].primaryKeyColumn);
-             console.log('Response data : ', response.data);
+            //console.log('Response data : ', response.data);
 
             const primaryKeyColumnObj = response.data.find(apiColumn => apiColumn.isPrimaryKey === true);
 
@@ -75,10 +75,13 @@ const FormTemplate = () => {
                 Header: apiColumn.description,
                 accessor: apiColumn.fieldName,
                 sortType: 'basic',
-                lookupTable: apiColumn.lookupTable,// You can customize this
+                lookupTable: apiColumn.lookupTable,
+                displayFormat: apiColumn.displayFormat,
+                
+                // You can customize this
             }));
             setColumns(transformedColumns);
-            console.log('getFormcode', getFormcode);
+            //console.log('getFormcode', getFormcode);
             fetchData(formCode[0]);
             setColumnVisibility(
                 Object.fromEntries(transformedColumns.map(column => [column.accessor, true])));
