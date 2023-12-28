@@ -13,15 +13,16 @@ import { FORM_SERVICE_DELETE_DATA, FORM_SERVICE_VIEW_DATA } from '../config/Conf
 import { token } from '../config/Constants';
 import axios from 'axios';
 import FormEdit from '../modal/form/FormEdit';
+import { NumericFormat } from 'react-number-format';
 
-const FormTable = ({ columns, data, columnVisibility, pageSize, totalItems, currentPage, onPageChange, formCode, menuName, refecthCallBack, primayKey, isLoadingTable,editPermission,deletePermission }) => {
+const FormTable = ({ columns, data, columnVisibility, pageSize, totalItems, currentPage, onPageChange, formCode, menuName, refecthCallBack, primayKey, isLoadingTable, editPermission, deletePermission }) => {
 
-    console.log('primary', primayKey);
+    //console.log('primary', primayKey);
     //console.log('columnVis', columnVisibility);
-     console.log('column', columns);
+    console.log('columns', columns);
     // console.log('totalItems', totalItems);
     // console.log('Current Page', currentPage)
-    console.log('Log Point: Inserting Header and Data to Table');
+    // console.log('Log Point: Inserting Header and Data to Table');
     const itemsPerPage = pageSize;
     // const [currentPage, setCurrentPage] = useState(1);
     const pageCount = Math.ceil(totalItems / itemsPerPage);
@@ -113,7 +114,7 @@ const FormTable = ({ columns, data, columnVisibility, pageSize, totalItems, curr
         if (action === 'Delete') {
             setDataToDelete(dataSelected);
             setShowDeleteModal(true);
-            
+
         } else if (action === 'Edit') {
             //handleEdit(dataSelected);
             setDataToEdit(dataSelected);
@@ -191,9 +192,38 @@ const FormTable = ({ columns, data, columnVisibility, pageSize, totalItems, curr
                                             return (
                                                 <td
                                                     key={column.id}
-                                                    {...cell.getCellProps()}
-                                                >
-                                                    {cell.render('Cell')}
+                                                    {...cell.getCellProps()} >
+                                                    {column.displayFormat === 'CURRENCY' ? (
+                                                        // Custom logic for formatting as integer or decimal
+                                                        Number.isInteger(cell.value) ? (
+                                                            // Format as integer
+                                                            cell.value.toLocaleString()
+                                                        ) : (
+                                                            // Format as decimal using NumberFormatBase (replace with your actual component)
+                                                            <NumericFormat
+                                                                value={cell.value}
+                                                                displayType={'text'}
+                                                                // prefix={'Rp. '}
+                                                                thousandSeparator={true}
+                                                                decimalScale={2}
+                                                                fixedDecimalScale
+                                                            />
+                                                        )
+                                                    ) : column.displayFormat === 'DECIMAL' ? (
+                                                        // Your logic for 'DECIMAL'
+                                                        <NumericFormat
+                                                            value={cell.value}
+                                                            displayType={'text'}
+                                                            prefix={''} // Modify prefix as needed
+                                                            //thousandSeparator={true}
+                                                            decimalScale={2}
+                                                            fixedDecimalScale
+                                                        />
+                                                    ) : (
+                                                        // Render cell using default rendering logic
+                                                        cell.render('Cell')
+                                                    )}
+
                                                 </td>
                                             );
                                         })}
@@ -222,22 +252,22 @@ const FormTable = ({ columns, data, columnVisibility, pageSize, totalItems, curr
                                                     </li>
                                                     <li>
                                                         {editPermission && (
-                                                        <button
-                                                            className="dropdown-item"
-                                                            onClick={() => handleShowModal('Edit', row.original)}
-                                                        >
-                                                            <FaEdit /> Edit
-                                                        </button>
+                                                            <button
+                                                                className="dropdown-item"
+                                                                onClick={() => handleShowModal('Edit', row.original)}
+                                                            >
+                                                                <FaEdit /> Edit
+                                                            </button>
                                                         )}
                                                     </li>
                                                     <li>
                                                         {deletePermission && (
-                                                        <button
-                                                            className="dropdown-item"
-                                                            onClick={() => handleShowModal('Delete', row)}
-                                                        >
-                                                            <FaTrash /> Delete
-                                                        </button>
+                                                            <button
+                                                                className="dropdown-item"
+                                                                onClick={() => handleShowModal('Delete', row)}
+                                                            >
+                                                                <FaTrash /> Delete
+                                                            </button>
                                                         )}
                                                     </li>
                                                 </ul>
@@ -304,11 +334,24 @@ const FormTable = ({ columns, data, columnVisibility, pageSize, totalItems, curr
                     {dataToView ? (
                         <div className="container">
                             <div className="row">
-                                {Object.keys(dataToView).map(key => (
-                                    <div key={key} className="col-md-4 mb-3"> {/* Add mb-4 class here */}
+                                {columns.map(column => (
+                                    <div key={column.accessor} className="col-md-4 mb-3">
                                         <div className="d-flex align-items-center">
-                                            <strong>{formatKey(key)}:</strong>
-                                            <span className="ml-2 flex-fill">{dataToView[key]}</span>
+                                            <strong>{formatKey(column.accessor)}:</strong>
+                                            <span className="ml-2 flex-fill">
+                                                {column.displayFormat === 'CURRENCY' || column.displayFormat === 'DECIMAL' ? (
+                                                    <NumericFormat
+                                                        value={dataToView[column.accessor]}
+                                                        displayType={'text'}
+                                                        prefix={column.displayFormat === 'CURRENCY' ? '' : ''}
+                                                        thousandSeparator={true}
+                                                        decimalScale={2}
+                                                        fixedDecimalScale
+                                                    />
+                                                ) : (
+                                                    dataToView[column.accessor]
+                                                )}
+                                            </span>
                                         </div>
                                     </div>
                                 ))}
