@@ -79,8 +79,8 @@ export default function SideBar() {
       <li className="nav-item" key={module.moduleName}>
         <Link to={module.url} className="nav-link">
           <i className={module.icon}></i>
-          {module.moduleName && <p>{module.moduleName}</p>}
-          {module.menu && module.menu.length > 0 && <i className="right fas fa-angle-left"></i>}
+          {module.moduleName && <p>{module.moduleName} {module.menu && module.menu.length > 0 && <i className="right fas fa-angle-left"></i>}</p>}
+          
         </Link>
         {module.menu && module.menu.length > 0 && (
           <ul className="nav nav-treeview">
@@ -105,8 +105,8 @@ export default function SideBar() {
             onClick={(event) => handleMenuItemClick(event, menuItem)}
           >
           <i className={menuItem.icon}></i>
-          {menuItem.menuName && <p>{menuItem.menuName}</p>}
-          {menuItem.subMenu && menuItem.subMenu.length > 0 && <i className="right fas fa-angle-left"></i>}
+          {menuItem.menuName && <p>{menuItem.menuName}  
+            {menuItem.subMenu && menuItem.subMenu.length > 0 && <i className="right fas fa-angle-left"></i>} </p>}
           </Link>
           {menuItem.subMenu && menuItem.subMenu.length > 0 && (
           <ul className="nav nav-treeview">
