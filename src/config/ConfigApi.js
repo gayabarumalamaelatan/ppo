@@ -87,6 +87,10 @@ export const SMARTIN_SERVICE_BASE = process.env.REACT_APP_API_SMARTIN_SERVICE_BA
     export const INTEGRATION_SERVICE_GET_GRAPHIC = `${SMARTIN_SERVICE_BASE}/integration-service/graphics`;
     export const INTEGRATION_SERVICE_GET_GRAPHIC_POSITION = `${SMARTIN_SERVICE_BASE}/integration-service/graphic-position`;
     export const INTEGRATION_SERVICE_WSO_SOCKET = `${SMARTIN_SERVICE_BASE}/integration-service/wso/socket-manager`;
+    export const INTEGRATION_SERVICE_KAFKA_TOPIC_LIST = `${SMARTIN_SERVICE_BASE}/integration-service/kafka/topics`;
+    export const INTEGRATION_SERVICE_KAFKA_TOPIC_CREATE = `${SMARTIN_SERVICE_BASE}/integration-service/kafka/topics/create`;
+    export const INTEGRATION_SERVICE_KAFKA_TOPIC_DELETE = `${SMARTIN_SERVICE_BASE}/integration-service/kafka/topics/delete`;
+    export const INTEGRATION_SERVICE_KAFKA_TOPIC_MESSAGE = `${SMARTIN_SERVICE_BASE}/integration-service/kafka/topics/message`;
 
 // LICENSE-SERVICE
 export const LICENSE_SERVICE_BASE = process.env.REACT_APP_API_LICENSE_SERVICE_BASE;
