@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { INTEGRATION_SERVICE_KAFKA_TOPIC_LIST } from "../config/ConfigApi";
 import { Pagination } from "react-bootstrap";
 
@@ -61,6 +61,10 @@ const KafkaTopicTable = ({createPermission, deletePermission, refreshTableStatus
             data: dataTable,
         }
     );
+
+    useEffect(() => {
+        fetchData();
+    }, [refreshTableStatus, currentPage, pageSize])
 
 
     // Pagination properties
