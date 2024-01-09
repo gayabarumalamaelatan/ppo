@@ -8,7 +8,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 
 // Call dotenv and it will return an Object with a parsed key 
-const env = dotenv.config({ path: './.env.development' }).parsed;
+const env = dotenv.config({ path: './.env.production' }).parsed;
 
 // Reduce it to a nice object, the same as before (but with the variables from .env)
 const envKeys = Object.keys(env).reduce((prev, next) => {
