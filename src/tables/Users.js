@@ -482,7 +482,7 @@ const Users = ({ editPermission, delPermission, authPermission,refreshTableStatu
                             </div>
                         );
                     }
-                    else if (row.original.status === pendingApproval && row.original.createdBy !== userLoggin) {
+                    else if (row.original.status === pendingApproval ) {
                         return (
                             <div>
                                 <Button variant="outline-success" onClick={() => handleShowApproveModal(row.original)}><i className="fas fa-check"></i></Button>&nbsp;

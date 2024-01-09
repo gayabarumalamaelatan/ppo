@@ -17,7 +17,7 @@ import { NumericFormat } from 'react-number-format';
 import Swal from 'sweetalert2';
 import { showDynamicSweetAlert } from '../toast/Swal';
 
-const FormTable = ({ columns, data, columnVisibility, pageSize, totalItems, currentPage, onPageChange, formCode, menuName, refecthCallBack, primayKey, isLoadingTable, canCreate, canVerify, canAuth, editPermission, deletePermission, isWorkflow }) => {
+const FormTableInquiry = ({ columns, data, columnVisibility, pageSize, totalItems, currentPage, onPageChange, formCode, menuName, refecthCallBack, primayKey, isLoadingTable, canCreate, canVerify, canAuth, editPermission, deletePermission, isWorkflow }) => {
 
     //console.log('primary', primayKey);
     console.log('columnVis', columnVisibility);
@@ -290,7 +290,7 @@ const FormTable = ({ columns, data, columnVisibility, pageSize, totalItems, curr
                 // Lakukan aksi verifikasi, misalnya, kirim data ke backend
                 const response = await axios.post(`${FORM_SERVICE_UPDATE_STATUS}?f=${formCode}`, requestData, { headers });
 
-
+                
             }
 
             setTimeout(() => {
@@ -338,49 +338,6 @@ const FormTable = ({ columns, data, columnVisibility, pageSize, totalItems, curr
 
 
         <Fragment>
-            {isWorkflow && (
-                <div className="mb-3">
-                    {(canVerify || canAuth) && (
-                        /* Tombol Rework */
-                        <button
-                            className="btn btn-warning btn-sm mr-3"
-                            onClick={() => handleConfirmation('Rework')}
-                            disabled={selectedRows.length === 0}
-                        >
-                            <i className="fas fa-redo"></i> Rework
-                        </button>
-                    )}
-                    {canVerify && (
-                        /* Tombol Verify */
-                        <button
-                            className="btn btn-success btn-sm mr-3"
-                            onClick={() => handleConfirmation('Verify')}
-                            disabled={selectedRows.length === 0}
-                        >
-                            <i className="fas fa-check"></i> Verify
-                        </button>
-                    )}
-                    {canAuth && (
-                        /* Tombol Authorize */
-                        <button
-                            className="btn btn-success btn-sm mr-3"
-                            onClick={() => handleConfirmation('Authorize')}
-                            disabled={selectedRows.length === 0}
-                        >
-                            <i className="fas fa-check"></i> Authorize
-                        </button>
-                    )}
-                    {/* Tombol Reject */}
-                    <button
-                        className="btn btn-danger btn-sm"
-                        onClick={() => handleConfirmation('Reject')}
-                        disabled={selectedRows.length === 0}
-                    >
-                        <i className="fas fa-times"></i> Reject
-                    </button>
-                </div>
-            )}
-
 
             <div className="table-responsive">
 
@@ -388,17 +345,7 @@ const FormTable = ({ columns, data, columnVisibility, pageSize, totalItems, curr
                     <thead>
                         {headerGroups.map(headerGroup => (
                             <tr {...headerGroup.getHeaderGroupProps()}>
-                                {isWorkflow && (
-                                    <th>
-                                        <input
-                                            type="checkbox"
-                                            onChange={(e) => {
-                                                const allRows = rows.map((row, index) => index);
-                                                setSelectedRows(e.target.checked ? allRows : []);
-                                            }}
-                                        />
-                                    </th>
-                                )}
+            
                                 {headerGroup.headers.map(column => (
                                     <th key={column.accessor} className="table-header" {...column.getHeaderProps(column.getSortByToggleProps())}>
                                         <span className="sort-icon" style={{ margin: '3px' }}>
@@ -439,26 +386,9 @@ const FormTable = ({ columns, data, columnVisibility, pageSize, totalItems, curr
                         ) : (
                             rows.map((row, rowIndex) => {
                                 prepareRow(row);
-                                const isSelected = selectedRows.includes(rowIndex);
                                 return (
-                                    <tr key={row.id} {...row.getRowProps()} className={isSelected ? 'selected-row' : ''}>
-                                        {isWorkflow && (
-                                            <td>
-                                                <input
-                                                    type="checkbox"
-                                                    checked={isSelected}
-                                                    onChange={(e) => {
-                                                        setSelectedRows((prevSelected) => {
-                                                            if (e.target.checked) {
-                                                                return [...prevSelected, rowIndex];
-                                                            } else {
-                                                                return prevSelected.filter((index) => index !== rowIndex);
-                                                            }
-                                                        });
-                                                    }}
-                                                />
-                                            </td>
-                                        )}
+                                    <tr key={row.id} {...row.getRowProps()} >
+                                    
                                         {row.cells.map(cell => {
                                             const column = cell.column;
                                             return (
@@ -522,26 +452,7 @@ const FormTable = ({ columns, data, columnVisibility, pageSize, totalItems, curr
                                                             <FaEye /> View
                                                         </button>
                                                     </li>
-                                                    <li>
-                                                        {editPermission && (
-                                                            <button
-                                                                className="dropdown-item"
-                                                                onClick={() => handleShowModal('Edit', row.original)}
-                                                            >
-                                                                <FaEdit /> Edit
-                                                            </button>
-                                                        )}
-                                                    </li>
-                                                    <li>
-                                                        {deletePermission && (
-                                                            <button
-                                                                className="dropdown-item"
-                                                                onClick={() => handleShowModal('Delete', row)}
-                                                            >
-                                                                <FaTrash /> Delete
-                                                            </button>
-                                                        )}
-                                                    </li>
+        
                                                 </ul>
                                             </div>
                                         </td>
@@ -649,11 +560,10 @@ const FormTable = ({ columns, data, columnVisibility, pageSize, totalItems, curr
                 data={dataToEdit}
                 keyCol={primayKey}
                 refecthCallBack={() => refecthCallBack()}
-                isWorkflow={isWorkflow}
             />
 
         </Fragment>
     );
 };
 
-export default FormTable;
+export default FormTableInquiry;

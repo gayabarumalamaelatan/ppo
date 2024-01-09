@@ -12,5 +12,5 @@ export const hasSpecialCharacter = (password) => {
 };
 
 export const hasMinimumLength = (password) => {
-    return password.length >= 8;
+    return password.length <= 8;
 };

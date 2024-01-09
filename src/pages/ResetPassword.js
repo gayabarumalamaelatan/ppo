@@ -6,19 +6,47 @@ import { AUTH_SERVICE_CHANGE_PASSWORD, AUTH_SERVICE_RESET_PASSWORD } from '../co
 import { idUser, token } from '../config/Constants';
 import { showSuccessToast } from '../toast/toast';
 
+// ... (previous imports)
+
 function ResetPasswordPage() {
   const [userId, setUserId] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [resetError, setResetError] = useState(false);
+  const [passwordValidation, setPasswordValidation] = useState({
+    isValid: true,
+    message: '',
+  });
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Add any necessary logic when component mounts
+    // Add any necessary logic when the component mounts
     if (!token) {
-        navigate('/login'); // Redirect to login if token is not available
-      }
+      navigate('/login'); // Redirect to login if the token is not available
+    }
   }, []);
+
+  // Function to validate the password
+  const validatePassword = (password) => {
+    const regex = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[~!@$]).{8,}$/;
+
+    if (password.length < 8) {
+      return {
+        isValid: false,
+        message: 'Password must be at least 8 characters long.',
+      };
+    }
+
+    if (regex.test(password)) {
+      return { isValid: true, message: '' };
+    } else {
+      return {
+        isValid: false,
+        message:
+          'Password must contain alphabets, numbers, at least 1 uppercase letter, and at least 1 special character (~ ! @ $).',
+      };
+    }
+  };
 
   const handleResetPassword = async (event) => {
     event.preventDefault();
@@ -26,31 +54,57 @@ function ResetPasswordPage() {
     const headers = { Authorization: `Bearer ${token}` };
 
     try {
-      if (newPassword !== confirmPassword) {
-        setResetError(true); // Set reset error state to true
+      // Validate the new password
+      const passwordValidationResult = validatePassword(newPassword);
+
+      if (!passwordValidationResult.isValid) {
+        setResetError(true);
+        setPasswordValidation(passwordValidationResult);
         return;
       }
 
-      const response = await axios.put(`${AUTH_SERVICE_CHANGE_PASSWORD}`, {
-        userId: idUser,
-        newPassword: newPassword,
-        confirmPassword: newPassword,
-      },
-      {headers},
-      {
-        timeout: 15000,
-      });
+      // Check if the new password and confirm password match
+      if (newPassword !== confirmPassword) {
+        setResetError(true);
+        setPasswordValidation({
+          isValid: false,
+          message: 'Passwords do not match.',
+        });
+        return;
+      }
+
+      // Call the API to reset the password
+      const response = await axios.put(
+        `${AUTH_SERVICE_CHANGE_PASSWORD}`,
+        {
+          userId: idUser,
+          newPassword: newPassword,
+          confirmPassword: confirmPassword,
+        },
+        { headers },
+        {
+          timeout: 15000,
+        }
+      );
 
       if (response.status === 200) {
         // Handle successful password reset, e.g., show a success message
         showSuccessToast('Reset password successfully. Please Login !');
         navigate('/login'); // Redirect to the login page after resetting
       } else {
-        setResetError(true); // Set reset error state to true
+        setResetError(true);
+        setPasswordValidation({
+          isValid: false,
+          message: 'Password reset failed. Please try again.',
+        });
       }
     } catch (error) {
       console.error('Error:', error);
-      setResetError(true); // Set reset error state to true in case of an error
+      setResetError(true);
+      setPasswordValidation({
+        isValid: false,
+        message: 'Password reset failed. Please try again.',
+      });
     }
   };
 
@@ -64,7 +118,7 @@ function ResetPasswordPage() {
       <div className="login-box">
         {resetError && (
           <div className="alert alert-danger" role="alert">
-            Password reset failed. Please try again.
+            {passwordValidation.message || 'Password reset failed. Please try again.'}
           </div>
         )}
         <div className="card card-outline card-primary">
@@ -74,10 +128,13 @@ function ResetPasswordPage() {
               <div className="input-group mb-3">
                 <input
                   type="password"
-                  className="form-control"
+                  className={`form-control ${passwordValidation.isValid ? '' : 'is-invalid'}`}
                   placeholder="New Password"
                   value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
+                  onChange={(e) => {
+                    setNewPassword(e.target.value);
+                    setPasswordValidation({ isValid: true, message: '' });
+                  }}
                 />
                 <div className="input-group-append">
                   <div className="input-group-text">
@@ -88,7 +145,7 @@ function ResetPasswordPage() {
               <div className="input-group mb-3">
                 <input
                   type="password"
-                  className="form-control"
+                  className={`form-control ${passwordValidation.isValid ? '' : 'is-invalid'}`}
                   placeholder="Confirm New Password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
@@ -99,6 +156,10 @@ function ResetPasswordPage() {
                   </div>
                 </div>
               </div>
+              {/* Display password validation error message */}
+              {!passwordValidation.isValid && (
+                <div className="invalid-feedback">{passwordValidation.message}</div>
+              )}
               <hr></hr>
               <div className="row">
                 <div className="col-12">

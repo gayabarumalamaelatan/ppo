@@ -11,9 +11,11 @@ const FormModalAddNew = ({ isOpen, onClose, columns, menuName, formCode, reFormf
   const headers = { Authorization: `Bearer ${token}` };
   const [lookupTableData, setLookupTableData] = useState({});
   const [formData, setFormData] = useState({});
-  const [isLoading, setIsLoading] = useState(false); 
+  const [isLoading, setIsLoading] = useState(false);
 
   //console.log('formcode', formCode);
+
+  console.log('columns modal', columns);
 
   const initialFormValues = {};
   columns.forEach((column) => {
@@ -27,7 +29,7 @@ const FormModalAddNew = ({ isOpen, onClose, columns, menuName, formCode, reFormf
     if (columnsWithLookupTable.length > 0) {
       // Create an array of promises for fetching data
       const fetchPromises = columnsWithLookupTable.map((column) =>
-        fetch(`${FORM_SERVICE_LOAD_DATA}?t=${column.lookupTable}`, { headers })
+        fetch(`${FORM_SERVICE_LOAD_DATA}?t=${column.lookupTable}&lookup=YES`, { headers })
           .then((response) => response.json())
           .then((data) => {
             //console.log('API Response for', column.accessor, ':', data.data);
@@ -49,7 +51,7 @@ const FormModalAddNew = ({ isOpen, onClose, columns, menuName, formCode, reFormf
             }
           });
 
-         // console.log('lookupTableData:', lookupData);
+          // console.log('lookupTableData:', lookupData);
           setLookupTableData(lookupData);
         })
         .catch((error) => {
@@ -88,17 +90,17 @@ const FormModalAddNew = ({ isOpen, onClose, columns, menuName, formCode, reFormf
 
           setTimeout(() => {
             // Call the successCallback function to close the modal
-          successCallback();
-          // Show a success toast with the API response message
-          // showSuccessToast(data.message);
-          showDynamicSweetAlert('Success', data.message, 'success');
-          reFormfetchCallback();
-          const resetData = { ...initialFormValues };
-          // Update the form data state to trigger a re-render with the reset values
-          setFormData(resetData);
+            successCallback();
+            // Show a success toast with the API response message
+            // showSuccessToast(data.message);
+            showDynamicSweetAlert('Success', data.message, 'success');
+            reFormfetchCallback();
+            const resetData = { ...initialFormValues };
+            // Update the form data state to trigger a re-render with the reset values
+            setFormData(resetData);
             setIsLoading(false);
-        }, 1000);
-          
+          }, 1000);
+
 
 
         }
@@ -119,8 +121,8 @@ const FormModalAddNew = ({ isOpen, onClose, columns, menuName, formCode, reFormf
     sendDataToAPI(formData, () => {
       // This function is called when the API request is successful
       // You can close the modal or perform other actions here
-      
-      
+
+
       onClose(); // Close the modal
     });
   };
@@ -142,47 +144,61 @@ const FormModalAddNew = ({ isOpen, onClose, columns, menuName, formCode, reFormf
       <Modal.Body>
         <Form>
           <div className="row">
-            {columns.map((column) => (
-              <div className="col-md-6" key={column.accessor}>
-                <Form.Group>
-                  <Form.Label htmlFor={column.accessor}>{column.Header}</Form.Label>
-                  {column.lookupTable !== null ? (
-                    <Form.Control as="select" id={column.accessor} name={column.accessor} value={formData[column.accessor] || ''} onChange={(e) => setFormData({ ...formData, [column.accessor]: e.target.value })}>
-                      <option value="">Select an option: {column.accessor}</option>
-                      {Array.isArray(lookupTableData[column.accessor]) &&
-                        lookupTableData[column.accessor].map((option) => (
-                          <option
-                            key={Object.values(option)[3]}
-                            value={Object.values(option)[0]}
-                          >
-                            {Object.values(option)[1]}
-                          </option>
-                        ))}
-                    </Form.Control>
-                  ) : (
-                    <Form.Control
-                      type="text"
-                      id={column.accessor}
-                      name={column.accessor}
-                      value={formData[column.accessor] || ''}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          [column.accessor]: e.target.value,
-                        })
-                      }
-                    />
-                  )}
-                </Form.Group>
-              </div>
-            ))}
+            {columns
+              .filter((column) => column.Header !== 'Status') // Filter out the 'Status' column
+              .map((column) => (
+                <div className="col-md-6" key={column.accessor}>
+                  <Form.Group>
+                    <Form.Label htmlFor={column.accessor}>{column.Header}</Form.Label>
+                    {column.lookupTable !== null ? (
+                      <Form.Control
+                        as="select"
+                        id={column.accessor}
+                        name={column.accessor}
+                        value={formData[column.accessor] || ''}
+                        onChange={(e) =>
+                          setFormData({ ...formData, [column.accessor]: e.target.value })
+                        }
+                      >
+                        <option value="">
+                          Select an option: {column.accessor}
+                        </option>
+                        {Array.isArray(lookupTableData[column.accessor]) &&
+                          lookupTableData[column.accessor].map((option, index) => (
+                            <option
+                              key={Object.values(option)[3] || index}
+                              value={Object.values(option)[1]}
+                            >
+                              {Object.values(option)[2]}
+                            </option>
+                          ))}
+
+                      </Form.Control>
+                    ) : (
+                      <Form.Control
+                        type="text"
+                        id={column.accessor}
+                        name={column.accessor}
+                        value={formData[column.accessor] || ''}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            [column.accessor]: e.target.value,
+                          })
+                        }
+                      />
+                    )}
+                  </Form.Group>
+                </div>
+              ))}
           </div>
         </Form>
+
         {isLoading && (
-                <div className="full-screen-overlay">
-                    <i className="fa-solid fa-spinner fa-spin full-screen-spinner"></i>
-                </div>
-            )}
+          <div className="full-screen-overlay">
+            <i className="fa-solid fa-spinner fa-spin full-screen-spinner"></i>
+          </div>
+        )}
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={onClose}>

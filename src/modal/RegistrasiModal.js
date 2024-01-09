@@ -12,162 +12,156 @@ const { userLoggin, token } = require('../config/Constants');
 
 
 
-const RegisterModal = ({ show, handleClose ,reloadData}) => {
-    const [isLoading, setIsLoading] = useState(false);
-    const headers = { Authorization: `Bearer ${token}` };
-    const initialUserData = {
-        userName: '',
-        password: '',
-        confirmPassword: '',
-        createdBy: userLoggin,
-        email: '',
-        firstName: '',
-        lastName: '',
-        phoneNumber: '',
-        group: '',
-        authenticationMethod: '',
+const RegisterModal = ({ show, handleClose, reloadData }) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const headers = { Authorization: `Bearer ${token}` };
+  const initialUserData = {
+    userName: '',
+    password: '',
+    confirmPassword: '',
+    createdBy: userLoggin,
+    email: '',
+    firstName: '',
+    lastName: '',
+    phoneNumber: '',
+    group: '',
+    authenticationMethod: '',
+  };
+
+  const [userData, setUserData] = useState(initialUserData);
+  const [validationErrors, setValidationErrors] = useState({});
+  const [groupList, setGroupList] = useState([]);
+
+
+  useEffect(() => {
+    // Fetch the list of groups from the API
+    const fetchGroups = async () => {
+      try {
+        const response = await axios.get(USER_SERVICE_GROUP_LIST, { headers });
+        setGroupList(response.data);
+        console.log(groupList); // Assuming the API response directly provides the list of groups
+      } catch (error) {
+        console.error('Error fetching groups:', error);
+      }
     };
 
-    const [userData, setUserData] = useState(initialUserData);
-    const [validationErrors, setValidationErrors] = useState({});
-    const [groupList, setGroupList] = useState([]);
-    
+    fetchGroups();
+  }, []);
 
-    useEffect(() => {
-        // Fetch the list of groups from the API
-        const fetchGroups = async () => {
-            try {
-                const response = await axios.get(USER_SERVICE_GROUP_LIST, { headers });
-                setGroupList(response.data);
-                console.log(groupList); // Assuming the API response directly provides the list of groups
-            } catch (error) {
-                console.error('Error fetching groups:', error);
-            }
-        };
+  const handleChange = (e) => {
+    const { name, value } = e.target;
 
-        fetchGroups();
-    }, []);
+    setUserData((prevData) => ({ ...prevData, [name]: value }));
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
+    // Reset validation error for the changed input
+    setValidationErrors((prevErrors) => ({ ...prevErrors, [name]: '' }));
+  };
 
-        setUserData((prevData) => ({ ...prevData, [name]: value }));
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const errors = {};
 
-        // Reset validation error for the changed input
-        setValidationErrors((prevErrors) => ({ ...prevErrors, [name]: '' }));
-    };
+    console.log('Password Length:', userData.password.length); // Add this line for debugging
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        const errors = {};
-
-        // Validasi form username
-        if (userData.userName.trim() === '') {
-            errors.userName = 'Username is required.';
-        } else {
-            // Hit the API to check if the username is available
-            try {
-                const response = await axios.get(`${AUTH_SERVICE_CHECK_USER}?username=${userData.userName}`, { headers });
-
-                if (response.data.status === false) {
-                    errors.userName = 'Username has been used.';
-                }
-            } catch (error) {
-                console.error('Error checking username availability:', error);
-                // Tampilkan toast error jika terjadi kesalahan pada pengecekan username
-                showErrorToast('Error checking username availability. Please try again later.');
-                return;
-            }
-        }
-
-        // Validasi panjang password
-        if (!hasMinimumLength(userData.password)) {
-            errors.password = 'Password must be at least 8 characters long.';
-        }
-
-        // Password validation: At least 1 uppercase letter
-        if (!hasUppercaseLetter(userData.password)) {
-            errors.password = 'Password must contain at least 1 uppercase letter.';
-        }
-
-        // Password validation: Combination of numbers
-        if (!hasNumber(userData.password)) {
-            errors.password = 'Password must contain a combination of numbers.';
-        }
-
-        // Password validation: At least 1 special character (customize allowed special characters inside the square brackets)
-        if (!hasSpecialCharacter(userData.password)) {
-            errors.password = 'Password must contain at least 1 special character.';
-        }
-
-        // Validasi apakah password dan konfirmasi password sama
-        if (userData.password !== userData.confirmPassword) {
-            errors.confirmPassword = 'Password and Confirm Password do not match.';
-        }
-
-
-
-        // Jika ada kesalahan, tampilkan pesan kesalahan
-        if (Object.keys(errors).length > 0) {
-            setValidationErrors(errors);
-            return;
-        }
-
-        const postData = {
-            userName: userData.userName,
-            password: userData.password,
-            createdBy: userData.createdBy,
-            email: userData.email,
-            firstName: userData.firstName,
-            lastName: userData.lastName,
-            phoneNumber: userData.phoneNumber,
-            groupId: parseInt(userData.group, 10),
-            authBy: userData.authenticationMethod,
-        };
-        try {
-            setIsLoading(true);
-           // Kirim permintaan POST ke API
-            //console.log('POST DATA', postData);
-            const response = await axios.post(`${USER_SERVICE_ADD_USER}`, postData, { headers });
-            console.log('API Response:', response.data);
-
-
-            handleClose();
-            setTimeout(() => {
-                setUserData(initialUserData);
-                setIsLoading(false);
-                showDynamicSweetAlert('Success!', 'Registration Successfully.', 'success');
-                //showSuccessToast('Registration successful!');
-                reloadData();
-            }, 1000);
-
-        } catch (error) {
-            setTimeout(() => {
-                console.error('Error registering member:', error);;
-                setIsLoading(false);
-                // Tambahkan logika lain sesuai dengan kebutuhan Anda untuk menangani kesalahan
-                showDynamicSweetAlert('Error!', 'An error occurred. Please try again later.', 'error');
-                //showErrorToast('An error occurred. Please try again later.');
-
-            }, 1000);
-
-
-        }
-    };
-
-    const handleModalClose = () => {
-        // Tutup modal dan reset form ke nilai awal
-        handleClose();
-        setUserData(initialUserData);
-    };
-
-    const handleReset = () => {
-        setUserData(initialUserData);
+    if (userData.password.length < 8) {
+      errors.password = 'Password must be at least 8 characters long.';
     }
 
-    return (
+    // Password validation: At least 1 uppercase letter
+    if (!hasUppercaseLetter(userData.password)) {
+      errors.password = 'Password must contain alphabets, numbers, at least 1 uppercase letter, and at least 1 special character (~ ! @ $).';
+    }
 
-        <Modal show={show} onHide={handleModalClose}>
+    // Password validation: Combination of numbers
+    if (!hasNumber(userData.password)) {
+      errors.password = 'Password must contain alphabets, numbers, at least 1 uppercase letter, and at least 1 special character (~ ! @ $).';
+    }
+
+    // Password validation: At least 1 special character
+    if (!hasSpecialCharacter(userData.password)) {
+      errors.password = 'Password must contain alphabets, numbers, at least 1 uppercase letter, and at least 1 special character (~ ! @ $).';
+    }
+
+    // Validasi form username
+    if (userData.userName.trim() === '') {
+      errors.userName = 'Username is required.';
+    } else {
+      // Hit the API to check if the username is available
+      try {
+        const response = await axios.get(`${AUTH_SERVICE_CHECK_USER}?username=${userData.userName}`, { headers });
+
+        if (response.data.status === false) {
+          errors.userName = 'Username has been used.';
+        }
+      } catch (error) {
+        console.error('Error checking username availability:', error);
+        // Tampilkan toast error jika terjadi kesalahan pada pengecekan username
+        showErrorToast('Error checking username availability. Please try again later.');
+        return;
+      }
+    }
+
+
+    if (Object.keys(errors).length > 0) {
+      setValidationErrors(errors);
+      return;
+    }
+
+    const postData = {
+      userName: userData.userName,
+      password: userData.password,
+      createdBy: userData.createdBy,
+      email: userData.email,
+      firstName: userData.firstName,
+      lastName: userData.lastName,
+      phoneNumber: userData.phoneNumber,
+      groupId: parseInt(userData.group, 10),
+      authBy: userData.authenticationMethod,
+    };
+    try {
+      setIsLoading(true);
+      // Kirim permintaan POST ke API
+      //console.log('POST DATA', postData);
+      const response = await axios.post(`${USER_SERVICE_ADD_USER}`, postData, { headers });
+      console.log('API Response:', response.data);
+
+
+      handleClose();
+      setTimeout(() => {
+        setUserData(initialUserData);
+        setIsLoading(false);
+        showDynamicSweetAlert('Success!', 'Registration Successfully.', 'success');
+        //showSuccessToast('Registration successful!');
+        reloadData();
+      }, 1000);
+
+    } catch (error) {
+      setTimeout(() => {
+        console.error('Error registering member:', error);;
+        setIsLoading(false);
+        // Tambahkan logika lain sesuai dengan kebutuhan Anda untuk menangani kesalahan
+        showDynamicSweetAlert('Error!', 'An error occurred. Please try again later.', 'error');
+        //showErrorToast('An error occurred. Please try again later.');
+
+      }, 1000);
+
+
+    }
+  };
+
+  const handleModalClose = () => {
+    // Tutup modal dan reset form ke nilai awal
+    handleClose();
+    setUserData(initialUserData);
+  };
+
+  const handleReset = () => {
+    setUserData(initialUserData);
+  }
+
+  return (
+
+    <Modal show={show} onHide={handleModalClose}>
       <Modal.Header closeButton>
         <Modal.Title>Registration User</Modal.Title>
       </Modal.Header>
@@ -314,7 +308,7 @@ const RegisterModal = ({ show, handleClose ,reloadData}) => {
         </Modal.Footer>
       </form>
     </Modal>
-    );
+  );
 };
 
 export default RegisterModal;

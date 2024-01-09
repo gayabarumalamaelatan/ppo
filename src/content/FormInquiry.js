@@ -12,8 +12,9 @@ import { assertPipelinePrimaryTopicReference } from '@babel/types';
 import { useRecoilValue } from 'recoil';
 import { menusState } from '../store/RecoilFormTemplate';
 import * as XLSX from 'xlsx';
+import FormTableInquiry from '../tables/FormTableInquiry';
 
-const FormTemplate = () => {
+const FormInquiry = () => {
     //const { idForm, prefixTable, menuName } = useSelector(state => state);
     const menusForm = useRecoilValue(menusState);
     const dispatch = useDispatch();
@@ -132,7 +133,7 @@ const FormTemplate = () => {
                 });
         } else {
             return axios
-                .get(`${FORM_SERVICE_LOAD_DATA}?f=${formCodePass}&page=${currentPage}&size=${pageSize}`, { headers })
+                .get(`${FORM_SERVICE_LOAD_DATA}?f=${formCodePass}&page=${currentPage}&size=${pageSize}&showAll=YES`, { headers })
                 .then((response) => {
 
                     setTimeout(() => {
@@ -450,14 +451,6 @@ const FormTemplate = () => {
                             <div className="col-md-8 d-flex justify-content-end align-items-center">
 
                                 <div className="btn-group ml-2">
-                                    {canCreate && (<button
-                                        type="button"
-                                        className="btn btn-success"
-                                        onClick={openModal}
-                                    >
-                                        <FaAddressBook /> Add New
-                                    </button>
-                                    )}
                                     <button
                                         type="button"
                                         className="btn btn-default"
@@ -609,7 +602,7 @@ const FormTemplate = () => {
                 <div className='card'>
 
                     <div className='card-body'>
-                        <FormTable
+                        <FormTableInquiry
                             columns={columns}
                             data={accountData}
                             columnVisibility={columnVisibility}
@@ -646,4 +639,4 @@ const FormTemplate = () => {
     );
 };
 
-export default FormTemplate;
+export default FormInquiry;

@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-import AUTH_SERVICE_UPDATE_USER, { USER_SERVICE_UPDATE_USER, USER_SERVICE_USER_DETAIL } from '../config/ConfigApi';
+import AUTH_SERVICE_UPDATE_USER, { USER_SERVICE_GROUP_LIST, USER_SERVICE_UPDATE_USER, USER_SERVICE_USER_DETAIL } from '../config/ConfigApi';
 import { showSuccessToast, showErrorToast } from '../toast/toast';
 import { showDynamicSweetAlert } from '../toast/Swal';
 import { Button, Modal } from 'react-bootstrap';
@@ -10,7 +10,7 @@ import { Button, Modal } from 'react-bootstrap';
 
 const { userLoggin, token } = require('../config/Constants');
 
-const EditFormModal = ({ showEdit, handleClose, username, handleSubmit,reloadData }) => {
+const EditFormModal = ({ showEdit, handleClose, username, handleSubmit, reloadData }) => {
   const initialFormData = {
     firstName: '',
     lastName: '',
@@ -21,6 +21,7 @@ const EditFormModal = ({ showEdit, handleClose, username, handleSubmit,reloadDat
 
   const [formData, setFormData] = useState(initialFormData);
   const [isLoading, setIsLoading] = useState(false);
+  const [groupList, setGroupList] = useState([]);
 
   // Function to fetch user details for editing
   useEffect(() => {
@@ -32,6 +33,10 @@ const EditFormModal = ({ showEdit, handleClose, username, handleSubmit,reloadDat
         const userData = response.data;
         console.log(userData);
         // Update the form data with fetched user details
+
+        const groupName = userData.group.map(groupItem => groupItem.name);
+
+        console.log('group', groupName);
         setFormData({
           firstName: userData.firstName,
           lastName: userData.lastName,
@@ -39,16 +44,30 @@ const EditFormModal = ({ showEdit, handleClose, username, handleSubmit,reloadDat
           phoneNumber: userData.phoneNumber,
           id: userData.id,
           authBy: userData.authBy,
+          group: groupName,
         });
       } catch (error) {
         console.error('Error fetching user details:', error);
+      }
+    };
+    const fetchGroups = async () => {
+      try {
+        const headers = { Authorization: `Bearer ${token}` };
+        const response = await axios.get(USER_SERVICE_GROUP_LIST, { headers });
+        setGroupList(response.data);
+        console.log(groupList); // Assuming the API response directly provides the list of groups
+      } catch (error) {
+        console.error('Error fetching groups:', error);
       }
     };
 
     // Fetch user details when the modal is opened
     if (showEdit) {
       fetchUserData();
+      fetchGroups();
     }
+
+
   }, [showEdit, username]);
 
   const handleFormChange = (e) => {
@@ -69,6 +88,7 @@ const EditFormModal = ({ showEdit, handleClose, username, handleSubmit,reloadDat
         phoneNumber: formData.phoneNumber,
         id: formData.id,
         authBy: formData.authBy,
+        groupId: parseInt(formData.group, 10),
       };
 
       setIsLoading(true);
@@ -136,6 +156,27 @@ const EditFormModal = ({ showEdit, handleClose, username, handleSubmit,reloadDat
               <option value="" disabled>Select an Authentication Method</option>
               <option value="DIRECT">DIRECT</option>
               <option value="LDAP">LDAP</option>
+            </select>
+          </div>
+          <div className="form-group">
+            <label>User Group</label>
+            <select
+               className="form-control"
+              name="group"
+              value={formData.group}
+              onChange={handleFormChange}
+              required
+            >
+              <option value="" disabled>Select a group</option>
+              {Array.isArray(groupList) && groupList.length > 0 ? (
+                groupList.map((group) => (
+                  <option key={group.id} value={group.id}>
+                    {group.groupName}
+                  </option>
+                ))
+              ) : (
+                <option value="" disabled>No groups available</option>
+              )}
             </select>
           </div>
           <div className="form-group">

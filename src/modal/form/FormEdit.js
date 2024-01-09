@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
-import { token } from '../../config/Constants';
-import { FORM_SERVICE_INSERT_DATA, FORM_SERVICE_LOAD_DATA, FORM_SERVICE_UPDATE_DATA, FORM_SERVICE_VIEW_DATA } from '../../config/ConfigApi';
+import { pending, token } from '../../config/Constants';
+import { FORM_SERVICE_INSERT_DATA, FORM_SERVICE_LOAD_DATA, FORM_SERVICE_UPDATE_DATA, FORM_SERVICE_UPDATE_STATUS, FORM_SERVICE_VIEW_DATA } from '../../config/ConfigApi';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSave, faSyncAlt, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { showSuccessToast } from '../../toast/toast';
 import axios from 'axios';
 import { showDynamicSweetAlert } from '../../toast/Swal';
 
-const FormEdit = ({ isOpen, onClose, columns, menuName, getFormCode, data, keyCol, refecthCallBack }) => {
+const FormEdit = ({ isOpen, onClose, columns, menuName, getFormCode, data, keyCol, refecthCallBack,isWorkflow }) => {
     const headers = { Authorization: `Bearer ${token}` };
     const [lookupTableData, setLookupTableData] = useState({});
     const [formDataEdit, setFormDataEdit] = useState({});
@@ -26,14 +26,14 @@ const FormEdit = ({ isOpen, onClose, columns, menuName, getFormCode, data, keyCo
     });
 
     const fetchData = async () => {
-        console.log('Fetch DATA');
+        console.log('Fetch DATA',data);
 
         if (data !== null) {
             console.log('masuk');
-            const firstValue = Object.values(data)[0];
+            const firstValue = Object.values(data)[1];
             const firstObject = columns[0].accessor;
             try {
-                const response = await axios.get(`${FORM_SERVICE_VIEW_DATA}?f=${getFormCode}&column=${keyCol}&value=${firstValue}`, { headers })
+                const response = await axios.get(`${FORM_SERVICE_VIEW_DATA}?f=${getFormCode}&column=id&value=${firstValue}`, { headers })
                 console.log('Data Edit:', response.data);
                 setFormDataEdit(response.data);
 
@@ -54,10 +54,10 @@ const FormEdit = ({ isOpen, onClose, columns, menuName, getFormCode, data, keyCo
         if (columnsWithLookupTable.length > 0) {
             // Create an array of promises for fetching data
             const fetchPromises = columnsWithLookupTable.map((column) =>
-                fetch(`${FORM_SERVICE_LOAD_DATA}?t=${column.lookupTable}`, { headers })
+                fetch(`${FORM_SERVICE_LOAD_DATA}?t=${column.lookupTable}&lookup=YES`, { headers })
                     .then((response) => response.json())
                     .then((data) => {
-                       // console.log('API Response for', column.accessor, ':', data.data);
+                        // console.log('API Response for', column.accessor, ':', data.data);
                         return data; // Return data to preserve it in the promise chain
                     })
             );
@@ -76,7 +76,7 @@ const FormEdit = ({ isOpen, onClose, columns, menuName, getFormCode, data, keyCo
                         }
                     });
 
-                   // console.log('lookupTableData:', lookupData);
+                    // console.log('lookupTableData:', lookupData);
                     setLookupTableData(lookupData);
                 })
                 .catch((error) => {
@@ -87,15 +87,13 @@ const FormEdit = ({ isOpen, onClose, columns, menuName, getFormCode, data, keyCo
     }, [data]);
 
     const sendDataToAPI = (formDataEdit, successCallback) => {
-        //console.log('form data Edit ', formDataEdit);
+      
+        console.log('Form Edit:', formDataEdit);
 
-        // for (const key in formDataEdit) {
-        //     if (typeof formDataEdit[key] === 'string') {
-        //         formDataEdit[key] = formDataEdit[key].trim();
-        //     }
-        // }
+        const { status, id, ...formDataWithoutStatusAndId } = formDataEdit;
+        console.log('Form Edit:', formDataWithoutStatusAndId);
 
-        const firstValue = Object.values(data)[0];
+        const firstValue = Object.values(data)[1];
 
         if (formDataEdit[keyCol] !== undefined) {
             delete formDataEdit[keyCol];
@@ -103,7 +101,7 @@ const FormEdit = ({ isOpen, onClose, columns, menuName, getFormCode, data, keyCo
 
 
         // Define the API endpoint URL for your POST request
-        const apiUrl = `${FORM_SERVICE_UPDATE_DATA}?f=${getFormCode}&column=${keyCol}&value=${firstValue}`;
+        const apiUrl = `${FORM_SERVICE_UPDATE_DATA}?f=${getFormCode}&column=id&value=${firstValue}`;
 
         // Create the request options, including method, headers, and body
         const requestOptions = {
@@ -112,7 +110,7 @@ const FormEdit = ({ isOpen, onClose, columns, menuName, getFormCode, data, keyCo
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
             },
-            body: JSON.stringify(formDataEdit), // Convert the form data to JSON format
+            body: JSON.stringify(formDataWithoutStatusAndId), // Convert the form data to JSON format
         };
 
         // Send the POST request to the API endpoint
@@ -127,31 +125,60 @@ const FormEdit = ({ isOpen, onClose, columns, menuName, getFormCode, data, keyCo
                 // Handle the API response data as needed
                 //console.log('API Response:', data);
 
-                if (data.message === "Update Data Successfully") {
+                if (data.message === "Update Data Successfully" && isWorkflow === true) {
+                    setTimeout(async () => {
+                        try {
+                            const requestData = {
+                                idTrx:formDataEdit.id,
+                                status: pending,
+                                // Other properties in your requestData object
+                            };
+                            const response = await axios.post(`${FORM_SERVICE_UPDATE_STATUS}?f=${getFormCode}`, requestData, { headers });
+                
+                            // Call the successCallback function to close the modal
+                            successCallback();
+                
+                            // Show a success toast with the API response message
+                            // showSuccessToast(data.message);
+                            showDynamicSweetAlert('Success!', data.message, 'success');
+                
+                            refecthCallBack();
+                
+                            const resetData = { ...initialFormValues };
+                            // Update the form data state to trigger a re-render with the reset values
+                            setFormDataEdit(resetData);
+                            setIsLoading(false);
+                        } catch (error) {
+                            // Handle error if the axios request fails
+                            console.error('Error updating data:', error);
+                            // You may want to show an error message to the user
+                            // showErrorToast('Failed to update data. Please try again.');
+                        }
+                    }, 1000);
+                } else {
                     setTimeout(() => {
-                        // Call the successCallback function to close the modal
                         successCallback();
-                        // Show a success toast with the API response message
-                        //showSuccessToast(data.message);
-                        showDynamicSweetAlert('Success!', data.message, 'success');
-
-                        refecthCallBack();
-                        const resetData = { ...initialFormValues };
-                        // Update the form data state to trigger a re-render with the reset values
-                        setFormDataEdit(resetData);
-                        setIsLoading(false);
+                
+                            // Show a success toast with the API response message
+                            // showSuccessToast(data.message);
+                            showDynamicSweetAlert('Success!', data.message, 'success');
+                
+                            refecthCallBack();
+                
+                            const resetData = { ...initialFormValues };
+                            // Update the form data state to trigger a re-render with the reset values
+                            setFormDataEdit(resetData);
+                            setIsLoading(false);
                     }, 1000);
 
-
-
                 }
-
 
             })
             .catch((error) => {
                 // Handle any errors that occurred during the fetch
                 console.error('Error sending data to API:', error);
                 showDynamicSweetAlert('Error!', error.message, 'error');
+                setIsLoading(false);
             });
     };
 
@@ -184,43 +211,59 @@ const FormEdit = ({ isOpen, onClose, columns, menuName, getFormCode, data, keyCo
                 <Form>
                     {/* Form untuk mengedit data */}
                     <div className="row">
-                        {columns.map((column) => (
-                            <div className="col-md-6" key={column.accessor}>
-                                <Form.Group>
-                                    <Form.Label htmlFor={column.accessor}>{column.Header}</Form.Label>
-                                    {column.lookupTable !== null ? (
-                                        <Form.Control as="select" id={column.accessor} name={column.accessor} value={formDataEdit[column.accessor] || ''} onChange={(e) => setFormDataEdit({ ...formDataEdit, [column.accessor]: e.target.value })}>
-                                            <option value="">Select an option: {column.accessor}</option>
-                                            {Array.isArray(lookupTableData[column.accessor]) &&
-                                                lookupTableData[column.accessor].map((option) => (
-                                                    <option
-                                                        key={Object.values(option)[3]}
-                                                        value={Object.values(option)[0]}
-                                                    >
-                                                        {Object.values(option)[1]}
-                                                    </option>
-                                                ))}
-                                        </Form.Control>
-                                    ) : (
-                                        <Form.Control
-                                            type="text"
-                                            id={column.accessor}
-                                            name={column.accessor}
-                                            value={formDataEdit[column.accessor] || ''}
-                                            onChange={(e) =>
-                                                setFormDataEdit({
-                                                    ...formDataEdit,
-                                                    [column.accessor]: e.target.value,
-                                                })
-                                            }
-                                            disabled={column.accessor === keyCol}
-                                        />
-                                    )}
-                                </Form.Group>
-                            </div>
-                        ))}
+                        {columns
+                            .filter((column) => column.Header !== 'Status') // Exclude the 'Status' column
+                            .map((column, index) => (
+                                <div className="col-md-6" key={column.accessor || index}>
+                                    <Form.Group>
+                                        <Form.Label htmlFor={column.accessor}>{column.Header}</Form.Label>
+                                        {column.lookupTable !== null ? (
+                                            <Form.Control
+                                                as="select"
+                                                id={column.accessor}
+                                                name={column.accessor}
+                                                value={formDataEdit[column.accessor] || ''}
+                                                onChange={(e) =>
+                                                    setFormDataEdit({
+                                                        ...formDataEdit,
+                                                        [column.accessor]: e.target.value,
+                                                    })
+                                                }
+                                            >
+                                                <option value="">
+                                                    Select an option: {column.accessor}
+                                                </option>
+                                                {Array.isArray(lookupTableData[column.accessor]) &&
+                                                    lookupTableData[column.accessor].map((option, optionIndex) => (
+                                                        <option
+                                                            key={optionIndex}
+                                                            value={Object.values(option)[1]}
+                                                        >
+                                                            {Object.values(option)[2]}
+                                                        </option>
+                                                    ))}
+                                            </Form.Control>
+                                        ) : (
+                                            <Form.Control
+                                                type="text"
+                                                id={column.accessor}
+                                                name={column.accessor}
+                                                value={formDataEdit[column.accessor] || ''}
+                                                onChange={(e) =>
+                                                    setFormDataEdit({
+                                                        ...formDataEdit,
+                                                        [column.accessor]: e.target.value,
+                                                    })
+                                                }
+                                                disabled={column.accessor === keyCol}
+                                            />
+                                        )}
+                                    </Form.Group>
+                                </div>
+                            ))}
                     </div>
                 </Form>
+
                 {isLoading && (
                     <div className="full-screen-overlay">
                         <i className="fa-solid fa-spinner fa-spin full-screen-spinner"></i>
