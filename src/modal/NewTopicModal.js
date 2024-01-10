@@ -8,7 +8,7 @@ import { faSave, faTimes } from "@fortawesome/free-solid-svg-icons";
 
 const { token, active } = require('../config/Constants');
 
-const NewTopicModal = ({isOpen, onClose, handleSubmit}) => {
+const NewTopicModal = ({isOpen, onClose, onSubmit}) => {
     // Const statement
     const headers = { Authorization: `Bearer ${token}` };
     const [isLoading, setIsLoading] = useState(false);
@@ -47,7 +47,7 @@ const NewTopicModal = ({isOpen, onClose, handleSubmit}) => {
                 setIsLoading(false);
                 setFormData(initialFormData);
                 showDynamicSweetAlert('Success!','Topic created successfully!', 'success');
-                handleSubmit();
+                onSubmit();
             }, 1000)
         } catch (error) {
             console.error('Error create topic:', error);
@@ -114,7 +114,7 @@ const NewTopicModal = ({isOpen, onClose, handleSubmit}) => {
                     <Form.Group>
                         <Form.Label>Cleanup Policy</Form.Label>
                         <Form.Control
-                            type="select"
+                            as="select"
                             name="cleanupPolicy"
                             value={formData.cleanupPolicy}
                             onChange={(e) => handleFormChange(e)}
@@ -130,7 +130,7 @@ const NewTopicModal = ({isOpen, onClose, handleSubmit}) => {
                 <Button variant="secondary" onClick={handleCloseModal}>
                     <FontAwesomeIcon icon={faTimes} /> Batal
                 </Button>
-                <Button variant="secondary" onClick={handleSubmit}>
+                <Button variant="primary" onClick={handleSubmit}>
                     <FontAwesomeIcon icon={faSave} /> Create
                 </Button>
             </Modal.Footer>

@@ -1,33 +1,39 @@
 import axios from "axios";
 import React, { Fragment, useEffect, useState } from "react";
-import { INTEGRATION_SERVICE_KAFKA_TOPIC_LIST } from "../config/ConfigApi";
-import { Pagination } from "react-bootstrap";
+import { INTEGRATION_SERVICE_KAFKA_TOPIC_DELETE, INTEGRATION_SERVICE_KAFKA_TOPIC_LIST } from "../config/ConfigApi";
+import { Button, Modal, Pagination } from "react-bootstrap";
+import { useTable } from "react-table";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTimes, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { showDynamicSweetAlert } from "../toast/Swal";
 
 const { token } = require('../config/Constants');
 
-const KafkaTopicTable = ({createPermission, deletePermission, refreshTableStatus}) => {
+const KafkaTopicTable = ({deletePermission, refreshTableStatus, onRowClick}) => {
     // API Call Variable
     const headers = { Authorization: `Bearer ${token}` };
 
     // Kosmetik Variable
     const [isLoadingTable, setIsLoadingTable] = useState(true);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [topicToDelete, setTopicToDelete] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     // Table Variable
     const [dataTable, setDataTable] = useState([]);
     const [totalItem, setTotalItem] = useState(0);
     const [currentPage, setCurrentPage] = useState(0);
     const [pageSize, setPageSize] = useState(5);
-    const [searchFilterValue, setSearchFilterValue] = useState('');
 
     // API Call
     const fetchData = async () => {
         try {
             setIsLoadingTable(true);
-            const response = await axios.get(`${INTEGRATION_SERVICE_KAFKA_TOPIC_LIST}?page=${currentPage}&size${pageSize}`, {headers})
+            const response = await axios.get(`${INTEGRATION_SERVICE_KAFKA_TOPIC_LIST}?page=${currentPage}&size=${pageSize}`, {headers})
 
             setTimeout(() => {
                 setDataTable(response.data.topicList);
-                setTotalItem(response.data.totalItmes);
+                setTotalItem(response.data.totalItems);
                 setIsLoadingTable(false);
             }, 500)
         } catch (error) {
@@ -46,7 +52,23 @@ const KafkaTopicTable = ({createPermission, deletePermission, refreshTableStatus
         { Header: 'Replication Factor', accessor: 'replicationFactor'},
         { Header: 'Retention Period', accessor: 'retentionPeriod'},
         { Header: 'Total Message', accessor: 'messageCount'},
-    ])
+        { 
+            Header: 'Action',
+            Cell: ({row}) => (
+                <div>
+                        <Button variant="outline-success" style={{ marginRight: '5px' }} onClick={() => onRowClick(row.original.topicName)}><i className="fas fa-eye"></i></Button>
+                        {deletePermission && (
+                            <Button variant="outline-danger" style={{ marginRight: '5px' }} onClick={() => handleShowDeleteModal(row.original)}><i className="fas fa-trash"></i></Button>
+                        )}
+                </div>
+            )
+        },
+    ],[])
+
+    useEffect(() => {
+        fetchData();
+    }, [currentPage, pageSize, refreshTableStatus])
+
 
     // Render Table
     const {
@@ -58,13 +80,10 @@ const KafkaTopicTable = ({createPermission, deletePermission, refreshTableStatus
     } = useTable(
         {
             columns,
-            data: dataTable,
+            data: dataTable
         }
     );
 
-    useEffect(() => {
-        fetchData();
-    }, [refreshTableStatus, currentPage, pageSize])
 
 
     // Pagination properties
@@ -73,6 +92,41 @@ const KafkaTopicTable = ({createPermission, deletePermission, refreshTableStatus
     const endIndex = Math.min((currentPage + 1) * pageSize, totalItem);
 
     // Handle logic
+    const reloadData = () => {
+        fetchData();
+    };
+    
+    const handleShowDeleteModal = (topic) => {
+        setTopicToDelete(topic);
+        setShowDeleteModal(true)
+    }
+
+    const handleDeleteTopic = async () => {
+        setIsLoading(true);
+        console.log(topicToDelete);
+        const requestData = {
+            topicName: topicToDelete.topicName
+        }
+        try {
+            const response = await axios.delete(
+                `${INTEGRATION_SERVICE_KAFKA_TOPIC_DELETE}`, 
+                {
+                    data: requestData,
+                    headers:headers
+                })
+            setTimeout(() => {
+                setShowDeleteModal(false);
+                setTopicToDelete(null);
+                showDynamicSweetAlert('Success!', 'Topic has been deleted successfully!', 'success');
+                setIsLoading(false);
+                reloadData();
+            })
+        } catch (error) {
+            console.error('Error Delete Topic : ', error);
+            showDynamicSweetAlert('Error!', error, 'error');
+        }
+    }
+    
     const handlePageChange = (newPage) => {
         if (newPage >= 0 && newPage < pageCount) {
             setCurrentPage(newPage);
@@ -154,25 +208,7 @@ const KafkaTopicTable = ({createPermission, deletePermission, refreshTableStatus
     return (
         <Fragment>
             <div className="row mb-3">
-                {/* <div className="col-3">
-                    <form className="form-inline">
-                        <div className="input-group">
-                            <input
-                                type="text"
-                                className="form-control"
-                                value={searchFilterValue}
-                                onChange={(e) => setSearchFilterValue(e.target.value)}
-                                placeholder="Search by Menu Name"
-                            />
-                            <div className="input-group-append">
-                                <button type="button" className="btn btn-primary" onClick={handleSearchSubmit}>
-                                    <i className="fas fa-search"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                </div> */}
-                <div className="col-9 d-flex justify-content-end align-items-center">
+                <div className="col-12 d-flex justify-content-end align-items-center">
                     <div className="row-per-page-label" style={{ whiteSpace: 'nowrap' }}>
                         Rows per page:
                     </div>
@@ -243,6 +279,31 @@ const KafkaTopicTable = ({createPermission, deletePermission, refreshTableStatus
                     </Pagination>
                 </div>
             </div>  
+            <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
+                <Modal.Header>
+                    <Modal.Title>Confirmation</Modal.Title>
+                    {/* Ganti ikon tombol close (X) */}
+                    <Button variant="link default" onClick={() => setShowDeleteModal(false)}>
+                        <FontAwesomeIcon icon={faTimes} />
+                    </Button>
+                </Modal.Header>
+                <Modal.Body>
+                    Are you sure you want to delete the user: {topicToDelete && topicToDelete.topicName}?
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
+                        <FontAwesomeIcon icon={faTimes} />   Cancel
+                    </Button>
+                    <Button variant="danger" onClick={handleDeleteTopic}>
+                        <FontAwesomeIcon icon={faTrash} />   Delete
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+            {isLoading && (
+                    <div className="full-screen-overlay">
+                        <i className="fa-solid fa-spinner fa-spin full-screen-spinner"></i>
+                    </div>
+            )}  
         </Fragment>
     )
 

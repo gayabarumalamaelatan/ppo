@@ -2,6 +2,8 @@ import React, { Fragment, useState } from "react";
 import { useRecoilValue } from "recoil";
 import { permissionsState } from "../store/Permission";
 import NewTopicModal from "../modal/NewTopicModal";
+import KafkaTopicTable from "../tables/KafkaTopicTable";
+import KafkaTopicMessage from "./KafkaTopicMessage";
 
 
 const KafkaTopic = () => {
@@ -9,13 +11,28 @@ const KafkaTopic = () => {
     const [showNewTopicModal, setShowNewTopicModal] = useState(false);
     const [refreshTable, setRefreshTable] = useState(false);
     const permissions = useRecoilValue(permissionsState);
+    const [selectedTopic, setSelectedTopic] = useState("");
+    const [showMessageTable, setShowMessageTable] = useState(false);
+    const [showTopicTable, setShowTopicTable] = useState(true);
 
     // Permission call
-    const canCreateTopic = permissions["Integration"]["Kakfa Manager"]["Topics"]["create"];
-    const canDeleteTopic = permissions["Integration"]["Kakfa Manager"]["Topics"]["delete"];
+    const canCreateTopic = permissions["Integration"]["Topics"]["create"];
+    const canDeleteTopic = permissions["Integration"]["Topics"]["delete"];
 
     const handleCloseModal = () => {
         setShowNewTopicModal(false);
+    }
+
+    const handleRowClick = (topicName) => {
+        console.log(topicName);
+        setSelectedTopic(topicName);
+        setShowTopicTable(false);
+        setShowMessageTable(true);
+    }
+
+    const handleBackClick = () => {
+        setShowTopicTable(true);
+        setShowMessageTable(false);
     }
 
     return (
@@ -38,17 +55,31 @@ const KafkaTopic = () => {
             </section>
             <section className="content">
                 <div className="card">
-                    <div class="row">
+                    <div className="row">
                         <div class="col-12">
                             <div className="card-header">
                                 <h2 className="card-title">Topic</h2>
-                                {canCreateTopic && ( 
+                                {showTopicTable && canCreateTopic && ( 
                                     <a className="btn btn-success btn-sm float-right" onClick={() => setShowNewTopicModal(true)}>
                                         <i className="fas fa-users"></i> New
                                     </a>
                                 )}
                             </div>
                             <div className="card-body">
+                                {showTopicTable && 
+                                    <KafkaTopicTable
+                                        deletePermission={canDeleteTopic}
+                                        refreshTableStatus={refreshTable}
+                                        onRowClick={handleRowClick}
+                                    />
+                                }
+
+                                {showMessageTable && 
+                                    <KafkaTopicMessage 
+                                        topicName={selectedTopic} 
+                                        onBackClick={handleBackClick}
+                                        />
+                                }
                             </div>
                         </div>
                     </div>
@@ -57,7 +88,7 @@ const KafkaTopic = () => {
         <NewTopicModal 
             isOpen={showNewTopicModal}
             onClose={handleCloseModal}
-
+            onSubmit={() => setRefreshTable(!refreshTable)}
         />
         </Fragment>
         

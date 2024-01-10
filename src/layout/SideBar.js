@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import React, { Fragment, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
@@ -37,6 +38,17 @@ export default function SideBar() {
             verify: menuItem.verify,
             auth: menuItem.auth,
           };
+          if (menuItem.subMenu && menuItem.subMenu.length > 0) {
+            menuItem.subMenu.forEach(subMenuItem => {
+              newPermissions[module.moduleName][subMenuItem.menuName] = {
+                create: subMenuItem.create,
+                update: subMenuItem.update,
+                delete: subMenuItem.delete,
+                verify: subMenuItem.verify,
+                auth: subMenuItem.auth,
+              };
+            })
+          };
         });
       });
       console.log('Permissions:', newPermissions);
@@ -60,7 +72,7 @@ export default function SideBar() {
             $(this).data('treeview-init', true);
         }
     });
-}
+  }
   
   useEffect(() => {
     fetchData();
