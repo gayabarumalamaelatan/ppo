@@ -116,7 +116,7 @@ const FormInquiry = () => {
 
         if (filterColumn !== '' && filterOperation !== '' && filterValue !== '') {
             return axios
-                .get(`${FORM_SERVICE_LOAD_DATA}?f=${formCodePass}&page=${currentPage}&size=${pageSize}&filterBy=${filterColumn}&filterValue=${filterValue}&operation=${filterOperation}`, { headers })
+                .get(`${FORM_SERVICE_LOAD_DATA}?f=${formCodePass}&page=${currentPage}&size=${pageSize}&filterBy=${filterColumn}&filterValue=${filterValue}&operation=${filterOperation}&showAll=YES`, { headers })
                 .then((response) => {
                     setTimeout(() => {
                         setAccountData(response.data.data);
@@ -165,7 +165,7 @@ const FormInquiry = () => {
         console.log('formcode', formCode);
         console.log('codeFormPass', formCodePass);
         return axios
-            .get(`${FORM_SERVICE_LOAD_DATA}?f=${formCodePass}&page=${currentPage}&size=${pageSize}&filterBy=${filterBy}&filterValue=${value}&operation=${filterOperation}`, { headers })
+            .get(`${FORM_SERVICE_LOAD_DATA}?f=${formCodePass}&page=${currentPage}&size=${pageSize}&filterBy=${filterBy}&filterValue=${value}&operation=${filterOperation}&showAll=YES`, { headers })
             .then((response) => {
 
                 setTimeout(() => {

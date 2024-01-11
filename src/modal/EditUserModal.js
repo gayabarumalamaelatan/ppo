@@ -17,6 +17,7 @@ const EditFormModal = ({ showEdit, handleClose, username, handleSubmit, reloadDa
     email: '',
     phoneNumber: '',
     authBy: '',
+    group:[],
   };
 
   const [formData, setFormData] = useState(initialFormData);
@@ -34,7 +35,7 @@ const EditFormModal = ({ showEdit, handleClose, username, handleSubmit, reloadDa
         console.log(userData);
         // Update the form data with fetched user details
 
-        const groupName = userData.group.map(groupItem => groupItem.name);
+        const groupName = userData.group.map(groupItem => groupItem.id);
 
         console.log('group', groupName);
         setFormData({
