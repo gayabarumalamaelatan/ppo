@@ -157,6 +157,31 @@ export default function Content() {
           menuItem.verify ||
           menuItem.auth);
       return shouldRenderMenuItem ? (
+        <Fragment key={menuItem.url}>
+          <Route
+          key={menuItem.url}
+          path={menuItem.url}
+          element={menuItem.element ? parseElement(menuItem.element) : null}
+        />
+          {menuItem.subMenu && menuItem.subMenu.length > 0 && (
+          generateRoutesSubMenu(menuItem.subMenu)
+          )}
+        </Fragment>
+
+      ) : null;
+    });
+  };
+
+  const generateRoutesSubMenu = (menuItems) => {
+    return menuItems.map((menuItem) => {
+      const shouldRenderMenuItem =
+        menuItem.menuName &&
+        (menuItem.create ||
+          menuItem.update ||
+          menuItem.delete ||
+          menuItem.verify ||
+          menuItem.auth);
+      return shouldRenderMenuItem ? (
         <Route
           key={menuItem.url}
           path={menuItem.url}
