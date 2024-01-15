@@ -16,5 +16,6 @@ const approved = "APPROVED";
 const reject = "REJECT";
 const rework = "REWORK";
 const pending = "PENDING";
+console.log("Test token", token)
 
 module.exports = { pending,rework,verified,approved,reject,pendingApproval, active,pendingDelete,inactive,disabled,expired,lock,userLoggin,token,expiredPass,idUser };

@@ -1,6 +1,4 @@
-import React, { Fragment, Link,useState } from 'react';
-import Users from '../tables/Users';
-import RegisterModal from '../modal/RegistrasiModal';
+import React, { Fragment, useState } from 'react';
 import ModulesTable from '../tables/ModulesTable';
 import AddModuleModal from '../modal/administration/AddModuleModal';
 import {  useRecoilValue } from 'recoil';
@@ -62,7 +60,7 @@ const CoreModule = () => {
                 </div>
             </section>
       
-            <AddModuleModal show={showModal} handleClose={handleCloseModal} reloadData={() => setRefreshTable(!refreshTable)} />
+            <AddModuleModal isOpenModal={showModal} handleClose={handleCloseModal} reloadData={() => setRefreshTable(!refreshTable)} />
 
         </Fragment>
     );

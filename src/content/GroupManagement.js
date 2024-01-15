@@ -36,6 +36,7 @@ const GroupManagement = () => {
     const canDeleteGroup = permissions["Administration"]["Group Management"]["delete"];
 
     const headers = { Authorization: `Bearer ${token}` };
+    console.log("Read Token: ", headers);
 
     const loadGroupsData = () => {
         setIsLoadingTable(true);
