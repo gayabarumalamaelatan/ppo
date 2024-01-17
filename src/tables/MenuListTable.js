@@ -11,10 +11,11 @@ import { showSuccessToast, showErrorToast } from "../toast/toast";
 import UpdateMenuModal from "../modal/UpdateMenuModal";
 import { showDynamicSweetAlert } from "../toast/Swal";
 
-const { token, inactive } = require('../config/Constants');
+const { inactive, getToken } = require('../config/Constants');
 
 const MenuListTable = ({ editPermission, deletePermission, refreshTableStatus }) => {
     // API Call Variable
+    const token = getToken();
     const headers = { Authorization: `Bearer ${token}` };
 
     // Table Variable
@@ -70,6 +71,7 @@ const MenuListTable = ({ editPermission, deletePermission, refreshTableStatus })
         } catch (error) {
             console.error('Error fetching data:', error);
             setIsLoadingTable(false);
+            showDynamicSweetAlert('Error', error, 'error');
             setDataTable([]);
         }
     }

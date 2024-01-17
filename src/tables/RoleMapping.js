@@ -4,7 +4,7 @@ import { Modal, Button } from 'react-bootstrap';
 import { showSuccessToast, showErrorToast } from '../toast/toast';
 import { USER_SERVICE_MAPPING_ROLE_GROUP_ADD } from '../config/ConfigApi';
 import { showDynamicSweetAlert } from '../toast/Swal';
-const { token } = require('../config/Constants');
+const { getToken } = require('../config/Constants');
 
 const RoleMapping = ({ selectedGroup, allRoles, setMappedRoles, groupRoleData,editPermission }) => {
   console.log("groupRoleData",groupRoleData);
@@ -12,6 +12,7 @@ const RoleMapping = ({ selectedGroup, allRoles, setMappedRoles, groupRoleData,ed
   const [editMode, setEditMode] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showSubmitModal, setShowSubmitModal] = useState(false); // State for the modal
+  const token = getToken();
 
   console.log("selectedGroup",selectedGroup.id);
 
@@ -75,6 +76,7 @@ const RoleMapping = ({ selectedGroup, allRoles, setMappedRoles, groupRoleData,ed
     } catch (error) {
       console.error('Error sending roles for approval:', error);
       // showErrorToast('An error occurred while sending roles for approval.');
+      setIsLoading(false);
       showDynamicSweetAlert('Error', error, 'error');
     } finally {
       setShowSubmitModal(false);

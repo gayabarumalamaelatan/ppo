@@ -11,10 +11,9 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import EditModuleModal from '../modal/administration/EditModuleModal';
 import { showDynamicSweetAlert } from '../toast/Swal';
 
-
 // Ganti dengan URL API yang sesuai
 
-const { inactive, token, expiredPass } = require('../config/Constants');
+const { inactive, expiredPass, getToken } = require('../config/Constants');
 
 const ModulesTable = ({ editPermission, deletePermission, refreshTableStatus }) => {
     const [data, setData] = useState([]);
@@ -29,6 +28,7 @@ const ModulesTable = ({ editPermission, deletePermission, refreshTableStatus }) 
     const [isLoadingTable, setIsLoadingTable] = useState(true);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [moduleToDelete, setModuleToDelete] = useState(null);
+    const token = getToken();
 
     const handleEdit = (data) => {
         setSelectedModule(data);
@@ -72,7 +72,6 @@ const ModulesTable = ({ editPermission, deletePermission, refreshTableStatus }) 
             setTimeout(() => {
                 setShowDeleteModal(false);
                 setModuleToDelete(null);
-                //showSuccessToast('User has been deleted successfully.');
                 showDynamicSweetAlert('Success!', 'Module has been deleted successfully!.', 'success');
                 setIsLoading(false);
                 reloadData();
@@ -110,6 +109,7 @@ const ModulesTable = ({ editPermission, deletePermission, refreshTableStatus }) 
             }, 1000);
         } catch (error) {
             console.error('Error fetching data:', error);
+            showDynamicSweetAlert('Error!',error, 'error');
             setIsLoadingTable(false);
         }
     };

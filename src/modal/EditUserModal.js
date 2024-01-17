@@ -8,7 +8,7 @@ import { showDynamicSweetAlert } from '../toast/Swal';
 import { Button, Modal } from 'react-bootstrap';
 
 
-const { userLoggin, token } = require('../config/Constants');
+const { userLoggin, getToken } = require('../config/Constants');
 
 const EditFormModal = ({ showEdit, handleClose, username, handleSubmit, reloadData }) => {
   const initialFormData = {
@@ -23,6 +23,7 @@ const EditFormModal = ({ showEdit, handleClose, username, handleSubmit, reloadDa
   const [formData, setFormData] = useState(initialFormData);
   const [isLoading, setIsLoading] = useState(false);
   const [groupList, setGroupList] = useState([]);
+  const token = getToken();
 
   // Function to fetch user details for editing
   useEffect(() => {

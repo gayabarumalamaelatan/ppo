@@ -11,9 +11,10 @@ import {  useRecoilValue } from 'recoil';
 import { permissionsState } from '../store/Permission';
 import { showDynamicSweetAlert } from '../toast/Swal';
 
-const { token } = require('../config/Constants');
+const { getToken } = require('../config/Constants');
 
 const RoleManagement = () => {
+  const token = getToken();
   const headers = { Authorization: `Bearer ${token}` };
   const [selectedRole, setSelectedRole] = useState(null);
   const [mappingVisible, setMappingVisible] = useState(false);

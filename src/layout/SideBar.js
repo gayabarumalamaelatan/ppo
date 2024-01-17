@@ -10,6 +10,8 @@ import { useRecoilState } from 'recoil';
 import { permissionsState } from '../store/Permission'; 
 import { menusState }from '../store/RecoilFormTemplate';
 
+const { getToken } = require('../config/Constants');
+
 export default function SideBar() {
   const [menuData, setMenuData] = useState([]);
   const [permissions, setPermissions] = useRecoilState(permissionsState);
@@ -18,7 +20,7 @@ export default function SideBar() {
   const dispatch = useDispatch();
 
   const userId = sessionStorage.id;
-  const token = sessionStorage.getItem('accessToken');
+  const token = getToken();
   const headers = { Authorization: `Bearer ${token}` };
 
   const fetchData = async () => {

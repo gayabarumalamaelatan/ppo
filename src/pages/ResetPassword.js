@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import axios from 'axios'; // Import axios
 import { AUTH_SERVICE_CHANGE_PASSWORD, AUTH_SERVICE_RESET_PASSWORD } from '../config/ConfigApi';
-import { idUser, token } from '../config/Constants';
+import { getToken, idUser } from '../config/Constants';
 import { showSuccessToast } from '../toast/toast';
 
 // ... (previous imports)
@@ -18,6 +18,7 @@ function ResetPasswordPage() {
     message: '',
   });
   const navigate = useNavigate();
+  const token = getToken();
 
   useEffect(() => {
     // Add any necessary logic when the component mounts

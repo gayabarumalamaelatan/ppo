@@ -3,12 +3,13 @@ import { showDynamicSweetAlert } from "../toast/Swal";
 import axios from "axios";
 import { INTEGRATION_SERVICE_WSO_SOCKET } from "../config/ConfigApi";
 
-const { token } = require('../config/Constants');
+const { getToken } = require('../config/Constants');
 
 const SocketTable = ({ isLoadingTable }) => {
   const [inputValues, setInputValues] = useState({});
   const [executedItems, setExecutedItems] = useState([]);
 
+  const token = getToken();
   const headers = { Authorization: `Bearer ${token}` };
 
   const roles = [

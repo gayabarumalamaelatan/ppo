@@ -11,9 +11,7 @@ import {  useRecoilValue } from 'recoil';
 import { permissionsState } from '../store/Permission';
 import { showDynamicSweetAlert } from '../toast/Swal';
 
-const { userLoggin, token } = require('../config/Constants');
-
-
+const { userLoggin, getToken } = require('../config/Constants');
 
 const GroupManagement = () => {
     const [selectedGroup, setSelectedGroup] = useState(null);
@@ -27,6 +25,7 @@ const GroupManagement = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [isLoadingTable, setIsLoadingTable] = useState(false);
     const permissions = useRecoilValue(permissionsState);
+    const token = getToken();
 
     console.log('permissions ',permissions);
 

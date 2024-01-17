@@ -8,10 +8,11 @@ import { faSave, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { showErrorToast, showSuccessToast } from "../toast/toast";
 import { showDynamicSweetAlert } from "../toast/Swal";
 
-const { token, active } = require('../config/Constants');
+const { active, getToken } = require('../config/Constants');
 
 const NewMenuModal = ({isOpen, onClose, handleSubmit}) => {
     //API Call Variable
+    const token = getToken();
     const headers = { Authorization: `Bearer ${token}` };
 
     // Set Initial Form Data

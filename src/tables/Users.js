@@ -20,7 +20,7 @@ import { showDynamicSweetAlert } from '../toast/Swal';
 
 // Ganti dengan URL API yang sesuai
 
-const { pendingApproval, active, pendingDelete, inactive, disabled, expired, lock, userLoggin, token, expiredPass } = require('../config/Constants');
+const { pendingApproval, active, pendingDelete, inactive, disabled, expired, lock, userLoggin, expiredPass, getToken } = require('../config/Constants');
 
 const Users = ({ editPermission, delPermission, authPermission,refreshTableStatus }) => {
     const [data, setData] = useState([]);
@@ -46,6 +46,7 @@ const Users = ({ editPermission, delPermission, authPermission,refreshTableStatu
     const [responseMessage, setResponseMessage] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const token = getToken();
 
     const handleEditUser = (user) => {
 

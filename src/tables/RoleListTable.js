@@ -9,7 +9,7 @@ import axios from 'axios';
 import { showErrorToast, showSuccessToast } from '../toast/toast';
 import { showDynamicSweetAlert } from '../toast/Swal';
 
-const { token } = require('../config/Constants');
+const { getToken } = require('../config/Constants');
 
 const RoleListTable = ({ roles,  handleRoleSelect, handleLoadMapping, selectedGroup, isLoadingTable, refetchCallback,editPermission,deletePermission }) => {
 
@@ -17,7 +17,7 @@ const RoleListTable = ({ roles,  handleRoleSelect, handleLoadMapping, selectedGr
   const [editingRole, setEditingRole] = useState(null);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
+  const token = getToken();
   const headers = { Authorization: `Bearer ${token}` };
   
   const columns = React.useMemo(

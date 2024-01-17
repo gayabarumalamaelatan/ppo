@@ -6,10 +6,11 @@ import { Button, Form, Modal } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSave, faTimes } from "@fortawesome/free-solid-svg-icons";
 
-const { token, active } = require('../config/Constants');
+const { active, getToken } = require('../config/Constants');
 
 const NewTopicModal = ({isOpen, onClose, onSubmit}) => {
     // Const statement
+    const token = getToken();
     const headers = { Authorization: `Bearer ${token}` };
     const [isLoading, setIsLoading] = useState(false);
 

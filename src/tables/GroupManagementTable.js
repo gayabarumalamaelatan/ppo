@@ -9,7 +9,7 @@ import { showErrorToast, showSuccessToast } from '../toast/toast';
 import { async } from 'q';
 import { showDynamicSweetAlert } from '../toast/Swal';
 
-const { token, inactive } = require('../config/Constants');
+const { inactive, getToken } = require('../config/Constants');
 
 
 const GroupManagementTable = ({ groups, selectedGroup, handleGroupSelect, handleLoadMapping, isLoadingTable, refetchCallback, editPermission, deletePermission }) => {
@@ -17,6 +17,7 @@ const GroupManagementTable = ({ groups, selectedGroup, handleGroupSelect, handle
     const [editingGroup, setEditingGroup] = useState(null);
     const [deleteModalVisible, setDeleteModalVisible] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const token = getToken();
 
     console.log('editPer ',editPermission);
     console.log('deletePer ',deletePermission);
