@@ -75,6 +75,7 @@ const AuditTable = () => {
     const columns = React.useMemo(
         () => [
             { Header: 'Username', accessor: 'userName' },
+            { Header: 'Service', accessor: 'serviceName' },
             { Header: 'Activity', accessor: 'activity' },
             { Header: 'Created At', accessor: 'createdDate', Cell: ({ value }) => formatDate(value) || '-' },
         ],
