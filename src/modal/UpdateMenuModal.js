@@ -10,7 +10,7 @@ import { showDynamicSweetAlert } from "../toast/Swal";
 
 const { getToken, active } = require('../config/Constants');
 
-const UpdateMenuModal = ({isOpen, menu, handleSubmit, onClose}) => {
+const UpdateMenuModal = ({isOpenModal, menu, handleSubmit, handleClose}) => {
     //API Call Variable
     const token = getToken();
     const headers = { Authorization: `Bearer ${token}` };
@@ -106,7 +106,7 @@ const UpdateMenuModal = ({isOpen, menu, handleSubmit, onClose}) => {
             setTimeout(() => {
                 console.log('Response', response.data);
                 setIsLoading(false);
-                onClose();
+                handleClose();
                 // showSuccessToast('Menu updated successfully');
                 showDynamicSweetAlert('Success!', 'Menu updated successfully.', 'success');
                 handleSubmit();
@@ -123,17 +123,17 @@ const UpdateMenuModal = ({isOpen, menu, handleSubmit, onClose}) => {
     // Handle Modal
     const handleCloseModal = () => {
         setFormData(initialFormData);
-        onClose()
+        handleClose()
     }
 
     // API Call 
     useEffect(() => {
         fetchMenuData();
         fetchModuleInfo();
-    }, [menu, isOpen]);
+    }, [menu, isOpenModal]);
 
     return (
-        <Modal show={isOpen} onHide={handleCloseModal}>
+        <Modal show={isOpenModal} onHide={handleCloseModal}>
             <Modal.Header closeButton>
                 <Modal.Title>Edit Menu</Modal.Title>
             </Modal.Header>

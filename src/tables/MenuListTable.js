@@ -496,9 +496,9 @@ const MenuListTable = ({ editPermission, deletePermission, refreshTableStatus })
 
             {menuToUpdate &&
                 <UpdateMenuModal
-                    isOpen={showUpdateModal}
+                    isOpenModal={showUpdateModal}
                     menu={menuToUpdate}
-                    onClose={() => setShowUpdateModal(false)}
+                    handleClose={() => setShowUpdateModal(false)}
                     handleSubmit={() => fetchData()}
 
                 />

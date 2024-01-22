@@ -61,8 +61,8 @@ const MenuManagement = () => {
             </section>
 
             <NewMenuModal 
-                isOpen={showNewMenuModal}
-                onClose={handleCloseModal}
+                isOpenModal={showNewMenuModal}
+                handleClose={handleCloseModal}
                 handleSubmit={() => setRefreshTable(!refreshTable)}
             />
         </Fragment>
