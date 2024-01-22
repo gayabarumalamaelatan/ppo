@@ -7,15 +7,15 @@ import { faSave, faSyncAlt, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { showSuccessToast } from '../../toast/toast';
 import { showDynamicSweetAlert } from '../../toast/Swal';
 
-const FormModalAddNew = ({ isOpen, onClose, columns, menuName, formCode, reFormfetchCallback }) => {
+const FormModalAddNew = ({ isOpen, onClose, columns, menuName, formCode,tableNameDetail, reFormfetchCallback }) => {
   const headers = { Authorization: `Bearer ${token}` };
   const [lookupTableData, setLookupTableData] = useState({});
   const [formData, setFormData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
 
-  //console.log('formcode', formCode);
+  console.log('tableNameDetail', tableNameDetail);
 
-  console.log('columns modal', columns);
+  //console.log('columns modal', columns);
 
   const initialFormValues = {};
   columns.forEach((column) => {
@@ -61,8 +61,15 @@ const FormModalAddNew = ({ isOpen, onClose, columns, menuName, formCode, reFormf
   }, [columns]);
 
   const sendDataToAPI = (formData, successCallback) => {
+    let apiUrl;
+
+    console.log("table",tableNameDetail);
     // Define the API endpoint URL for your POST request
-    const apiUrl = `${FORM_SERVICE_INSERT_DATA}?f=${formCode}`;
+    if (tableNameDetail) {
+      apiUrl = `${FORM_SERVICE_INSERT_DATA}?t=${tableNameDetail}`;
+    } else {
+      apiUrl = `${FORM_SERVICE_INSERT_DATA}?f=${formCode}`;
+    }
 
     // Create the request options, including method, headers, and body
     const requestOptions = {
