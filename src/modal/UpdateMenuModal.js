@@ -8,7 +8,7 @@ import { faSave, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { showErrorToast, showSuccessToast } from "../toast/toast";
 import { showDynamicSweetAlert } from "../toast/Swal";
 
-const { getToken } = require('../config/Constants');
+const { getToken, active } = require('../config/Constants');
 
 const UpdateMenuModal = ({isOpen, menu, handleSubmit, onClose}) => {
     //API Call Variable
@@ -96,6 +96,7 @@ const UpdateMenuModal = ({isOpen, menu, handleSubmit, onClose}) => {
                 parentCode: formData.parentCode,
                 formId: formData.formId, 
                 parent: formData.parent,
+                status: active
             }
 
             setIsLoading(true);
