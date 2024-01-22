@@ -700,14 +700,14 @@ const FormTableMasterDetail = ({ idForm, tableNameDetail, columns, data, columnV
             {showDetailTable && (
                     <div className="card card-primary">
                         <div className="card-header">
-                            <h3 className="card-title"> Detail Data {primayKey} : {selectedRowData && selectedRowData.id}</h3>
+                            <h3 className="card-title"> Detail Data {primayKey} : {selectedRowData && selectedRowData[primayKey]}</h3>
                         </div>
                         <div className="card-body">
                             <FormDetail
                                 idForm={idForm}
                                 tableNameDetail={tableNameDetail}
                                 headers={headers}
-                                rowData={selectedRowData.id}
+                                rowData={selectedRowData[primayKey]}
                                 canCreate={canCreate}
                                 canAuth={canAuth}
                                 canVerify={canVerify}
