@@ -58,13 +58,14 @@ const FormMasterDetail = () => {
     };
 
     const fetchHeader = async () => {
-        console.log("Log Point: Fetching Header");
+        console.log("Log Point: Fetching Header for", idForm);
         try {
             // console.log('Exec Fetch Header');
             const response = await axios.get(`${FORM_SERVICE_LOAD_FIELD}?formId=${idForm}`, { headers });
             const formCode = response.data.coreFields.map(getFormcode => getFormcode.formCode);
             console.log('Get Form code', formCode);
             setGetFormCode(formCode[0]);
+            setCurrentPage(1);
 
             // setPrimaryKeyColumn(response.data[0].primaryKeyColumn);
             console.log('Response data : ', response.coreFields);
@@ -74,6 +75,7 @@ const FormMasterDetail = () => {
             //console.log('Key', primaryKeyColumnObj.primaryKeyColumn);
 
             setPrimaryKeyColumn(primaryKeyColumnObj.fieldName);
+            console.log("Log Point ",primaryKeyColumnObj.fieldName);
 
             // Check if coreFields is an array before mapping
             const transformedColumns = Array.isArray(response.data.coreFields)
@@ -113,7 +115,7 @@ const FormMasterDetail = () => {
                 setTableNameDetail('');
             }
             //console.log('getFormcode', getFormcode);
-            fetchData(formCode[0]);
+            // fetchData(formCode[0]);
             setColumnVisibility(
                 Object.fromEntries(columnsWithManualStatus.map(column => [column.accessor, true])));
         } catch (error) {
@@ -163,7 +165,7 @@ const FormMasterDetail = () => {
                         setAccountData(response.data.data);
                         setTotalItems(response.data.totalAllData);
                         setTotalPage(response.data.totalPage);
-                        console.log("Log Point: Get Data for Master Detail without Filter", response.data.data)
+                        console.log("Log Point: Get Data without Filter", response.data.data)
                         // if (totalPage != response.data.totalPage && currentPage === totalPage) {
                         //     setCurrentPage(response.data.totalPage);
                         //     console.log("Log Point ", response.data.totalPage);
@@ -204,10 +206,16 @@ const FormMasterDetail = () => {
     };
 
     useEffect(() => {
-        // console.log('Response get Data : ', accountData);
         fetchHeader();
-        fetchData(getFormcode);
-    }, [pageSize, currentPage, filterStatus, primaryKeyColumn, idForm ]);
+    }, [idForm])
+
+    useEffect(() => {
+        // console.log('Response get Data : ', accountData);
+        if (getFormcode) {
+            fetchData(getFormcode);
+        }
+        // fetchData(getFormcode);
+    }, [pageSize, currentPage, filterStatus, getFormcode ]);
 
     const [isCustomizeOpen, setIsCustomizeOpen] = useState(false);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
