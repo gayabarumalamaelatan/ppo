@@ -1,14 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { useTable } from 'react-table';
 import axios from 'axios';
-import { FORM_SERVICE_LOAD_DATA, FORM_SERVICE_LOAD_FIELD } from '../config/ConfigApi';
+import { FORM_SERVICE_DELETE_DATA, FORM_SERVICE_LOAD_DATA, FORM_SERVICE_LOAD_FIELD, FORM_SERVICE_REPORT_DATA_CSV, FORM_SERVICE_REPORT_DATA_EXCEL, FORM_SERVICE_VIEW_DATA } from '../config/ConfigApi';
 import { NumericFormat } from 'react-number-format';
-import { Pagination } from 'react-bootstrap';
+import { Modal, Pagination, Button } from 'react-bootstrap';
 import { FaAddressBook, FaCogs, FaDownload, FaEdit, FaEye, FaFilter, FaSyncAlt, FaTimes, FaTrash } from 'react-icons/fa';
 import FormModalAddNew from '../modal/form/FormModalAddNew';
-const FormDetail = ({ idForm,getFormCode, tableNameDetail, headers, rowData, keyCol,canCreate,canAuth,canVerify,editPermission,deletePermission }) => {
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTimes, faTrash } from '@fortawesome/free-solid-svg-icons';
+import * as XLSX from 'xlsx';
+import FormEdit from '../modal/form/FormEdit';
+
+
+const FormDetail = ({ idForm, getFormCode, tableNameDetail, headers, rowData, keyCol, canCreate, canAuth, canVerify, editPermission, deletePermission, menuName }) => {
     console.log("getFormcode", getFormCode);
     console.log("keyCOl", keyCol);
+    console.log("rowData", rowData);
     const [columns, setColumns] = useState([]);
     const [data, setData] = useState([]);
     const [currentPageDetail, setCurrentPageDetail] = useState(1);
@@ -24,6 +31,14 @@ const FormDetail = ({ idForm,getFormCode, tableNameDetail, headers, rowData, key
     const [isCustomizeOpen, setIsCustomizeOpen] = useState(false);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [showViewModal, setShowViewModal] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [dataToDelete, setDataToDelete] = useState(null);
+    const [dataToView, setDataToView] = useState(null);
+    const [dataToEdit, setDataToEdit] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+
 
     useEffect(() => {
         fetchHeaderDetail();
@@ -83,8 +98,13 @@ const FormDetail = ({ idForm,getFormCode, tableNameDetail, headers, rowData, key
         setCurrentPageDetail(1); // Kembalikan ke halaman pertama setelah mengubah ukuran halaman
     };
 
+    function formatKey(key) {
+        // Replace underscores with spaces and capitalize the first letter
+        return key.replace(/_/g, ' ').replace(/\b\w/g, firstChar => firstChar.toUpperCase());
+    }
+
     const handleShowModal = (action, dataSelected) => {
-        console.log('action ', action, 'data selected', dataSelected);
+        console.log('data selected', dataSelected);
         if (action === 'Delete') {
             setDataToDelete(dataSelected);
             setShowDeleteModal(true);
@@ -101,6 +121,52 @@ const FormDetail = ({ idForm,getFormCode, tableNameDetail, headers, rowData, key
         }
 
     }
+
+    const handleView = async (data) => {
+        console.log('data view ', data);
+        const firstValue = data.id;
+        // console.log('First object ', firstObject);
+        console.log('First Value ', firstValue);
+
+        try {
+            const response = await axios.get(`${FORM_SERVICE_VIEW_DATA}?t=${tableNameDetail}&column=id&value=${firstValue}`, { headers })
+            console.log('Data View successfully:', response.data);
+            setDataToView(response.data);
+            setShowDeleteModal(false);
+            setDataToDelete(null);
+        } catch (error) {
+            console.error('Error View data:', error);
+        }
+    }
+
+    const handleDelete = async (data) => {
+        setIsLoading(true);
+        console.log('data view ', data);
+        const columnKey = data.original.id;
+        console.log('column key ', columnKey);
+        try {
+            const response = await axios.delete(`${FORM_SERVICE_DELETE_DATA}?t=${tableNameDetail}&column=id&value=${columnKey}`, { headers })
+            //console.log('Data delete successfully:', response.data);
+            setTimeout(() => {
+                setShowDeleteModal(false);
+                setDataToDelete(null);
+                fetchDataDetail(tableNameDetail);
+                setIsLoading(false);
+            }, 1000);
+
+        } catch (error) {
+            console.error('Error deleting data:', error);
+        }
+    }
+
+    const handleActionClick = (action, rowData) => {
+        if (action === 'Delete') {
+            handleDelete(dataToDelete);
+        } else if (action === 'Edit') {
+            console.log('edit for data', rowData);
+        }
+    };
+
 
     const openModal = () => {
         setIsModalOpen(true);
@@ -130,7 +196,7 @@ const FormDetail = ({ idForm,getFormCode, tableNameDetail, headers, rowData, key
         const accessors = columns.map(column => column.accessor);
 
         // Transform accountData sesuai dengan accessors
-        const transformedData = accountData.map(item =>
+        const transformedData = data.map(item =>
             accessors.map(accessor => item[accessor])
         );
 
@@ -140,7 +206,7 @@ const FormDetail = ({ idForm,getFormCode, tableNameDetail, headers, rowData, key
         const ws = XLSX.utils.aoa_to_sheet(dataWithHeader);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
-        XLSX.writeFile(wb, `${menuName}-${getCurrentDateTime()}.xlsx`);
+        XLSX.writeFile(wb, `${menuName}_Detail-${getCurrentDateTime()}.xlsx`);
     };
 
     const exportToCSV = () => {
@@ -148,7 +214,7 @@ const FormDetail = ({ idForm,getFormCode, tableNameDetail, headers, rowData, key
         const accessors = columns.map(column => column.accessor);  // Mengambil accessors dari kolom
 
         // Transform accountData sesuai dengan accessors
-        const transformedData = accountData.map(item =>
+        const transformedData = data.map(item =>
             accessors.map(accessor => item[accessor])
         );
 
@@ -158,7 +224,7 @@ const FormDetail = ({ idForm,getFormCode, tableNameDetail, headers, rowData, key
         const ws = XLSX.utils.aoa_to_sheet(dataWithHeader);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Sheet1");  // Anda bisa mengganti "Sheet1" dengan nama yang Anda inginkan
-        XLSX.writeFile(wb, `${menuName}-${getCurrentDateTime()}.csv`, { bookType: 'csv' });  // Note the added bookType parameter for CSV
+        XLSX.writeFile(wb, `${menuName}_Detail-${getCurrentDateTime()}.csv`, { bookType: 'csv' });  // Note the added bookType parameter for CSV
     };
     const downloadFileCsv = async () => {
 
@@ -176,7 +242,7 @@ const FormDetail = ({ idForm,getFormCode, tableNameDetail, headers, rowData, key
             // Create a temporary anchor tag and set the href and download attributes
             const a = document.createElement('a');
             a.href = downloadUrl;
-            a.download = `${menuName}-${getCurrentDateTime()}.csv`; // You can set the default file name here
+            a.download = `${menuName}_Detail-${getCurrentDateTime()}.csv`; // You can set the default file name here
             document.body.appendChild(a);
 
             // Programmatically click the anchor tag
@@ -208,7 +274,7 @@ const FormDetail = ({ idForm,getFormCode, tableNameDetail, headers, rowData, key
             // Create a temporary anchor tag and set the href and download attributes
             const a = document.createElement('a');
             a.href = downloadUrl;
-            a.download = `${menuName}-${getCurrentDateTime()}.xls`; // You can set the default file name here
+            a.download = `${menuName}_Detail-${getCurrentDateTime()}.xls`; // You can set the default file name here
             document.body.appendChild(a);
 
             // Programmatically click the anchor tag
@@ -251,67 +317,35 @@ const FormDetail = ({ idForm,getFormCode, tableNameDetail, headers, rowData, key
 
                 <div className="col-md-8 d-flex justify-content-end align-items-center">
 
-                                <div className="btn-group ml-2">
-                                    {canCreate && (<button
-                                        type="button"
-                                        className="btn btn-success"
-                                        onClick={openModal}
-                                    >
-                                        <FaAddressBook /> Add New Detail
-                                    </button>
-                                    )}
-                                    <button
-                                        type="button"
-                                        className="btn btn-default"
-                                        onClick={() => fetchDataDetail(getFormcode)}
-                                    >
-                                        <FaSyncAlt />
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className={`btn ${isFilterOpen ? 'btn-secondary' : 'btn-default'}`}
-                                        onClick={handleFilterToggle}
-                                    >
-
-                                        {isFilterOpen ? (
-                                            <>
-                                                <span className="ml-1"><FaTimes />Close</span>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <FaFilter /> <span className="ml-1">Filter</span>
-                                            </>
-                                        )}
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className={`btn ${isCustomizeOpen ? 'btn-secondary' : 'btn-default'}`}
-                                        onClick={handleCustomizeToggle}
-                                    >
-
-                                        {isCustomizeOpen ? (
-                                            <>
-                                                <span className="ml-1"><FaTimes /> Close</span>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <FaCogs /> <span className="ml-1">Customize</span>
-                                            </>
-                                        )}
-                                    </button>
-                                    <div className="dropdown">
-                                        <button className="btn btn-default dropdown-toggle" type="button" id="downloadDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <FaDownload /> Download
-                                        </button>
-                                        <div className="dropdown-menu" aria-labelledby="downloadDropdown">
-                                            <button className="dropdown-item" onClick={exportToXLS}>Download XLS</button>
-                                            <button className="dropdown-item" onClick={exportToCSV}>Download CSV</button>
-                                            <button className="dropdown-item" onClick={downloadFileXls}>All Data XLS</button>
-                                            <button className="dropdown-item" onClick={downloadFileCsv}>All Data CSV</button>
-                                        </div>
-                                    </div>
-                                </div>
+                    <div className="btn-group ml-2">
+                        {canCreate && (<button
+                            type="button"
+                            className="btn btn-success"
+                            onClick={openModal}
+                        >
+                            <FaAddressBook /> Add New Detail
+                        </button>
+                        )}
+                        <button
+                            type="button"
+                            className="btn btn-default"
+                            onClick={() => fetchDataDetail(tableNameDetail)}
+                        >
+                            <FaSyncAlt />
+                        </button>
+                        <div className="dropdown">
+                            <button className="btn btn-default dropdown-toggle" type="button" id="downloadDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <FaDownload /> Download
+                            </button>
+                            <div className="dropdown-menu" aria-labelledby="downloadDropdown">
+                                <button className="dropdown-item" onClick={exportToXLS}>Download XLS</button>
+                                <button className="dropdown-item" onClick={exportToCSV}>Download CSV</button>
+                                <button className="dropdown-item" onClick={downloadFileXls}>All Data XLS</button>
+                                <button className="dropdown-item" onClick={downloadFileCsv}>All Data CSV</button>
                             </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <br />
             <div className="table-responsive">
@@ -325,7 +359,7 @@ const FormDetail = ({ idForm,getFormCode, tableNameDetail, headers, rowData, key
                                 <th>Action</th>
                             </tr>
                         ))}
-                        
+
                     </thead>
                     <tbody {...getTableBodyProps()}>
                         {isLoadingTableDetail ? (
@@ -386,7 +420,7 @@ const FormDetail = ({ idForm,getFormCode, tableNameDetail, headers, rowData, key
                                                     )}
 
                                                 </td>
-                                                
+
                                             );
                                         })}
                                         <td>
@@ -440,6 +474,11 @@ const FormDetail = ({ idForm,getFormCode, tableNameDetail, headers, rowData, key
                             })
                         )}
                     </tbody>
+                    {isLoading && (
+                        <div className="full-screen-overlay">
+                            <i className="fa-solid fa-spinner fa-spin full-screen-spinner"></i>
+                        </div>
+                    )}
                 </table>
 
                 <div className="d-flex justify-content-between align-items-center">
@@ -463,16 +502,88 @@ const FormDetail = ({ idForm,getFormCode, tableNameDetail, headers, rowData, key
                             disabled={currentPageDetail === pageCount}
                         />
                     </Pagination>
+                    <Modal show={showViewModal} onHide={() => setShowViewModal(false)} size="lg">
+                        <Modal.Header closeButton>
+                            <Modal.Title>View {menuName}</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            {/* Check if dataToView is not null before rendering */}
+                            {dataToView ? (
+                                <div className="container">
+                                    <div className="row">
+                                        {columns.map(column => (
+                                            <div key={column.accessor} className="col-md-4 mb-3">
+                                                <div className="d-flex align-items-center">
+                                                    <strong>{formatKey(column.accessor)}:</strong>
+                                                    <span className="ml-2 flex-fill">
+                                                        {column.displayFormat === 'CURRENCY' || column.displayFormat === 'DECIMAL' ? (
+                                                            <NumericFormat
+                                                                value={dataToView[column.accessor]}
+                                                                displayType={'text'}
+                                                                prefix={column.displayFormat === 'CURRENCY' ? '' : ''}
+                                                                thousandSeparator={true}
+                                                                decimalScale={2}
+                                                                fixedDecimalScale
+                                                            />
+                                                        ) : (
+                                                            dataToView[column.accessor]
+                                                        )}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            ) : (
+                                <p>No user data to display.</p>
+                            )}
+                        </Modal.Body>
+                        <Modal.Footer>
+                            <Button variant='secondary' onClick={() => setShowViewModal(false)}>
+                                <FontAwesomeIcon icon={faTimes} /> Close
+                            </Button>
+                        </Modal.Footer>
+                    </Modal>
+
+                    <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} >
+                        <Modal.Header closeButton>
+                            <Modal.Title>Confirmation</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            Are you sure you want to delete data: {dataToDelete && dataToDelete.index}
+                        </Modal.Body>
+                        <Modal.Footer>
+                            <Button variant='secondary' onClick={() => setShowDeleteModal(false)}>
+                                <FontAwesomeIcon icon={faTimes} />   Cancel
+                            </Button>
+                            <Button variant='danger' onClick={() => handleActionClick("Delete")}>
+                                <FontAwesomeIcon icon={faTrash} /> Delete
+                            </Button>
+                        </Modal.Footer>
+                    </Modal>
 
                     <FormModalAddNew
-                    isOpen={isModalOpen}
-                    onClose={closeModal}
-                    columns={columns}
-                    menuName={keyCol}
-                    formCode={getFormCode}
-                    tableNameDetail={tableNameDetail}
-                    reFormfetchCallback={() => fetchDataDetail(getFormcode)}
-                />
+                        isOpen={isModalOpen}
+                        onClose={closeModal}
+                        columns={columns}
+                        menuName={menuName}
+                        formCode={getFormCode}
+                        tableNameDetail={tableNameDetail}
+                        reFormfetchCallback={() => fetchDataDetail(tableNameDetail)}
+                    />
+
+                    <FormEdit
+                        isOpen={showEditModal}
+                        onClose={() => setShowEditModal(false)}
+                        columns={columns}
+                        menuName={menuName}
+                        getFormCode={getFormCode}
+                        tableNameDetail={tableNameDetail}
+                        data={dataToEdit}
+                        keyCol={keyCol}
+                        refecthCallBack={() => fetchDataDetail(tableNameDetail)}
+                        //isWorkflow={isWorkflow}
+                    />
                 </div>
             </div>
         </div>

@@ -591,7 +591,7 @@ const FormMasterDetail = () => {
                             formCode={getFormcode}
                             refecthCallBack={() => fetchData(getFormcode)}
                             menuName={menuName}
-                            primayKey={primaryKeyColumn}
+                            primaryKey={primaryKeyColumn}
                             isLoadingTable={isLoadingTable}
                             canCreate={canCreate}
                             editPermission={canUpdate}

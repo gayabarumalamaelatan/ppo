@@ -81,10 +81,10 @@ const FormTable = ({ columns, data, columnVisibility, pageSize, totalItems, curr
     const handleDelete = async (data) => {
         setIsLoading(true);
         console.log('data view ', data);
-        const columnKey = Object.keys(data.original)
-        console.log(columnKey[0], "Data to Delete: ", data.original[columnKey[0]]);
+        const columnKey = data.original.id;
+        console.log('column key ', columnKey);
         try {
-            const response = await axios.delete(`${FORM_SERVICE_DELETE_DATA}?f=${formCode}&column=${primayKey}&value=${data.original[columnKey[0]]}`, { headers })
+            const response = await axios.delete(`${FORM_SERVICE_DELETE_DATA}?f=${formCode}&column=id&value=${columnKey}`, { headers })
             //console.log('Data delete successfully:', response.data);
             setTimeout(() => {
                 setShowDeleteModal(false);

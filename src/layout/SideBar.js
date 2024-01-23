@@ -51,7 +51,7 @@ export default function SideBar() {
           };
         });
       });
-      console.log('Permissions:', newPermissions);
+      //console.log('Permissions:', newPermissions);
       const accessPermissions = JSON.stringify(newPermissions);
 
       setPermissions(newPermissions);
@@ -65,7 +65,7 @@ export default function SideBar() {
   };
 
   const loadTreeview = () => {
-    console.log("Load Treeview")
+   // console.log("Load Treeview")
     window.$('[data-widget="treeview"]').each(function () {
         if ($(this).data('treeview-init') === undefined) {
             $(this).Treeview('init');

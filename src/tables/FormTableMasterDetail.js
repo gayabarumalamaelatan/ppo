@@ -18,7 +18,7 @@ import Swal from 'sweetalert2';
 import { showDynamicSweetAlert } from '../toast/Swal';
 import FormDetail from './FormDetail';
 
-const FormTableMasterDetail = ({ idForm, tableNameDetail, columns, data, columnVisibility, pageSize, totalItems, currentPage, onPageChange, formCode, menuName, refecthCallBack, primayKey, isLoadingTable, canCreate, canVerify, canAuth, editPermission, deletePermission, isWorkflow }) => {
+const FormTableMasterDetail = ({ idForm, tableNameDetail, columns, data, columnVisibility, pageSize, totalItems, currentPage, onPageChange, formCode, menuName, refecthCallBack, primaryKey, isLoadingTable, canCreate, canVerify, canAuth, editPermission, deletePermission, isWorkflow }) => {
 
     //console.log('primary', primayKey);
     console.log('columnVis', columnVisibility);
@@ -89,10 +89,10 @@ const FormTableMasterDetail = ({ idForm, tableNameDetail, columns, data, columnV
     const handleDelete = async (data) => {
         setIsLoading(true);
         console.log('data view ', data);
-        const columnKey = Object.keys(data.original)
-        console.log(columnKey[0], "Data to Delete: ", data.original[columnKey[0]]);
+        const columnKey = data.original.id;
+        console.log('columnKey ', columnKey);
         try {
-            const response = await axios.delete(`${FORM_SERVICE_DELETE_DATA}?f=${formCode}&column=${primayKey}&value=${data.original[columnKey[0]]}`, { headers })
+            const response = await axios.delete(`${FORM_SERVICE_DELETE_DATA}?f=${formCode}&column=id&value=${columnKey}`, { headers })
             //console.log('Data delete successfully:', response.data);
             setTimeout(() => {
                 setShowDeleteModal(false);
@@ -114,7 +114,7 @@ const FormTableMasterDetail = ({ idForm, tableNameDetail, columns, data, columnV
         console.log('First Value ', firstValue);
 
         try {
-            const response = await axios.get(`${FORM_SERVICE_VIEW_DATA}?f=${formCode}&column=${primayKey}&value=${firstValue}`, { headers })
+            const response = await axios.get(`${FORM_SERVICE_VIEW_DATA}?f=${formCode}&column=${primaryKey}&value=${firstValue}`, { headers })
             console.log('Data View successfully:', response.data);
             setDataToView(response.data);
             setShowDeleteModal(false);
@@ -345,10 +345,11 @@ const FormTableMasterDetail = ({ idForm, tableNameDetail, columns, data, columnV
     const handleRowClick = async (rowIndex) => {
         try {
             // Get the original data of the selected row
+            console.log('primary key',primaryKey);
             const selectedRow = rows[rowIndex].original;
-            console.log(selectedRow);
+            console.log('selectedRowPrimaryKey', selectedRow[primaryKey]);
             setSelectedRows([rowIndex]);
-            setSelectedRowData(selectedRow);
+            setSelectedRowData(selectedRow[primaryKey]);
             if(tableNameDetail){
                 setShowDetailTable(true);
             }
@@ -356,6 +357,7 @@ const FormTableMasterDetail = ({ idForm, tableNameDetail, columns, data, columnV
             console.error('Error fetching data:', error);
         }
     };
+
     useEffect(() => {
         if (!tableNameDetail){
             setShowDetailTable(false);
@@ -690,7 +692,7 @@ const FormTableMasterDetail = ({ idForm, tableNameDetail, columns, data, columnV
                     menuName={menuName}
                     getFormCode={formCode}
                     data={dataToEdit}
-                    keyCol={primayKey}
+                    keyCol={primaryKey}
                     refecthCallBack={() => refecthCallBack()}
                     isWorkflow={isWorkflow}
                 />
@@ -700,22 +702,22 @@ const FormTableMasterDetail = ({ idForm, tableNameDetail, columns, data, columnV
             {showDetailTable && (
                     <div className="card card-primary">
                         <div className="card-header">
-                            <h3 className="card-title"> Detail Data {primayKey} : {selectedRowData && selectedRowData.id}</h3>
+                            <h3 className="card-title"> Detail Data {primaryKey} : {selectedRowData && selectedRowData}</h3>
                         </div>
                         <div className="card-body">
                             <FormDetail
                                 idForm={idForm}
                                 tableNameDetail={tableNameDetail}
                                 headers={headers}
-                                rowData={selectedRowData.id}
+                                rowData={selectedRowData}
                                 canCreate={canCreate}
                                 canAuth={canAuth}
                                 canVerify={canVerify}
                                 editPermission={editPermission}
                                 deletePermission={deletePermission}
-                                keyCol={primayKey}
+                                keyCol={primaryKey}
                                 getFormCode={formCode}
-
+                                menuName={menuName}
                             />
 
 
