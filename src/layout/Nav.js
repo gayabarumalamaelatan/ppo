@@ -5,8 +5,10 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import 'font-awesome/css/font-awesome.min.css';
-import { faSyncAlt, faTimes, faLock } from '@fortawesome/free-solid-svg-icons';
+import { faSyncAlt, faTimes, faLock, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
 
 const { getToken } = require('../config/Constants');
 
@@ -52,6 +54,23 @@ export default function Nav() {
     }
   };
 
+  const showLogoutConfirmation = () => {
+    Swal.fire({
+      title: 'Confirmation',
+      text: 'Are you sure you want to logout?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: 'warning',
+      cancelButtonColor: 'grey',
+      confirmButtonText: 'Logout',
+      cancelButtonText: 'Cancel',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        logoutUser();
+      }
+    });
+  };
+
   return (
     <Fragment>
 
@@ -67,33 +86,18 @@ export default function Nav() {
 
         <ul className="navbar-nav ml-auto">
           <li className="nav-item">
-            <a className="nav-link" href="#" role="button" onClick={() => setShowLogoutModal(true)}>
-              <i className="fa-solid fa-right-from-bracket"></i>
+          <a
+              className="nav-link"
+              href="#"
+              role="button"
+              onClick={showLogoutConfirmation}
+            >
+              <FontAwesomeIcon icon={faSignOutAlt} />
             </a>
           </li>
         </ul>
       </nav>
-      <Modal show={showLogoutModal} onHide={() => setShowLogoutModal(false)}>
-        <Modal.Header>
-          <Modal.Title>Confirmation</Modal.Title>
-          {/* Ganti ikon tombol close (X) */}
-          <Button variant="link default" onClick={handleCloseModal}>
-            <FontAwesomeIcon icon={faTimes} />
-          </Button>
-        </Modal.Header>
-        <Modal.Body>Are you sure you want to logout?</Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowLogoutModal(false)}>
-          <FontAwesomeIcon icon={faTimes} /> Cancel
-          </Button>
-          <Button variant="danger" onClick={() => {
-            logoutUser();
-            setShowLogoutModal(false);
-          }}>
-           <FontAwesomeIcon icon={faLock} /> Logout
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      
     </Fragment>
   )
 }

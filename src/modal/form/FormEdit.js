@@ -7,8 +7,12 @@ import { faSave, faSyncAlt, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { showSuccessToast } from '../../toast/toast';
 import axios from 'axios';
 import { showDynamicSweetAlert } from '../../toast/Swal';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import 'admin-lte/dist/css/adminlte.min.css'; // Import AdminLTE styles
+import 'admin-lte/plugins/fontawesome-free/css/all.min.css';
 
-const FormEdit = ({ isOpen, onClose, columns, menuName, getFormCode, data, keyCol, refecthCallBack,isWorkflow }) => {
+const FormEdit = ({ isOpen, onClose, columns, menuName, getFormCode, data, keyCol, refecthCallBack, isWorkflow, tableNameDetail }) => {
     const headers = { Authorization: `Bearer ${token}` };
     const [lookupTableData, setLookupTableData] = useState({});
     const [formDataEdit, setFormDataEdit] = useState({});
@@ -26,14 +30,21 @@ const FormEdit = ({ isOpen, onClose, columns, menuName, getFormCode, data, keyCo
     });
 
     const fetchData = async () => {
-        console.log('Fetch DATA',data);
+        console.log('Fetch DATA', data);
+
 
         if (data !== null) {
             console.log('masuk');
-            const firstValue = Object.values(data)[1];
+            const firstValue = data.id;
             const firstObject = columns[0].accessor;
+            let apiUrl;
+            if (tableNameDetail) {
+                apiUrl = `${FORM_SERVICE_VIEW_DATA}?t=${tableNameDetail}&column=id&value=${firstValue}`;
+            } else {
+                apiUrl = `${FORM_SERVICE_VIEW_DATA}?f=${getFormCode}&column=id&value=${firstValue}`;
+            }
             try {
-                const response = await axios.get(`${FORM_SERVICE_VIEW_DATA}?f=${getFormCode}&column=id&value=${firstValue}`, { headers })
+                const response = await axios.get(apiUrl, { headers })
                 console.log('Data Edit:', response.data);
                 setFormDataEdit(response.data);
 
@@ -87,7 +98,7 @@ const FormEdit = ({ isOpen, onClose, columns, menuName, getFormCode, data, keyCo
     }, [data]);
 
     const sendDataToAPI = (formDataEdit, successCallback) => {
-      
+
         console.log('Form Edit:', formDataEdit);
 
         const { status, id, ...formDataWithoutStatusAndId } = formDataEdit;
@@ -99,9 +110,14 @@ const FormEdit = ({ isOpen, onClose, columns, menuName, getFormCode, data, keyCo
             delete formDataEdit[keyCol];
         }
 
-
+        let apiUrl;
+        if(tableNameDetail){
+            apiUrl = `${FORM_SERVICE_UPDATE_DATA}?t=${tableNameDetail}&column=id&value=${firstValue}`
+        }else{
+            apiUrl = `${FORM_SERVICE_UPDATE_DATA}?f=${getFormCode}&column=id&value=${firstValue}`;
+        }
         // Define the API endpoint URL for your POST request
-        const apiUrl = `${FORM_SERVICE_UPDATE_DATA}?f=${getFormCode}&column=id&value=${firstValue}`;
+        
 
         // Create the request options, including method, headers, and body
         const requestOptions = {
@@ -129,21 +145,21 @@ const FormEdit = ({ isOpen, onClose, columns, menuName, getFormCode, data, keyCo
                     setTimeout(async () => {
                         try {
                             const requestData = {
-                                idTrx:formDataEdit.id,
+                                idTrx: formDataEdit.id,
                                 status: pending,
                                 // Other properties in your requestData object
                             };
                             const response = await axios.post(`${FORM_SERVICE_UPDATE_STATUS}?f=${getFormCode}`, requestData, { headers });
-                
+
                             // Call the successCallback function to close the modal
                             successCallback();
-                
+
                             // Show a success toast with the API response message
                             // showSuccessToast(data.message);
                             showDynamicSweetAlert('Success!', data.message, 'success');
-                
+
                             refecthCallBack();
-                
+
                             const resetData = { ...initialFormValues };
                             // Update the form data state to trigger a re-render with the reset values
                             setFormDataEdit(resetData);
@@ -158,17 +174,17 @@ const FormEdit = ({ isOpen, onClose, columns, menuName, getFormCode, data, keyCo
                 } else {
                     setTimeout(() => {
                         successCallback();
-                
-                            // Show a success toast with the API response message
-                            // showSuccessToast(data.message);
-                            showDynamicSweetAlert('Success!', data.message, 'success');
-                
-                            refecthCallBack();
-                
-                            const resetData = { ...initialFormValues };
-                            // Update the form data state to trigger a re-render with the reset values
-                            setFormDataEdit(resetData);
-                            setIsLoading(false);
+
+                        // Show a success toast with the API response message
+                        // showSuccessToast(data.message);
+                        showDynamicSweetAlert('Success!', data.message, 'success');
+
+                        refecthCallBack();
+
+                        const resetData = { ...initialFormValues };
+                        // Update the form data state to trigger a re-render with the reset values
+                        setFormDataEdit(resetData);
+                        setIsLoading(false);
                     }, 1000);
 
                 }
@@ -243,7 +259,28 @@ const FormEdit = ({ isOpen, onClose, columns, menuName, getFormCode, data, keyCo
                                                         </option>
                                                     ))}
                                             </Form.Control>
-                                        ) : (
+                                        ) : column.displayFormat === 'DATE' ? (
+                                            <div className="input-group date">
+                                              <DatePicker
+                                                className="form-control"
+                                                id={column.accessor}
+                                                name={column.accessor}
+                                                selected={formDataEdit[column.accessor] ? new Date(formDataEdit[column.accessor]) : null}
+                                                onChange={(date) =>
+                                                  setFormDataEdit({
+                                                    ...formDataEdit,
+                                                    [column.accessor]: date.toISOString().split('T')[0],
+                                                  })
+                                                }
+                                                dateFormat="yyyy-MM-dd" // Specify the desired date format
+                                              />
+                                              <div className="input-group-append">
+                                                <div className="input-group-text">
+                                                  <i className="fa fa-calendar"></i>
+                                                </div>
+                                              </div>
+                                            </div>
+                                        ):( 
                                             <Form.Control
                                                 type="text"
                                                 id={column.accessor}

@@ -9,20 +9,22 @@ import { Button, Modal } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { Fragment } from 'react';
-import { FORM_SERVICE_DELETE_DATA, FORM_SERVICE_UPDATE_STATUS, FORM_SERVICE_VIEW_DATA } from '../config/ConfigApi';
+import { FORM_SERVICE_DELETE_DATA, FORM_SERVICE_LOAD_DATA, FORM_SERVICE_LOAD_FIELD, FORM_SERVICE_UPDATE_STATUS, FORM_SERVICE_VIEW_DATA } from '../config/ConfigApi';
 import { approved, reject, rework, token, verified } from '../config/Constants';
 import axios from 'axios';
 import FormEdit from '../modal/form/FormEdit';
 import { NumericFormat } from 'react-number-format';
 import Swal from 'sweetalert2';
 import { showDynamicSweetAlert } from '../toast/Swal';
+import FormDetail from './FormDetail';
 
-const FormTable = ({ columns, data, columnVisibility, pageSize, totalItems, currentPage, onPageChange, formCode, menuName, refecthCallBack, primayKey, isLoadingTable, canCreate, canVerify, canAuth, editPermission, deletePermission, isWorkflow }) => {
+const FormTableMasterDetail = ({ idForm, tableNameDetail, columns, data, columnVisibility, pageSize, totalItems, currentPage, onPageChange, formCode, menuName, refecthCallBack, primaryKey, isLoadingTable, canCreate, canVerify, canAuth, editPermission, deletePermission, isWorkflow }) => {
 
     //console.log('primary', primayKey);
     console.log('columnVis', columnVisibility);
     console.log('columns', columns);
     console.log('Data', data);
+    //console.log('primaryKey', primayKey);
     // console.log('Current Page', currentPage)
     // console.log('Log Point: Inserting Header and Data to Table');
     const itemsPerPage = pageSize;
@@ -37,6 +39,11 @@ const FormTable = ({ columns, data, columnVisibility, pageSize, totalItems, curr
     const [isRejecting, setIsRejecting] = useState(false);
     const [isAuthing, setIsAuthing] = useState(false);
     const [isReworking, setIsReworking] = useState(false);
+    const [selectedRow, setSelectedRow] = useState(null);
+    const [detailData, setDetailData] = useState([]);
+    const [showDetailTable, setShowDetailTable] = useState(false);
+    const [headerDataDetail, setHeaderDataDetail] = useState(null);
+    const [rowDataDetail, setRowDataDetail] = useState(null);
     const {
         getTableProps,
         getTableBodyProps,
@@ -60,6 +67,7 @@ const FormTable = ({ columns, data, columnVisibility, pageSize, totalItems, curr
         setHiddenColumns(columns.filter(column => !columnVisibility[column.accessor]).map(column => column.accessor));
     }, [columnVisibility]);
 
+
     const handlePageChange = newPage => {
         // setCurrentPage(newPage);
         onPageChange(newPage);
@@ -82,7 +90,7 @@ const FormTable = ({ columns, data, columnVisibility, pageSize, totalItems, curr
         setIsLoading(true);
         console.log('data view ', data);
         const columnKey = data.original.id;
-        console.log('column key ', columnKey);
+        console.log('columnKey ', columnKey);
         try {
             const response = await axios.delete(`${FORM_SERVICE_DELETE_DATA}?f=${formCode}&column=id&value=${columnKey}`, { headers })
             //console.log('Data delete successfully:', response.data);
@@ -106,7 +114,7 @@ const FormTable = ({ columns, data, columnVisibility, pageSize, totalItems, curr
         console.log('First Value ', firstValue);
 
         try {
-            const response = await axios.get(`${FORM_SERVICE_VIEW_DATA}?f=${formCode}&column=${primayKey}&value=${firstValue}`, { headers })
+            const response = await axios.get(`${FORM_SERVICE_VIEW_DATA}?f=${formCode}&column=${primaryKey}&value=${firstValue}`, { headers })
             console.log('Data View successfully:', response.data);
             setDataToView(response.data);
             setShowDeleteModal(false);
@@ -334,6 +342,34 @@ const FormTable = ({ columns, data, columnVisibility, pageSize, totalItems, curr
         });
     };
 
+    const handleRowClick = async (rowIndex) => {
+        try {
+            // Get the original data of the selected row
+            console.log('primary key',primaryKey);
+            const selectedRow = rows[rowIndex].original;
+            console.log('selectedRowPrimaryKey', selectedRow[primaryKey]);
+            setSelectedRows([rowIndex]);
+            setSelectedRowData(selectedRow[primaryKey]);
+            if(tableNameDetail){
+                setShowDetailTable(true);
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
+
+    useEffect(() => {
+        if (!tableNameDetail){
+            setShowDetailTable(false);
+        }
+        setSelectedRowData(null);
+        setSelectedRows([]);
+    }, [tableNameDetail]);
+
+    const [selectedRowData, setSelectedRowData] = useState(null);
+
+
+
     return (
 
 
@@ -384,7 +420,7 @@ const FormTable = ({ columns, data, columnVisibility, pageSize, totalItems, curr
 
             <div className="table-responsive">
 
-                <table className="table table-bordered" {...getTableProps()}>
+                <table className="table table-bordered table-hover" {...getTableProps()} >
                     <thead>
                         {headerGroups.map(headerGroup => (
                             <tr {...headerGroup.getHeaderGroupProps()}>
@@ -438,10 +474,15 @@ const FormTable = ({ columns, data, columnVisibility, pageSize, totalItems, curr
                             </tr>
                         ) : (
                             rows.map((row, rowIndex) => {
-                                prepareRow(row);
                                 const isSelected = selectedRows.includes(rowIndex);
+                                prepareRow(row);
                                 return (
-                                    <tr key={row.id} {...row.getRowProps()} className={isSelected ? 'selected-row' : ''}>
+                                    <tr
+                                        key={row.id}
+                                        onClick={() => handleRowClick(rowIndex)}
+                                        className={selectedRows.includes(rowIndex) ? 'table-success' : ''}
+                                        style={{ cursor: 'pointer' }}
+                                    >
                                         {isWorkflow && (
                                             <td>
                                                 <input
@@ -556,6 +597,8 @@ const FormTable = ({ columns, data, columnVisibility, pageSize, totalItems, curr
                         </div>
                     )}
                 </table>
+
+
                 <div className="d-flex justify-content-between align-items-center">
                     <div>Showing {startIndex + 1} to {endIndex} of {totalItems} entries</div>
                     <Pagination>
@@ -578,82 +621,111 @@ const FormTable = ({ columns, data, columnVisibility, pageSize, totalItems, curr
                         />
                     </Pagination>
                 </div>
-            </div>
-            <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} >
-                <Modal.Header closeButton>
-                    <Modal.Title>Confirmation</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    Are you sure you want to delete data: {dataToDelete && dataToDelete.index}
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant='secondary' onClick={() => setShowDeleteModal(false)}>
-                        <FontAwesomeIcon icon={faTimes} />   Cancel
-                    </Button>
-                    <Button variant='danger' onClick={() => handleActionClick("Delete")}>
-                        <FontAwesomeIcon icon={faTrash} /> Delete
-                    </Button>
-                </Modal.Footer>
-            </Modal>
 
 
-            <Modal show={showViewModal} onHide={() => setShowViewModal(false)} size="lg">
-                <Modal.Header closeButton>
-                    <Modal.Title>View {menuName}</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    {/* Check if dataToView is not null before rendering */}
-                    {dataToView ? (
-                        <div className="container">
-                            <div className="row">
-                                {columns.map(column => (
-                                    <div key={column.accessor} className="col-md-4 mb-3">
-                                        <div className="d-flex align-items-center">
-                                            <strong>{formatKey(column.accessor)}:</strong>
-                                            <span className="ml-2 flex-fill">
-                                                {column.displayFormat === 'CURRENCY' || column.displayFormat === 'DECIMAL' ? (
-                                                    <NumericFormat
-                                                        value={dataToView[column.accessor]}
-                                                        displayType={'text'}
-                                                        prefix={column.displayFormat === 'CURRENCY' ? '' : ''}
-                                                        thousandSeparator={true}
-                                                        decimalScale={2}
-                                                        fixedDecimalScale
-                                                    />
-                                                ) : (
-                                                    dataToView[column.accessor]
-                                                )}
-                                            </span>
+
+                <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} >
+                    <Modal.Header closeButton>
+                        <Modal.Title>Confirmation</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        Are you sure you want to delete data: {dataToDelete && dataToDelete.index}
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant='secondary' onClick={() => setShowDeleteModal(false)}>
+                            <FontAwesomeIcon icon={faTimes} />   Cancel
+                        </Button>
+                        <Button variant='danger' onClick={() => handleActionClick("Delete")}>
+                            <FontAwesomeIcon icon={faTrash} /> Delete
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+
+
+                <Modal show={showViewModal} onHide={() => setShowViewModal(false)} size="lg">
+                    <Modal.Header closeButton>
+                        <Modal.Title>View {menuName}</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        {/* Check if dataToView is not null before rendering */}
+                        {dataToView ? (
+                            <div className="container">
+                                <div className="row">
+                                    {columns.map(column => (
+                                        <div key={column.accessor} className="col-md-4 mb-3">
+                                            <div className="d-flex align-items-center">
+                                                <strong>{formatKey(column.accessor)}:</strong>
+                                                <span className="ml-2 flex-fill">
+                                                    {column.displayFormat === 'CURRENCY' || column.displayFormat === 'DECIMAL' ? (
+                                                        <NumericFormat
+                                                            value={dataToView[column.accessor]}
+                                                            displayType={'text'}
+                                                            prefix={column.displayFormat === 'CURRENCY' ? '' : ''}
+                                                            thousandSeparator={true}
+                                                            decimalScale={2}
+                                                            fixedDecimalScale
+                                                        />
+                                                    ) : (
+                                                        dataToView[column.accessor]
+                                                    )}
+                                                </span>
+                                            </div>
                                         </div>
-                                    </div>
-                                ))}
+                                    ))}
+                                </div>
                             </div>
+                        ) : (
+                            <p>No user data to display.</p>
+                        )}
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant='secondary' onClick={() => setShowViewModal(false)}>
+                            <FontAwesomeIcon icon={faTimes} /> Close
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+
+                <FormEdit
+                    isOpen={showEditModal}
+                    onClose={() => setShowEditModal(false)}
+                    columns={columns}
+                    menuName={menuName}
+                    getFormCode={formCode}
+                    data={dataToEdit}
+                    keyCol={primaryKey}
+                    refecthCallBack={() => refecthCallBack()}
+                    isWorkflow={isWorkflow}
+                />
+                
+            </div>
+                        <hr></hr>
+            {showDetailTable && (
+                    <div className="card card-primary">
+                        <div className="card-header">
+                            <h3 className="card-title"> Detail Data {primaryKey} : {selectedRowData && selectedRowData}</h3>
                         </div>
-                    ) : (
-                        <p>No user data to display.</p>
-                    )}
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant='secondary' onClick={() => setShowViewModal(false)}>
-                        <FontAwesomeIcon icon={faTimes} /> Close
-                    </Button>
-                </Modal.Footer>
-            </Modal>
+                        <div className="card-body">
+                            <FormDetail
+                                idForm={idForm}
+                                tableNameDetail={tableNameDetail}
+                                headers={headers}
+                                rowData={selectedRowData}
+                                canCreate={canCreate}
+                                canAuth={canAuth}
+                                canVerify={canVerify}
+                                editPermission={editPermission}
+                                deletePermission={deletePermission}
+                                keyCol={primaryKey}
+                                getFormCode={formCode}
+                                menuName={menuName}
+                            />
 
-            <FormEdit
-                isOpen={showEditModal}
-                onClose={() => setShowEditModal(false)}
-                columns={columns}
-                menuName={menuName}
-                getFormCode={formCode}
-                data={dataToEdit}
-                keyCol={primayKey}
-                refecthCallBack={() => refecthCallBack()}
-                isWorkflow={isWorkflow}
-            />
 
+                        </div>
+                    </div>
+                )}
         </Fragment>
     );
 };
 
-export default FormTable;
+export default FormTableMasterDetail;

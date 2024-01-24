@@ -6,14 +6,18 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSave, faSyncAlt, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { showSuccessToast } from '../../toast/toast';
 import { showDynamicSweetAlert } from '../../toast/Swal';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import 'admin-lte/dist/css/adminlte.min.css'; // Import AdminLTE styles
+import 'admin-lte/plugins/fontawesome-free/css/all.min.css';
 
-const FormModalAddNew = ({ isOpen, onClose, columns, menuName, formCode, reFormfetchCallback }) => {
+const FormModalAddNew = ({ isOpen, onClose, columns, menuName, formCode, tableNameDetail, reFormfetchCallback }) => {
   const headers = { Authorization: `Bearer ${token}` };
   const [lookupTableData, setLookupTableData] = useState({});
   const [formData, setFormData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
 
-  //console.log('formcode', formCode);
+  console.log('tableNameDetail', tableNameDetail);
 
   console.log('columns modal', columns);
 
@@ -61,8 +65,16 @@ const FormModalAddNew = ({ isOpen, onClose, columns, menuName, formCode, reFormf
   }, [columns]);
 
   const sendDataToAPI = (formData, successCallback) => {
+    let apiUrl;
+
+    console.log("table", tableNameDetail);
+    console.log("formCode", formCode);
     // Define the API endpoint URL for your POST request
-    const apiUrl = `${FORM_SERVICE_INSERT_DATA}?f=${formCode}`;
+    if (tableNameDetail) {
+      apiUrl = `${FORM_SERVICE_INSERT_DATA}?f=${formCode}&t=${tableNameDetail}&isDetail=true`;
+    } else {
+      apiUrl = `${FORM_SERVICE_INSERT_DATA}?f=${formCode}`;
+    }
 
     // Create the request options, including method, headers, and body
     const requestOptions = {
@@ -145,7 +157,7 @@ const FormModalAddNew = ({ isOpen, onClose, columns, menuName, formCode, reFormf
         <Form>
           <div className="row">
             {columns
-              .filter((column) => column.Header !== 'Status') // Filter out the 'Status' column
+              .filter((column) => column.Header !== 'Status')
               .map((column) => (
                 <div className="col-md-6" key={column.accessor}>
                   <Form.Group>
@@ -172,8 +184,28 @@ const FormModalAddNew = ({ isOpen, onClose, columns, menuName, formCode, reFormf
                               {Object.values(option)[2]}
                             </option>
                           ))}
-
                       </Form.Control>
+                    ) : column.displayFormat === 'DATE' ? (
+                      <div className="input-group date">
+                        <DatePicker
+                          className="form-control"
+                          id={column.accessor}
+                          name={column.accessor}
+                          selected={formData[column.accessor] ? new Date(formData[column.accessor]) : null}
+                          onChange={(date) =>
+                            setFormData({
+                              ...formData,
+                              [column.accessor]: date.toISOString().split('T')[0],
+                            })
+                          }
+                          dateFormat="yyyy-MM-dd" // Specify the desired date format
+                        />
+                        <div className="input-group-append">
+                          <div className="input-group-text">
+                            <i className="fa fa-calendar"></i>
+                          </div>
+                        </div>
+                      </div>
                     ) : (
                       <Form.Control
                         type="text"
@@ -192,6 +224,7 @@ const FormModalAddNew = ({ isOpen, onClose, columns, menuName, formCode, reFormf
                 </div>
               ))}
           </div>
+
         </Form>
 
         {isLoading && (
