@@ -6,7 +6,6 @@ import { useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { FORM_SERVICE_DELETE_DATA, FORM_SERVICE_LOAD_DATA, FORM_SERVICE_LOAD_FIELD, FORM_SERVICE_REPORT_DATA, FORM_SERVICE_REPORT_DATA_CSV, FORM_SERVICE_REPORT_DATA_EXCEL } from '../config/ConfigApi';
 import axios from 'axios';
-import { disabled, token } from '../config/Constants';
 import FormModalAddNew from '../modal/form/FormModalAddNew';
 import { assertPipelinePrimaryTopicReference } from '@babel/types';
 import { useRecoilValue } from 'recoil';
@@ -21,6 +20,7 @@ const FormMasterDetail = () => {
     const [columns, setColumns] = useState([]);
     const [formCode, setFormCode] = useState('');
     const [accountData, setAccountData] = useState([]);
+    const token = sessionStorage.getItem('accessToken');
     const headers = { Authorization: `Bearer ${token}` };
     const [getFormcode, setGetFormCode] = useState();
     const [isModalOpen, setIsModalOpen] = useState(false);

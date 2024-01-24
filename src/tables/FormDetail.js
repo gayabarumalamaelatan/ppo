@@ -226,72 +226,7 @@ const FormDetail = ({ idForm, getFormCode, tableNameDetail, headers, rowData, ke
         XLSX.utils.book_append_sheet(wb, ws, "Sheet1");  // Anda bisa mengganti "Sheet1" dengan nama yang Anda inginkan
         XLSX.writeFile(wb, `${menuName}_Detail-${getCurrentDateTime()}.csv`, { bookType: 'csv' });  // Note the added bookType parameter for CSV
     };
-    const downloadFileCsv = async () => {
-
-
-        try {
-            // Fetch the data from the API
-            const response = await axios.get(`${FORM_SERVICE_REPORT_DATA_CSV}?formId=${idForm}`, {
-                headers: headers,
-                responseType: 'blob', // Set the response type to 'blob' to handle binary data
-            });
-
-            // Create a URL for the Blob
-            const downloadUrl = window.URL.createObjectURL(new Blob([response.data]));
-
-            // Create a temporary anchor tag and set the href and download attributes
-            const a = document.createElement('a');
-            a.href = downloadUrl;
-            a.download = `${menuName}_Detail-${getCurrentDateTime()}.csv`; // You can set the default file name here
-            document.body.appendChild(a);
-
-            // Programmatically click the anchor tag
-            a.click();
-
-            // Remove the anchor tag after downloading
-            document.body.removeChild(a);
-
-            // Revoke the Blob URL after the download
-            window.URL.revokeObjectURL(downloadUrl);
-        } catch (error) {
-            console.error('Error while downloading file: ', error);
-        }
-    };
-
-    const downloadFileXls = async () => {
-
-
-        try {
-            // Fetch the data from the API
-            const response = await axios.get(`${FORM_SERVICE_REPORT_DATA_EXCEL}?formId=${idForm}`, {
-                headers: headers,
-                responseType: 'blob', // Set the response type to 'blob' to handle binary data
-            });
-
-            // Create a URL for the Blob
-            const downloadUrl = window.URL.createObjectURL(new Blob([response.data]));
-
-            // Create a temporary anchor tag and set the href and download attributes
-            const a = document.createElement('a');
-            a.href = downloadUrl;
-            a.download = `${menuName}_Detail-${getCurrentDateTime()}.xls`; // You can set the default file name here
-            document.body.appendChild(a);
-
-            // Programmatically click the anchor tag
-            a.click();
-
-            // Remove the anchor tag after downloading
-            document.body.removeChild(a);
-
-            // Revoke the Blob URL after the download
-            window.URL.revokeObjectURL(downloadUrl);
-        } catch (error) {
-            console.error('Error while downloading file: ', error);
-        }
-    };
-
-
-
+   
     return (
         <div >
             <div className="row align-items-center">
@@ -340,8 +275,8 @@ const FormDetail = ({ idForm, getFormCode, tableNameDetail, headers, rowData, ke
                             <div className="dropdown-menu" aria-labelledby="downloadDropdown">
                                 <button className="dropdown-item" onClick={exportToXLS}>Download XLS</button>
                                 <button className="dropdown-item" onClick={exportToCSV}>Download CSV</button>
-                                <button className="dropdown-item" onClick={downloadFileXls}>All Data XLS</button>
-                                <button className="dropdown-item" onClick={downloadFileCsv}>All Data CSV</button>
+                                {/* <button className="dropdown-item" onClick={downloadFileXls}>All Data XLS</button>
+                                <button className="dropdown-item" onClick={downloadFileCsv}>All Data CSV</button> */}
                             </div>
                         </div>
                     </div>

@@ -7,6 +7,10 @@ import { faSave, faSyncAlt, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { showSuccessToast } from '../../toast/toast';
 import axios from 'axios';
 import { showDynamicSweetAlert } from '../../toast/Swal';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import 'admin-lte/dist/css/adminlte.min.css'; // Import AdminLTE styles
+import 'admin-lte/plugins/fontawesome-free/css/all.min.css';
 
 const FormEdit = ({ isOpen, onClose, columns, menuName, getFormCode, data, keyCol, refecthCallBack, isWorkflow, tableNameDetail }) => {
     const headers = { Authorization: `Bearer ${token}` };
@@ -255,7 +259,28 @@ const FormEdit = ({ isOpen, onClose, columns, menuName, getFormCode, data, keyCo
                                                         </option>
                                                     ))}
                                             </Form.Control>
-                                        ) : (
+                                        ) : column.displayFormat === 'DATE' ? (
+                                            <div className="input-group date">
+                                              <DatePicker
+                                                className="form-control"
+                                                id={column.accessor}
+                                                name={column.accessor}
+                                                selected={formDataEdit[column.accessor] ? new Date(formDataEdit[column.accessor]) : null}
+                                                onChange={(date) =>
+                                                  setFormDataEdit({
+                                                    ...formDataEdit,
+                                                    [column.accessor]: date.toISOString().split('T')[0],
+                                                  })
+                                                }
+                                                dateFormat="yyyy-MM-dd" // Specify the desired date format
+                                              />
+                                              <div className="input-group-append">
+                                                <div className="input-group-text">
+                                                  <i className="fa fa-calendar"></i>
+                                                </div>
+                                              </div>
+                                            </div>
+                                        ):( 
                                             <Form.Control
                                                 type="text"
                                                 id={column.accessor}
