@@ -9,7 +9,8 @@ const expired = "EXPIRED";
 const lock = "LOCKED";
 const expiredPass = "EXPIRED_PASSWORD";
 const userLoggin = sessionStorage.getItem('userId');
-const token = sessionStorage.getItem('accessToken');
+const getToken = () => sessionStorage.getItem('accessToken');
+const token = sessionStorage.getItem('accessToken')
 const idUser = sessionStorage.getItem('id');
 const verified = "VERIFIED";
 const approved = "APPROVED";
@@ -17,4 +18,4 @@ const reject = "REJECT";
 const rework = "REWORK";
 const pending = "PENDING";
 
-module.exports = { pending,rework,verified,approved,reject,pendingApproval, active,pendingDelete,inactive,disabled,expired,lock,userLoggin,token,expiredPass,idUser };
+module.exports = { pending,rework,verified,approved,reject,pendingApproval, active,pendingDelete,inactive,disabled,expired,lock,userLoggin,token,expiredPass,idUser, getToken };

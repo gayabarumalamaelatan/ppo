@@ -7,14 +7,14 @@ import { useEffect } from "react";
 import { Button, Modal, ModalBody, Pagination } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes, faTrash } from "@fortawesome/free-solid-svg-icons";
-import { showSuccessToast, showErrorToast } from "../toast/toast";
 import UpdateMenuModal from "../modal/UpdateMenuModal";
 import { showDynamicSweetAlert } from "../toast/Swal";
 
-const { token, inactive } = require('../config/Constants');
+const { inactive, getToken } = require('../config/Constants');
 
 const MenuListTable = ({ editPermission, deletePermission, refreshTableStatus }) => {
     // API Call Variable
+    const token = getToken();
     const headers = { Authorization: `Bearer ${token}` };
 
     // Table Variable
@@ -70,6 +70,7 @@ const MenuListTable = ({ editPermission, deletePermission, refreshTableStatus })
         } catch (error) {
             console.error('Error fetching data:', error);
             setIsLoadingTable(false);
+            showDynamicSweetAlert('Error', error, 'error');
             setDataTable([]);
         }
     }
@@ -180,7 +181,6 @@ const MenuListTable = ({ editPermission, deletePermission, refreshTableStatus })
             setMenuToDelete(null);
             // Tambahkan logika 
 
-            // showSuccessToast('Menu has been deleted successfully.');
             showDynamicSweetAlert('Success', 'Menu has been deleted successfully.', 'success');
             // Tambahkan logika lain sesuai dengan kebutuhan Anda setelah penguncian pengguna berhasil
             fetchData();
@@ -494,9 +494,9 @@ const MenuListTable = ({ editPermission, deletePermission, refreshTableStatus })
 
             {menuToUpdate &&
                 <UpdateMenuModal
-                    isOpen={showUpdateModal}
+                    isOpenModal={showUpdateModal}
                     menu={menuToUpdate}
-                    onClose={() => setShowUpdateModal(false)}
+                    handleClose={() => setShowUpdateModal(false)}
                     handleSubmit={() => fetchData()}
 
                 />

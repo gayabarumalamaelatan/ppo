@@ -1,99 +1,73 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useTable } from 'react-table';
-import ConfigApi, { USER_SERVICE_AUDITTRAIL_LIST } from '../config/ConfigApi';
+import { USER_SERVICE_AUDITTRAIL_LIST } from '../config/ConfigApi';
 import { Fragment } from 'react';
 import { Pagination } from 'react-bootstrap';
 
-// Ganti dengan URL API yang sesuai
-const token = sessionStorage.getItem('accessToken');  // Ganti dengan token autentikasi yang sesuai
-const pageSize = 5;
+const { getToken } = require('../config/Constants');
 
 const AuditTable = () => {
     const [data, setData] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
     const [totalItem, setTotalItem] = useState(0);
     const [currentPage, setCurrentPage] = useState(0);
     const [pageSize, setPageSize] = useState(5);
-    // const [searchUsername, setSearchUsername] = useState('');
-    // const [searchActivity, setSearchActivity] = useState('');
     const [searchFilter, setSearchFilter] = useState('username');
     const [searchFilterValue, setSearchFilterValue] = useState('');
-    const [selectedRows, setSelectedRows] = useState([]);
+    const [isLoadingTable, setIsLoadingTable] = useState(true);
+    const token = getToken();
 
     const empyData = ([])
 
     useEffect(() => {
         fetchData();
-    }, [currentPage, pageSize, searchFilterValue]); // Panggil fetchData setiap kali currentPage berubah
+    }, [currentPage, pageSize, searchFilterValue, searchFilter]); // Panggil fetchData setiap kali currentPage berubah
 
     const fetchData = async () => {
         try {
+            setIsLoadingTable(true);
             const headers = { Authorization: `Bearer ${token}` };
             // const response = await axios.get(`${ConfigApi.apiUrl}audittrail/list?size=${pageSize}&page=${currentPage}`, { headers })
             
             if (searchFilter === 'username' ){
                 const response = await axios.get(`${USER_SERVICE_AUDITTRAIL_LIST}?size=${pageSize}&page=${currentPage}&username=${searchFilterValue}`, { headers });
-                    setData(response.data.auditTrails);
-                    setTotalItem(response.data.totalItems);
-                    setIsLoading(false);
+                    setTimeout(() => {
+                        setData(response.data.auditTrails);
+                        setTotalItem(response.data.totalItems);
+                        setIsLoadingTable(false);
+                    }, 1000)
             } else if (searchFilter === 'activity'){
                 const response2 = await axios.get(`${USER_SERVICE_AUDITTRAIL_LIST}?size=${pageSize}&page=${currentPage}&activity=${searchFilterValue}`, { headers });
-                    setData(response2.data.auditTrails);
-                    setTotalItem(response2.data.totalItems);
-                    setIsLoading(false);
+                    setTimeout(() => {
+                        setData(response2.data.auditTrails);
+                        setTotalItem(response2.data.totalItems);
+                        setIsLoadingTable(false);
+                    }, 1000)
             } else if (searchFilter === 'createdDate'){
                 const response4 = await axios.get(`${USER_SERVICE_AUDITTRAIL_LIST}?size=${pageSize}&page=${currentPage}&date=${searchFilterValue}`, { headers });
+                setTimeout(() => {
                     setData(response4.data.auditTrails);
                     setTotalItem(response4.data.totalItems);
-                    setIsLoading(false);
+                    setIsLoadingTable(false);
+                }, 1000)
             } else {
                 const response3 = await axios.get(`${USER_SERVICE_AUDITTRAIL_LIST}?size=${pageSize}&page=${currentPage}`, { headers });
-                    console.log(searchFilter)
+                setTimeout(() => {
                     setData(response3.data.auditTrails);
                     setTotalItem(response3.data.totalItems);
-                    setIsLoading(false);
+                    setIsLoadingTable(false);
+                }, 1000)
             }
-            // switch(searchFilter) {
-            //     case 'username':
-            //         const response = await axios.get(`${ConfigApi.apiUrl}audittrail/list?size=${pageSize}&page=${currentPage}&username=${searchFilterValue}`, { headers });
-            //         setData(response.data.auditTrails);
-            //         setTotalItems(response.data.totalItems);
-            //         setIsLoading(false);
-            //         break;
-            //     case 'activity':
-            //         const response2 = await axios.get(`${ConfigApi.apiUrl}audittrail/list?size=${pageSize}&page=${currentPage}&activity=${searchFilterValue}`, { headers });
-            //         setData(response2.data.auditTrails);
-            //         setTotalItems(response2.data.totalItems);
-            //         setIsLoading(false);
-            //         break;
-            //     case 'createdDate':
-            //         const response4 = await axios.get(`${ConfigApi.apiUrl}audittrail/list?size=${pageSize}&page=${currentPage}&createdAt=${searchFilterValue}`, { headers });
-            //         setData(response4.data.auditTrails);
-            //         setTotalItems(response4.data.totalItems);
-            //         setIsLoading(false);
-            //         break;
-            //     default:
-            //         const response3 = await axios.get(`${ConfigApi.apiUrl}audittrail/list?size=${pageSize}&page=${currentPage}`, { headers });
-            //         setData(response3.data.auditTrails);
-            //         setTotalItems(response3.data.totalItems);
-            //         setIsLoading(false);
-            //         break;
-            // }
 
         } catch (error) {
             console.error('Error fetching data:', error);
             setData(empyData);
             setTotalItem(empyData);
-            setIsLoading(false);
+            setIsLoadingTable(false);
         }
     };
 
     const formatDate = (dateString) => {
-        // const options = { year: "numeric", month: "numeric", day: "numeric", hour: 'numeric', minute: 'numeric', second: 'numeric',  hour12: false}
-        // return new Date(dateString).toLocaleDateString("en-AU", options).replaceAll("/", "-")
-        // var date = new Date(dateString);
-        // var dateFormatted = date.getFullYear() + "-" + date.get;Month() + "-" + date.getDate();
         var date2 = String(dateString).replaceAll("T", " ");
         return date2
       }
@@ -101,6 +75,7 @@ const AuditTable = () => {
     const columns = React.useMemo(
         () => [
             { Header: 'Username', accessor: 'userName' },
+            { Header: 'Service', accessor: 'serviceName' },
             { Header: 'Activity', accessor: 'activity' },
             { Header: 'Created At', accessor: 'createdDate', Cell: ({ value }) => formatDate(value) || '-' },
         ],
@@ -144,8 +119,6 @@ const AuditTable = () => {
         fetchData();
     };
 
-
-    
     // Pagination Logic
 
     const renderPaginationItems = () => {
@@ -212,13 +185,8 @@ const AuditTable = () => {
         return paginationItems;
       };
 
-    if (isLoading) {
-        return <div>Loading...</div>;
-    }
-
     return (
         <Fragment>
-            <div className="container mt-4">
                 <div className="row mb-3">
                     <div className="col-6">
                         <form className="form-inline">
@@ -281,23 +249,28 @@ const AuditTable = () => {
                             ))}
                         </thead>
                         <tbody {...getTableBodyProps()}>
-                            {rows.map(row => {
-                                prepareRow(row);
-                                return (
-                                    <tr {...row.getRowProps()}>
-                                        {/* <td>
-                                            <input
-                                                type="checkbox"
-                                                checked={selectedRows[row.index] || false}
-                                                onChange={() => handleRowCheckboxChange(row.index)}
-                                            />
-                                        </td> */}
-                                        {row.cells.map(cell => (
-                                            <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
-                                        ))}
-                                    </tr>
-                                );
-                            })}
+                            {isLoadingTable ? (
+                                <tr>
+                                    <td colSpan={headerGroups[0].headers.length}> {/* Replace 'numberOfColumns' with the actual number of columns */}
+                                        <div className="text-center">
+                                            <div className="spinner-border text-primary" role="status">
+                                                <span className="sr-only">Loading...</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ) : (
+                                rows.map(row => {
+                                    prepareRow(row);
+                                    return (
+                                        <tr {...row.getRowProps()}>
+                                            {row.cells.map(cell => (
+                                                <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                                            ))}
+                                        </tr>
+                                    );
+                                })
+                            )}
                         </tbody>
                     </table>
                 </div>
@@ -325,7 +298,6 @@ const AuditTable = () => {
                       />
                   </Pagination>
               </div>
-            </div>
         </Fragment>
     );
 };

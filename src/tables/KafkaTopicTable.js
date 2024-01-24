@@ -7,10 +7,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { showDynamicSweetAlert } from "../toast/Swal";
 
-const { token } = require('../config/Constants');
+const { getToken } = require('../config/Constants');
 
 const KafkaTopicTable = ({deletePermission, refreshTableStatus, onRowClick}) => {
     // API Call Variable
+    const token = getToken();
     const headers = { Authorization: `Bearer ${token}` };
 
     // Kosmetik Variable

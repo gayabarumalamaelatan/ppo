@@ -1,26 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useTable } from 'react-table';
-import { AUTH_SERVICE_FORCE_RESET_PASSWORD, AUTH_SERVICE_LIST_USER, AUTH_SERVICE_UPDATE_STATUS_USER, MENU_SERVICE_ALL_MODULES, MENU_SERVICE_CORE_MODULE, MENU_SERVICE_CORE_MODULE_DELETE, MENU_SERVICE_CORE_MODULE_GET_ID, MENU_SERVICE_DELETE_MENU, USER_SERVICE_USER_DETAIL } from '../config/ConfigApi';
+import { MENU_SERVICE_CORE_MODULE, MENU_SERVICE_CORE_MODULE_DELETE, MENU_SERVICE_CORE_MODULE_GET_ID } from '../config/ConfigApi';
 import { Fragment } from 'react';
-import { Modal, Button, ButtonGroup, Form, Pagination } from 'react-bootstrap';
-import { showSuccessToast, showErrorToast } from '../toast/toast';
-import { faCheck, faSpinner, faTrash, faUnlock } from '@fortawesome/free-solid-svg-icons';
+import { Modal, Button, Pagination } from 'react-bootstrap';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import 'font-awesome/css/font-awesome.min.css';
-import { faSyncAlt, faTimes, faLock } from '@fortawesome/free-solid-svg-icons';
-
-
-import { flushSync } from 'react-dom';
-import EditUserModal from '../modal/EditUserModal';
-import { isTokenExpired, refreshToken } from '../config/TokenHandler';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import EditModuleModal from '../modal/administration/EditModuleModal';
 import { showDynamicSweetAlert } from '../toast/Swal';
 
-
 // Ganti dengan URL API yang sesuai
 
-const { pendingApproval, active, pendingDelete, inactive, disabled, expired, lock, userLoggin, token, expiredPass } = require('../config/Constants');
+const { inactive, expiredPass, getToken } = require('../config/Constants');
 
 const ModulesTable = ({ editPermission, deletePermission, refreshTableStatus }) => {
     const [data, setData] = useState([]);
@@ -35,18 +28,12 @@ const ModulesTable = ({ editPermission, deletePermission, refreshTableStatus }) 
     const [isLoadingTable, setIsLoadingTable] = useState(true);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [moduleToDelete, setModuleToDelete] = useState(null);
+    const token = getToken();
 
     const handleEdit = (data) => {
         setSelectedModule(data);
         setShowEditModal(true);
     };
-
-    const handleFormSubmit = (data) => {
-        console.log('Form data:', data);
-        setShowEditModal(false);
-    };
-
-
 
     const handleView = async (data) => {
         try {
@@ -85,7 +72,6 @@ const ModulesTable = ({ editPermission, deletePermission, refreshTableStatus }) 
             setTimeout(() => {
                 setShowDeleteModal(false);
                 setModuleToDelete(null);
-                //showSuccessToast('User has been deleted successfully.');
                 showDynamicSweetAlert('Success!', 'Module has been deleted successfully!.', 'success');
                 setIsLoading(false);
                 reloadData();
@@ -123,6 +109,7 @@ const ModulesTable = ({ editPermission, deletePermission, refreshTableStatus }) 
             }, 1000);
         } catch (error) {
             console.error('Error fetching data:', error);
+            showDynamicSweetAlert('Error!',error, 'error');
             setIsLoadingTable(false);
         }
     };
@@ -277,7 +264,6 @@ const ModulesTable = ({ editPermission, deletePermission, refreshTableStatus }) 
     };
     return (
         <Fragment>
-            <div className="container mt-4">
                 <div className="row mb-3">
                     <div className="col-3">
                         <form className="form-inline">
@@ -379,7 +365,7 @@ const ModulesTable = ({ editPermission, deletePermission, refreshTableStatus }) 
                     </Pagination>
                 </div>
 
-            </div>
+            
 
             <Modal show={showModal} onHide={closeModal} size="lg">
                 <Modal.Header closeButton>
@@ -520,7 +506,7 @@ const ModulesTable = ({ editPermission, deletePermission, refreshTableStatus }) 
 
             {selectedModule && (
                 <EditModuleModal
-                    showEdit={showEditModal}
+                    isOpenModal={showEditModal}
                     handleClose={handleCloseModal}
                     dataModule={selectedModule}
                     //refecthCallBack={() => fetchData()}

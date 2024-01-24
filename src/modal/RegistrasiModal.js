@@ -7,12 +7,10 @@ import { hasMinimumLength, hasNumber, hasUppercaseLetter, hasSpecialCharacter } 
 import { showDynamicSweetAlert } from '../toast/Swal';
 import { Button, Modal } from 'react-bootstrap';
 
-const { userLoggin, token } = require('../config/Constants');
-
-
-
+const { userLoggin, getToken } = require('../config/Constants');
 
 const RegisterModal = ({ show, handleClose, reloadData }) => {
+  const token = getToken();
   const [isLoading, setIsLoading] = useState(false);
   const headers = { Authorization: `Bearer ${token}` };
   const initialUserData = {

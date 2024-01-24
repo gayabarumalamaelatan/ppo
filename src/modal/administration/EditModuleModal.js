@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { MENU_SERVICE_CORE_MODULE_ADD, MENU_SERVICE_CORE_MODULE_GET_ID, MENU_SERVICE_CORE_MODULE_UPDATE, MENU_SERVICE_CORE_MODULE_update } from '../../config/ConfigApi';
-import { showSuccessToast, showErrorToast } from '../../toast/toast';
+import { MENU_SERVICE_CORE_MODULE_GET_ID, MENU_SERVICE_CORE_MODULE_UPDATE } from '../../config/ConfigApi';
 import { Button, Form, Modal } from 'react-bootstrap';
 import { useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSave, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { showDynamicSweetAlert } from '../../toast/Swal';
 
-const { userLoggin, token, active } = require('../../config/Constants');
+const { token, active } = require('../../config/Constants');
 
-const EditModuleModal = ({ showEdit, handleClose, dataModule ,reloadData}) => {
+const EditModuleModal = ({ isOpenModal, handleClose, dataModule ,reloadData}) => {
 
    // console.log('module',dataModule);
     const [isLoading, setIsLoading] = useState(false);
@@ -57,10 +56,10 @@ const EditModuleModal = ({ showEdit, handleClose, dataModule ,reloadData}) => {
         };
 
         // Fetch user details when the modal is opened
-        if (showEdit) {
+        if (isOpenModal) {
             fetchUserData();
         }
-    }, [showEdit]);
+    }, [isOpenModal]);
 
     const handleSubmit = async () => {
         //console.log('prifix ',formData.modulePrefix);
@@ -88,7 +87,6 @@ const EditModuleModal = ({ showEdit, handleClose, dataModule ,reloadData}) => {
                 setIsLoading(false);
                 showDynamicSweetAlert('Success!', 'Module Edited successfully!', 'success');
                 reloadData();
-                reloadData();
             }, 1000);
 
             
@@ -98,15 +96,9 @@ const EditModuleModal = ({ showEdit, handleClose, dataModule ,reloadData}) => {
             showDynamicSweetAlert('Error!',error, 'error');
         }
     };
-
-    const handleReset = () => {
-        setFormData(initialUserData);
-    };
-
     
-
     return (
-        <Modal show={showEdit} onHide={handleClose}>
+        <Modal show={isOpenModal} onHide={handleClose}>
             <Modal.Header closeButton>
                 <Modal.Title>Edit Core Modules</Modal.Title>
             </Modal.Header>

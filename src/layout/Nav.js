@@ -8,16 +8,15 @@ import 'font-awesome/css/font-awesome.min.css';
 import { faSyncAlt, faTimes, faLock } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 
-const { token } = require('../config/Constants');
+const { getToken } = require('../config/Constants');
 
 
 export default function Nav() {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [responseMessage, setResponseMessage] = useState('');
   const navigate = useNavigate();
-
+  const token = getToken();
   
-
   const handleLogout = () => {
     // Remove login information from session
     sessionStorage.clear();

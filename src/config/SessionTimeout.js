@@ -4,9 +4,10 @@ import { AUTH_SERVICE_BASE, AUTH_SERVICE_LOGOUT } from "./ConfigApi";
 import { refreshToken } from "./TokenHandler";
 import { showDynamicSweetAlert } from "../toast/Swal";
 
-const { token } = require('../config/Constants');
+const { getToken } = require('../config/Constants');
 
 function SessionTimeout() {
+  const token = getToken();
   let timeout; // Declare the timeout variable outside of useEffect
 
 //   const logoutUser = async () => {

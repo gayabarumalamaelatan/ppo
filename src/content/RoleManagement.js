@@ -4,16 +4,16 @@ import 'admin-lte/dist/css/adminlte.min.css';
 import RoleListTable from '../tables/RoleListTable';
 import MenuAccessTable from '../tables/MenuAccessTable';
 import axios from 'axios';
-import {  USER_SERVICE_ADD_ROLE, USER_SERVICE_ROLE_LIST, MENU_SERVICE_MENU_PERMISSION, MENU_SERVICE_ALL_MENU, MENU_SERVICE_LIST_MENU_PERMISSION } from '../config/ConfigApi';
+import {  USER_SERVICE_ADD_ROLE, USER_SERVICE_ROLE_LIST, MENU_SERVICE_MENU_PERMISSION, MENU_SERVICE_LIST_MENU_PERMISSION } from '../config/ConfigApi';
 import { Modal } from 'react-bootstrap';
-import { showErrorToast, showSuccessToast } from '../toast/toast';
 import {  useRecoilValue } from 'recoil';
 import { permissionsState } from '../store/Permission';
 import { showDynamicSweetAlert } from '../toast/Swal';
 
-const { token } = require('../config/Constants');
+const { getToken } = require('../config/Constants');
 
 const RoleManagement = () => {
+  const token = getToken();
   const headers = { Authorization: `Bearer ${token}` };
   const [selectedRole, setSelectedRole] = useState(null);
   const [mappingVisible, setMappingVisible] = useState(false);
@@ -87,7 +87,6 @@ const RoleManagement = () => {
         setIsLoading(false); // Stop loading
         fetchData();
         showDynamicSweetAlert('Success!', 'Success Create New Role, Please Edit New Permission.', 'success');
-        //showSuccessToast('Success Create New Role, Please Edit New Permission');
     }, 1000);
 
     } catch (error) {

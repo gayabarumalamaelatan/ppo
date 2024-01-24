@@ -3,17 +3,14 @@ import axios from 'axios';
 import GroupManagementTable from '../tables/GroupManagementTable';
 import RoleMapping from '../tables/RoleMapping';
 import { Modal, Button } from 'react-bootstrap';
-import { showSuccessToast, showErrorToast } from '../toast/toast';
 import { USER_SERVICE_GROUP_ADD, USER_SERVICE_GROUP_LIST, USER_SERVICE_GROUP_ROLE_LIST, USER_SERVICE_ROLE_LIST } from '../config/ConfigApi';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSave, faTimes, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faSave, faTimes } from '@fortawesome/free-solid-svg-icons';
 import {  useRecoilValue } from 'recoil';
 import { permissionsState } from '../store/Permission';
 import { showDynamicSweetAlert } from '../toast/Swal';
 
-const { userLoggin, token } = require('../config/Constants');
-
-
+const { userLoggin, getToken } = require('../config/Constants');
 
 const GroupManagement = () => {
     const [selectedGroup, setSelectedGroup] = useState(null);
@@ -27,6 +24,7 @@ const GroupManagement = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [isLoadingTable, setIsLoadingTable] = useState(false);
     const permissions = useRecoilValue(permissionsState);
+    const token = getToken();
 
     console.log('permissions ',permissions);
 
@@ -36,6 +34,7 @@ const GroupManagement = () => {
     const canDeleteGroup = permissions["Administration"]["Group Management"]["delete"];
 
     const headers = { Authorization: `Bearer ${token}` };
+    console.log("Read Token: ", headers);
 
     const loadGroupsData = () => {
         setIsLoadingTable(true);
@@ -126,7 +125,6 @@ const GroupManagement = () => {
                 setIsLoading(false); // Stop loading
                 loadGroupsData();
                 showDynamicSweetAlert('Success!', 'Group created successfully.', 'success');
-                //showSuccessToast('Group created successfully.');
             }, 1000);
         } catch (error) {
             console.error('Error creating group:', error);

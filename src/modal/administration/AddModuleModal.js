@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { MENU_SERVICE_CORE_MODULE_ADD } from '../../config/ConfigApi';
-import { showSuccessToast, showErrorToast } from '../../toast/toast';
 import { Button, Form, Modal } from 'react-bootstrap';
+import { showDynamicSweetAlert } from '../../toast/Swal';
 
-const { userLoggin, token, active } = require('../../config/Constants');
+const { token, active } = require('../../config/Constants');
 
-const AddModuleModal = ({ show, handleClose, reloadData}) => {
+const AddModuleModal = ({ isOpenModal, handleClose, reloadData}) => {
     const [isLoading, setIsLoading] = useState(false);
     const headers = { Authorization: `Bearer ${token}` };
     const initialUserData = {
@@ -49,7 +49,6 @@ const AddModuleModal = ({ show, handleClose, reloadData}) => {
                 handleClose();
                 setFormData(initialUserData);
                 setIsLoading(false);
-                //showSuccessToast('Module Update successfully!');
                 showDynamicSweetAlert('Success!', 'Module Inserted successfully!', 'success');
                 reloadData();
             }, 1000);
@@ -66,7 +65,7 @@ const AddModuleModal = ({ show, handleClose, reloadData}) => {
     };
 
     return (
-        <Modal show={show} onHide={handleClose}>
+        <Modal show={isOpenModal} onHide={handleClose}>
             <Modal.Header closeButton>
                 <Modal.Title>Create New Entry</Modal.Title>
             </Modal.Header>

@@ -7,14 +7,14 @@ import { MENU_SERVICE_MODULES } from '../config/ConfigApi';
 import FormTemplate from '../content/FormTemplate';
 import PageDown from '../content/PageDown';
 import { DynamicLazyImport } from '../config/DynamicImport';
-
+const { getToken } = require('../config/Constants');
 
 // const BifastDashboard = React.lazy(() => import("gritbifastmodule/BifastDashboard"));
 //  const Smendpoint = React.lazy(() => import("gritsmartinmodule/SmartinEndpoints"));
 
 export default function Content() {
   const userId = sessionStorage.id;
-  const token = sessionStorage.getItem('accessToken');
+  const token = getToken();
   const headers = { Authorization: `Bearer ${token}` };
   // const [routeRoles, setRouteRoles] = useState([]);
   const [menuData, setMenuData] = useState([]);

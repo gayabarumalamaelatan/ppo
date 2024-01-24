@@ -2,16 +2,16 @@ import React,{ useState } from "react";
 import { MENU_SERVICE_ALL_MODULES, MENU_SERVICE_DETAIL, MENU_SERVICE_UPDATE_MENU } from "../config/ConfigApi";
 import axios from "axios";
 import { useEffect } from "react";
-import { Button, Form, Modal, Row } from "react-bootstrap";
+import { Button, Form, Modal } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSave, faTimes } from "@fortawesome/free-solid-svg-icons";
-import { showErrorToast, showSuccessToast } from "../toast/toast";
 import { showDynamicSweetAlert } from "../toast/Swal";
 
-const { token } = require('../config/Constants');
+const { getToken, active } = require('../config/Constants');
 
-const UpdateMenuModal = ({isOpen, menu, handleSubmit, onClose}) => {
+const UpdateMenuModal = ({isOpenModal, menu, handleSubmit, handleClose}) => {
     //API Call Variable
+    const token = getToken();
     const headers = { Authorization: `Bearer ${token}` };
 
     // Set Initial Form Data
@@ -28,7 +28,6 @@ const UpdateMenuModal = ({isOpen, menu, handleSubmit, onClose}) => {
     }
     const [formData, setFormData] = useState(initialFormData);
     const [moduleInfo, setModuleInfo] = useState(null);
-    const [formInfo, setFormInfo] = useState(null);
 
     // Kosmetik
     const [isLoading, setIsLoading] = useState(false);
@@ -95,6 +94,7 @@ const UpdateMenuModal = ({isOpen, menu, handleSubmit, onClose}) => {
                 parentCode: formData.parentCode,
                 formId: formData.formId, 
                 parent: formData.parent,
+                status: active
             }
 
             setIsLoading(true);
@@ -104,7 +104,7 @@ const UpdateMenuModal = ({isOpen, menu, handleSubmit, onClose}) => {
             setTimeout(() => {
                 console.log('Response', response.data);
                 setIsLoading(false);
-                onClose();
+                handleClose();
                 // showSuccessToast('Menu updated successfully');
                 showDynamicSweetAlert('Success!', 'Menu updated successfully.', 'success');
                 handleSubmit();
@@ -121,17 +121,17 @@ const UpdateMenuModal = ({isOpen, menu, handleSubmit, onClose}) => {
     // Handle Modal
     const handleCloseModal = () => {
         setFormData(initialFormData);
-        onClose()
+        handleClose()
     }
 
     // API Call 
     useEffect(() => {
         fetchMenuData();
         fetchModuleInfo();
-    }, [menu, isOpen]);
+    }, [menu, isOpenModal]);
 
     return (
-        <Modal show={isOpen} onHide={handleCloseModal}>
+        <Modal show={isOpenModal} onHide={handleCloseModal}>
             <Modal.Header closeButton>
                 <Modal.Title>Edit Menu</Modal.Title>
             </Modal.Header>

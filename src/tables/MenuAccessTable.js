@@ -7,9 +7,10 @@ import { MENU_SERVICE_ADD_MENU_PERMISSION } from '../config/ConfigApi';
 import { Modal, Button } from 'react-bootstrap';
 import { showDynamicSweetAlert } from '../toast/Swal';
 
-const { token } = require('../config/Constants');
+const { getToken } = require('../config/Constants');
 
 const MenuAccessTable = ({ selectedRole, menuRolesData, menuData,editPermission }) => {
+  const token = getToken();
   const headers = { Authorization: `Bearer ${token}` };
   const [editMode, setEditMode] = useState(false);
   const [updatedMenuRolesData, setUpdatedMenuRolesData] = useState([]);

@@ -4,10 +4,11 @@ import { INTEGRATION_SERVICE_KAFKA_TOPIC_MESSAGE } from "../config/ConfigApi";
 import { Pagination } from "react-bootstrap";
 import { useTable } from "react-table";
 
-const { token } = require('../config/Constants');
+const { getToken } = require('../config/Constants');
 
 const KafkaTopicMessage = ({topicName, onBackClick}) => {
     // API Call Variable
+    const token = getToken();
     const headers = { Authorization: `Bearer ${token}` };
 
     // Kosmetik Variable
