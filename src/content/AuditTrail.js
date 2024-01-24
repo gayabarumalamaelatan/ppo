@@ -1,4 +1,4 @@
-import React, { Fragment, Link } from 'react';
+import React, { Fragment } from 'react';
 import AuditTable from '../tables/AuditTable'
 
 const AuditTrail = () => {

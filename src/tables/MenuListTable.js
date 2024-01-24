@@ -7,7 +7,6 @@ import { useEffect } from "react";
 import { Button, Modal, ModalBody, Pagination } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes, faTrash } from "@fortawesome/free-solid-svg-icons";
-import { showSuccessToast, showErrorToast } from "../toast/toast";
 import UpdateMenuModal from "../modal/UpdateMenuModal";
 import { showDynamicSweetAlert } from "../toast/Swal";
 
@@ -182,7 +181,6 @@ const MenuListTable = ({ editPermission, deletePermission, refreshTableStatus })
             setMenuToDelete(null);
             // Tambahkan logika 
 
-            // showSuccessToast('Menu has been deleted successfully.');
             showDynamicSweetAlert('Success', 'Menu has been deleted successfully.', 'success');
             // Tambahkan logika lain sesuai dengan kebutuhan Anda setelah penguncian pengguna berhasil
             fetchData();

@@ -2,10 +2,9 @@ import React,{ useState } from "react";
 import { MENU_SERVICE_ALL_MODULES, MENU_SERVICE_DETAIL, MENU_SERVICE_UPDATE_MENU } from "../config/ConfigApi";
 import axios from "axios";
 import { useEffect } from "react";
-import { Button, Form, Modal, Row } from "react-bootstrap";
+import { Button, Form, Modal } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSave, faTimes } from "@fortawesome/free-solid-svg-icons";
-import { showErrorToast, showSuccessToast } from "../toast/toast";
 import { showDynamicSweetAlert } from "../toast/Swal";
 
 const { getToken, active } = require('../config/Constants');
@@ -29,7 +28,6 @@ const UpdateMenuModal = ({isOpenModal, menu, handleSubmit, handleClose}) => {
     }
     const [formData, setFormData] = useState(initialFormData);
     const [moduleInfo, setModuleInfo] = useState(null);
-    const [formInfo, setFormInfo] = useState(null);
 
     // Kosmetik
     const [isLoading, setIsLoading] = useState(false);

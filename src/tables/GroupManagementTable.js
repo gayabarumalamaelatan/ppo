@@ -5,8 +5,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSave, faTimes, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { USER_SERVICE_GROUP_ROLE_UPDATE, USER_SERVICE_GROUP_ROLE_UPDATE_STATUS } from '../config/ConfigApi';
 import axios from 'axios';
-import { showErrorToast, showSuccessToast } from '../toast/toast';
-import { async } from 'q';
 import { showDynamicSweetAlert } from '../toast/Swal';
 
 const { inactive, getToken } = require('../config/Constants');
@@ -77,7 +75,6 @@ const GroupManagementTable = ({ groups, selectedGroup, handleGroupSelect, handle
                 setEditModalVisible(false);
                 setIsLoading(false);
                 refetchCallback();
-                //showSuccessToast('Group name updated successfully!');
                 showDynamicSweetAlert('Success!', 'Group name updated successfully!', 'success');
             }, 1000);
         } catch (error) {

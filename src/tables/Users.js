@@ -4,15 +4,12 @@ import { useTable } from 'react-table';
 import { AUTH_SERVICE_FORCE_RESET_PASSWORD, AUTH_SERVICE_LIST_USER, AUTH_SERVICE_UPDATE_STATUS_USER, AUTH_SERVICE_VALIDATE_LOGIN, USER_SERVICE_USER_DETAIL } from '../config/ConfigApi';
 import { Fragment } from 'react';
 import { Modal, Button, Pagination, Form } from 'react-bootstrap';
-import { showSuccessToast, showErrorToast } from '../toast/toast';
+// import { showSuccessToast, showErrorToast } from '../toast/toast';
 import { faCheck, faSpinner, faTrash, faUnlock } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import 'font-awesome/css/font-awesome.min.css';
 import { faSyncAlt, faTimes, faLock } from '@fortawesome/free-solid-svg-icons';
 
-
-
-import { flushSync } from 'react-dom';
 import EditUserModal from '../modal/EditUserModal';
 import { isTokenExpired, refreshToken } from '../config/TokenHandler';
 import { showDynamicSweetAlert } from '../toast/Swal';
