@@ -19,7 +19,7 @@ import { showDynamicSweetAlert } from '../toast/Swal';
 
 const { pendingApproval, active, pendingDelete, inactive, disabled, expired, lock, userLoggin, expiredPass, getToken } = require('../config/Constants');
 
-const Users = ({ editPermission, delPermission, authPermission,refreshTableStatus }) => {
+const Users = ({ editPermission, delPermission, authPermission, refreshTableStatus }) => {
     const [data, setData] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [totalItem, setTotalItem] = useState(0);
@@ -39,6 +39,7 @@ const Users = ({ editPermission, delPermission, authPermission,refreshTableStatu
     const [showApproveModal, setShowApproveModal] = useState(false);
     const [showTestLoginModal, setShowTestLoginModal] = useState(false);
     const [userToApprove, setUserToApprove] = useState(null);
+    const [userToReset, setUserToReset] = useState(null);
     const [showModalReset, setShowModalReset] = useState(false);
     const [responseMessage, setResponseMessage] = useState('');
     const [password, setPassword] = useState('');
@@ -226,6 +227,10 @@ const Users = ({ editPermission, delPermission, authPermission,refreshTableStatu
         }
     };
 
+    const handleShowResetUser = (user) => {
+        setUserToReset(user);
+        setShowModalReset(true);
+    };
     const handleResetUser = async (user) => {
         try { // Ganti dengan akses token yang sesuai
             const headers = { Authorization: `Bearer ${token}` };// Ganti dengan endpoint URL yang sesuai
@@ -233,7 +238,7 @@ const Users = ({ editPermission, delPermission, authPermission,refreshTableStatu
             // Objek data yang akan dikirim sebagai body permintaan PUT
             const data = {
                 status: expiredPass, // Ganti dengan status yang sesuai untuk mengunci pengguna
-                id: user.id, // Dapatkan username dari objek user yang diberikan
+                id: userToReset.id, // Dapatkan username dari objek user yang diberikan
             };
 
             console.log(data);
@@ -242,7 +247,9 @@ const Users = ({ editPermission, delPermission, authPermission,refreshTableStatu
 
             if (response.status === 200) {
                 setResponseMessage(response.data);
-                setShowModalReset(true);
+                setShowModalReset(false);
+                setUserToReset(null);
+                showDynamicSweetAlert('Success!', 'User has been reset successfully.', 'success');
                 console.log(response.data);
                 fetchData(); // Assuming this function fetches updated data
             }
@@ -345,7 +352,7 @@ const Users = ({ editPermission, delPermission, authPermission,refreshTableStatu
 
     useEffect(() => {
         fetchData();
-    }, [currentPage, pageSize, searchUsername,refreshTableStatus]); // Panggil fetchData setiap kali currentPage berubah
+    }, [currentPage, pageSize, searchUsername, refreshTableStatus]); // Panggil fetchData setiap kali currentPage berubah
 
     const fetchData = async () => {
         try {
@@ -412,7 +419,7 @@ const Users = ({ editPermission, delPermission, authPermission,refreshTableStatu
                                             <a className="dropdown-item" onClick={() => handleShowDeleteModal(row.original)}>Delete User</a>
                                         )}
                                         {editPermission && (
-                                            <a className="dropdown-item" onClick={() => handleResetUser(row.original)}>Reset Password</a>
+                                            <a className="dropdown-item" onClick={() => handleShowResetUser(row.original)}>Reset Password</a>
                                         )}
                                     </div>
                                 </div>
@@ -480,11 +487,11 @@ const Users = ({ editPermission, delPermission, authPermission,refreshTableStatu
                             </div>
                         );
                     }
-                    else if (row.original.status === pendingApproval ) {
+                    else if (row.original.status === pendingApproval) {
                         return (
                             <div>
                                 <Button variant="outline-success" onClick={() => handleShowApproveModal(row.original)}><i className="fas fa-check"></i></Button>&nbsp;
-                                
+
                             </div>
                         );
                     } else if (row.original.status === pendingDelete && row.original.createdBy !== userLoggin) {
@@ -918,18 +925,21 @@ const Users = ({ editPermission, delPermission, authPermission,refreshTableStatu
 
             <Modal show={showModalReset} onHide={handleCloseModal}>
                 <Modal.Header>
-                    <Modal.Title>New Password</Modal.Title>
+                    <Modal.Title>Confirmation</Modal.Title>
                     {/* Ganti ikon tombol close (X) */}
                     <Button variant="link default" onClick={handleCloseModal}>
                         <FontAwesomeIcon icon={faTimes} />
                     </Button>
                 </Modal.Header>
                 <Modal.Body>
-                    This the New Password : <strong>{responseMessage && responseMessage.newPass}</strong>
+                    Are you sure you want to lock the user: {userToReset && userToReset.userName}?
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="primary" onClick={handleCloseModal}>
-                        <FontAwesomeIcon icon={faTimes} /> Close
+                    <Button variant="secondary" onClick={handleCloseModal}>
+                        <FontAwesomeIcon icon={faTimes} /> Cancel
+                    </Button>
+                    <Button variant="success" type="submit" onClick={handleResetUser}>
+                        <FontAwesomeIcon icon={faCheck} /> Reset Password
                     </Button>
                 </Modal.Footer>
             </Modal>

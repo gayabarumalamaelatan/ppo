@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import axios from 'axios'; // Import axios
-import { AUTH_SERVICE_CHANGE_PASSWORD, AUTH_SERVICE_RESET_PASSWORD } from '../config/ConfigApi';
+import { AUTH_SERVICE_CHANGE_PASSWORD } from '../config/ConfigApi';
 import { getToken, idUser } from '../config/Constants';
-import { showSuccessToast } from '../toast/toast';
+import { showDynamicSweetAlert } from '../toast/Swal';
 
 // ... (previous imports)
 
@@ -90,7 +90,8 @@ function ResetPasswordPage() {
 
       if (response.status === 200) {
         // Handle successful password reset, e.g., show a success message
-        showSuccessToast('Reset password successfully. Please Login !');
+        //showSuccessToast('Reset password successfully. Please Login !');
+        showDynamicSweetAlert('Success', 'Reset password successfully. Please Login !', 'success');
         navigate('/login'); // Redirect to the login page after resetting
       } else {
         setResetError(true);

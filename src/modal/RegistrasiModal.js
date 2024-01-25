@@ -65,6 +65,10 @@ const RegisterModal = ({ show, handleClose, reloadData }) => {
       errors.password = 'Password must be at least 8 characters long.';
     }
 
+    if (userData.password !== userData.confirmPassword) {
+      errors.confirmPassword = 'Passwords do not match.';
+    }
+
     // Password validation: At least 1 uppercase letter
     if (!hasUppercaseLetter(userData.password)) {
       errors.password = 'Password must contain alphabets, numbers, at least 1 uppercase letter, and at least 1 special character (~ ! @ $).';
