@@ -5,6 +5,7 @@ import axios from "axios";
 import { Button, Form, Modal } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSave, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { SCHEDULER_SERVICE_ADD } from "../../config/ConfigApi";
 
 const NewSchedulerModal = ({isOpenModal, onClose, onSubmit}) => {
     
@@ -43,10 +44,9 @@ const NewSchedulerModal = ({isOpenModal, onClose, onSubmit}) => {
         try {
             setIsLoading(true);
 
-            // const response = await axios.post('', postData, {headers});
-            // console.log('API Response: ', response.data);
-            console.log(postData);
-            
+            const response = await axios.post(`${SCHEDULER_SERVICE_ADD}`, postData, {headers});
+            console.log('API Response: ', response.data);
+                    
             setTimeout(() => {
                 onClose();
                 setIsLoading(false);
@@ -103,7 +103,6 @@ const NewSchedulerModal = ({isOpenModal, onClose, onSubmit}) => {
                     </Form.Group>
                     {/* Cron Expression Fields */}
                     <Form.Group>
-                        <Form.Label>Cron Expression</Form.Label>
                         <div className="row">
                             {/* Minute */}
                             <div className="col">
@@ -115,7 +114,6 @@ const NewSchedulerModal = ({isOpenModal, onClose, onSubmit}) => {
                                     onChange={handleFormChange}
                                 />
                             </div>
-
                             {/* Hour */}
                             <div className="col">
                                 <Form.Label>Hour</Form.Label>
@@ -126,7 +124,6 @@ const NewSchedulerModal = ({isOpenModal, onClose, onSubmit}) => {
                                     onChange={handleFormChange}
                                 />
                             </div>
-
                             {/* Day */}
                             <div className="col">
                                 <Form.Label>Day</Form.Label>
@@ -137,7 +134,6 @@ const NewSchedulerModal = ({isOpenModal, onClose, onSubmit}) => {
                                     onChange={handleFormChange}
                                 />
                             </div>
-
                             {/* Month */}
                             <div className="col">
                                 <Form.Label>Month</Form.Label>
@@ -148,7 +144,6 @@ const NewSchedulerModal = ({isOpenModal, onClose, onSubmit}) => {
                                     onChange={handleFormChange}
                                 />
                             </div>
-
                             {/* Week */}
                             <div className="col">
                                 <Form.Label>Week</Form.Label>

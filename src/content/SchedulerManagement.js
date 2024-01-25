@@ -53,6 +53,7 @@ const SchedulerManagement = () => {
                                         <SchedulerTable
                                             updatePermission={canUpdateSchedule}
                                             deletePermission={canDeleteSchedule}
+                                            refreshTableStatus={refreshTableStatus}
                                         />
                                 </div>
                             </div>

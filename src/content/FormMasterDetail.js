@@ -12,6 +12,7 @@ import { useRecoilValue } from 'recoil';
 import { menusState } from '../store/RecoilFormTemplate';
 import * as XLSX from 'xlsx';
 import FormTableMasterDetail from '../tables/FormTableMasterDetail';
+import { getToken } from '../config/Constants';
 
 const FormMasterDetail = () => {
     //const { idForm, prefixTable, menuName } = useSelector(state => state);
@@ -20,7 +21,7 @@ const FormMasterDetail = () => {
     const [columns, setColumns] = useState([]);
     const [formCode, setFormCode] = useState('');
     const [accountData, setAccountData] = useState([]);
-    const token = sessionStorage.getItem('accessToken');
+    const token = getToken();
     const headers = { Authorization: `Bearer ${token}` };
     const [getFormcode, setGetFormCode] = useState();
     const [isModalOpen, setIsModalOpen] = useState(false);
