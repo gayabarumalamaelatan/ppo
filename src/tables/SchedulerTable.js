@@ -1,33 +1,60 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { getToken } from "../config/Constants";
 import { Button, Modal, Pagination } from "react-bootstrap";
 import { showDynamicSweetAlert } from "../toast/Swal";
 import axios from "axios";
 import { useTable } from "react-table";
 import EditSchedulerModal from "../modal/scheduler/EditSchedulerModal";
-import { faPowerOff, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { faPowerOff, faTimes, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { SCHEDULER_SERVICE_LIST, SCHEDULER_SERVICE_UPDATE_STATUS } from "../config/ConfigApi";
 
-const SchedulerTable = ({updatePermission, deletePermission}) => {
+const SchedulerTable = ({updatePermission, deletePermission, refreshTableStatus}) => {
     
     const token = getToken();
     const headers = { Authorization: `Bearer ${token}`};
     
     const [isLoadingTable, setIsLoadingTable] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [showUpdateModal, setShowUpdateModal] = useState(false);
+    const [showUpdateStatusModal, setShowUpdateStatusModal] = useState(false);
 
     const [schedulerToUpdate, setSchedulerToUpdate] = useState(null);
     const [schedulerToDelete, setSchedulerToDelete] = useState(null);
+    const [schedulerToUpdateStatus, setSchedulerToUpdateStatus] = useState(null);
 
-    // const [dataTable, setDataTable] = useState([]);
+    const [dataTable, setDataTable] = useState([]);
     const [totalItem, setTotalItem] = useState(0);
     const [currentPage, setCurrentPage] = useState(0);
     const [pageSize, setPageSize] = useState(5);
 
-    const dataTable = ([{ "id": 1, "name": "Test", "description": "Test", "scheduled": "0 * * * * 9", "status": "ACTIVE"}])
+    // const dataTable = ([{ "id": 1, "name": "Test", "description": "Test", "scheduled": "0 * * * * 9", "status": "ACTIVE"}])
 
+    const fetchData = async () => {
+        try {
+            setIsLoadingTable(true);
+            
+            const response = await axios.get(`${SCHEDULER_SERVICE_LIST}?page=${currentPage}&size=${pageSize}`, {headers});
+
+            setTimeout(() => {
+                setDataTable(response.data.schedulers);
+                setTotalItem(response.data.totalItem);
+                setCurrentPage(response.data.currentPage);
+                setTotalItem(response.data.totalItems);
+                setIsLoadingTable(false);
+            }, 500)
+        } catch (error) {
+            console.error('Error fetching data: ', error);
+            showDynamicSweetAlert('Error', error, 'error');
+            setIsLoadingTable(false);
+        }
+    }
+
+    useEffect(() => {
+        fetchData();
+    }, [currentPage, pageSize, refreshTableStatus]);
+
+    
     const columns = React.useMemo(() => [
         { Header: 'Name', accessor: 'name'},
         { Header: 'Description', accessor: 'description'},
@@ -38,37 +65,30 @@ const SchedulerTable = ({updatePermission, deletePermission}) => {
             Cell: ({row}) => (
                     <div>
                         {updatePermission && (
-                            <Button variant="outline-primary" style={{ marginRight: '5px' }} onClick={() => handleUpdateScheduler(row)}>
-                                <i className="fas fa-edit"/>
-                            </Button>
+                            <>
+                                <Button variant="outline-primary" title="Update Scheduler" style={{ marginRight: '5px' }} onClick={() => handleUpdateScheduler(row)}>
+                                    <i className="fas fa-edit"/>
+                                </Button>
+                                {row.original.status === 'INACTIVE' ? (
+                                    <Button variant="outline-success" title="Turn On" style={{ marginRight: '5px' }} onClick={() => handleShowUpdateStatusModal(row)}>
+                                        <i className="fa fa-power-off"/>
+                                    </Button>
+                                ) : (
+                                    <Button variant="outline-danger" title="Turn Off" style={{ marginRight: '5px' }} onClick={() => handleShowUpdateStatusModal(row)}>
+                                        <i className="fa fa-power-off"/>
+                                    </Button>
+                                )}
+                            </>
                         )}
                         {deletePermission && (
-                            <Button variant="outline-danger" style={{ marginRight: '5px' }} onClick={() => handleShowDeleteModal(row)}>
-                                <i className="fas fa-power-off"/>
+                            <Button variant="outline-danger" title="Delete Scheduler" style={{ marginRight: '5px' }} onClick={() => handleShowDeleteModal(row)}>
+                                <i className="fas fa-trash"/>
                             </Button>
                         )}
                     </div>
                 )
         },
     ], [])
-
-    const fetchData = async () => {
-        try {
-            setIsLoadingTable(true);
-            
-            //const response = await axios.get(`?page=${currentPage}&size=${pageSize}`, {headers});
-
-            setTimeout(() => {
-                //setDataTable(response.data);
-                //setTotalItem(response.data.totalItem);
-                setIsLoadingTable(false);
-            }, 500)
-        } catch (error) {
-            console.error('Error fetching data: ', error);
-            showDynamicSweetAlert('Error', error, 'error');
-            setIsLoadingTable(false);
-        }
-    }
 
     const {
         getTableProps,
@@ -97,21 +117,59 @@ const SchedulerTable = ({updatePermission, deletePermission}) => {
         setShowDeleteModal(true);
     }
 
+    const handleShowUpdateStatusModal = async (data) => {
+        setSchedulerToUpdateStatus(data.original);
+        setShowUpdateStatusModal(true);
+    }
+
     const handleDeleteScheduler = async () => {
         setIsLoadingTable(true);
         try {
             const dataToDelete = {
                 id: schedulerToDelete.id,
-                status: "INACTIVE"
+                status: "DELETED"
             };
 
-            //axios.put(``, dataToDelete, {headers})
-            console.log(dataToDelete);
+            axios.put(`${SCHEDULER_SERVICE_UPDATE_STATUS}`, dataToDelete, {headers})
 
             setShowDeleteModal(false);
             setSchedulerToDelete(null);
 
             showDynamicSweetAlert('Success', 'Scheduler has been deleted successfully', 'success');
+            setIsLoadingTable(false);
+            reloadData();
+
+        } catch (error) {
+            setIsLoadingTable(false);
+            showDynamicSweetAlert('Error', error, 'error')
+        }
+    }
+
+    const handleUpdateStatusScheduler = async () => {
+        setIsLoadingTable(true);
+        try {
+            let updatedStatus = '';
+            if (schedulerToUpdateStatus.status === "INACTIVE") {
+                updatedStatus = "ACTIVE";
+            } else {
+                updatedStatus = "INACTIVE";
+            }
+            const dataToUpdate = {
+                id: schedulerToUpdateStatus.id,
+                status: updatedStatus
+            };
+
+            axios.put(`${SCHEDULER_SERVICE_UPDATE_STATUS}`, dataToUpdate, {headers})
+
+            setShowUpdateStatusModal(false);
+            setSchedulerToUpdateStatus(null);
+
+
+            if (schedulerToUpdateStatus.status === "INACTIVE") {
+                showDynamicSweetAlert('Success', 'Scheduler has been turned on', 'success');
+            } else {
+                showDynamicSweetAlert('Success', 'Scheduler has been turned off', 'success');
+            }
             setIsLoadingTable(false);
             reloadData();
 
@@ -292,17 +350,48 @@ const SchedulerTable = ({updatePermission, deletePermission}) => {
                     </Button>
                 </Modal.Header>
                 <Modal.Body>
-                    Are you sure you want to turn off scheduler: {schedulerToDelete && schedulerToDelete.name}?
+                    Are you sure you want to delete scheduler: {schedulerToDelete && schedulerToDelete.name}?
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
                         <FontAwesomeIcon icon={faTimes} />   Cancel
                     </Button>
                     <Button variant="danger" onClick={handleDeleteScheduler}>
-                        <FontAwesomeIcon icon={faPowerOff} />   Turn Off
+                        <FontAwesomeIcon icon={faTrash} />   Delete
                     </Button>
                 </Modal.Footer>
             </Modal>  
+            {schedulerToUpdateStatus && (
+                <Modal show={showUpdateStatusModal} onHide={() => setShowUpdateStatusModal(false)}>
+                <Modal.Header>
+                    <Modal.Title>Confirmation</Modal.Title>
+                    <Button variant="link default" onClick={() => setShowUpdateStatusModal(false)}>
+                        <FontAwesomeIcon icon={faTimes} />
+                    </Button>
+                </Modal.Header>
+                <Modal.Body>
+                    {schedulerToUpdateStatus.status === 'INACTIVE' ? (
+                        `Are you sure you want to turn on scheduler: ${schedulerToUpdateStatus.name}?`
+                    ) : (
+                        `Are you sure you want to turn off scheduler: ${schedulerToUpdateStatus.name}?`
+                    )}
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowUpdateStatusModal(false)}>
+                        <FontAwesomeIcon icon={faTimes} />   Cancel
+                    </Button>
+                    {schedulerToUpdateStatus.status === 'INACTIVE' ? (
+                        <Button variant="success" onClick={handleUpdateStatusScheduler}>
+                            <FontAwesomeIcon icon={faPowerOff} />   Turn On
+                        </Button>
+                    ) : (
+                        <Button variant="danger" onClick={handleUpdateStatusScheduler}>
+                            <FontAwesomeIcon icon={faPowerOff} />   Turn Off
+                        </Button>
+                    )}
+                </Modal.Footer>
+            </Modal>  
+            )}
         </Fragment>
     )
 }

@@ -97,3 +97,10 @@ export const SMARTIN_SERVICE_BASE = process.env.REACT_APP_API_SMARTIN_SERVICE_BA
 export const LICENSE_SERVICE_BASE = process.env.REACT_APP_API_LICENSE_SERVICE_BASE;
     //LICESE-CONTROLLER
     export const LICENSE_SERVICE_CHECK = `${LICENSE_SERVICE_BASE}/license-service/check-license`;
+
+export const SCHEDULER_SERVICE_BASE = process.env.REACT_APP_API_SCHEDULER_SERVICE_BASE;
+    
+    export const SCHEDULER_SERVICE_LIST = `${SCHEDULER_SERVICE_BASE}/scheduler-service/core-scheduler/list`
+    export const SCHEDULER_SERVICE_ADD = `${SCHEDULER_SERVICE_BASE}/scheduler-service/core-schduler/add`
+    export const SCHEDULER_SERVICE_UPDATE = `${SCHEDULER_SERVICE_BASE}/scheduler-service/core-schduler/update`
+    export const SCHEDULER_SERVICE_UPDATE_STATUS = `${SCHEDULER_SERVICE_BASE}/scheduler-service/core-schduler/update-status`

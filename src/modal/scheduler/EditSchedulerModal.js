@@ -5,6 +5,7 @@ import axios from "axios";
 import { Button, Form, Modal } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSave, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { SCHEDULER_SERVICE_UPDATE } from "../../config/ConfigApi";
 
 const EditSchedulerModal = ({isOpenModal, onClose, onSubmit, dataScheduler}) => {
     
@@ -76,15 +77,14 @@ const EditSchedulerModal = ({isOpenModal, onClose, onSubmit, dataScheduler}) => 
         try {
             setIsLoading(true);
 
-            // const response = await axios.post('', postData, {headers});
-            // console.log('API Response: ', response.data);
-            console.log(postData);
+            const response = await axios.put(`${SCHEDULER_SERVICE_UPDATE}`, postData, {headers});
+            console.log('API Response: ', response.data);
             
             setTimeout(() => {
                 onClose();
                 setIsLoading(false);
                 setFormData(initialFormData);
-                showDynamicSweetAlert('Success!','Schedule created successfully!', 'success');
+                showDynamicSweetAlert('Success!','Schedule edited successfully!', 'success');
                 onSubmit();
             }, 1000)
         } catch (error) {
@@ -136,7 +136,6 @@ const EditSchedulerModal = ({isOpenModal, onClose, onSubmit, dataScheduler}) => 
                     </Form.Group>
                     {/* Cron Expression Fields */}
                     <Form.Group>
-                        <Form.Label>Cron Expression</Form.Label>
                         <div className="row">
                             {/* Minute */}
                             <div className="col">
@@ -148,7 +147,6 @@ const EditSchedulerModal = ({isOpenModal, onClose, onSubmit, dataScheduler}) => 
                                     onChange={handleFormChange}
                                 />
                             </div>
-
                             {/* Hour */}
                             <div className="col">
                                 <Form.Label>Hour</Form.Label>
@@ -159,7 +157,6 @@ const EditSchedulerModal = ({isOpenModal, onClose, onSubmit, dataScheduler}) => 
                                     onChange={handleFormChange}
                                 />
                             </div>
-
                             {/* Day */}
                             <div className="col">
                                 <Form.Label>Day</Form.Label>
@@ -170,7 +167,6 @@ const EditSchedulerModal = ({isOpenModal, onClose, onSubmit, dataScheduler}) => 
                                     onChange={handleFormChange}
                                 />
                             </div>
-
                             {/* Month */}
                             <div className="col">
                                 <Form.Label>Month</Form.Label>
@@ -181,7 +177,6 @@ const EditSchedulerModal = ({isOpenModal, onClose, onSubmit, dataScheduler}) => 
                                     onChange={handleFormChange}
                                 />
                             </div>
-
                             {/* Week */}
                             <div className="col">
                                 <Form.Label>Week</Form.Label>

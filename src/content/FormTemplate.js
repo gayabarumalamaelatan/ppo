@@ -6,7 +6,7 @@ import { useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { FORM_SERVICE_DELETE_DATA, FORM_SERVICE_LOAD_DATA, FORM_SERVICE_LOAD_FIELD, FORM_SERVICE_REPORT_DATA, FORM_SERVICE_REPORT_DATA_CSV, FORM_SERVICE_REPORT_DATA_EXCEL } from '../config/ConfigApi';
 import axios from 'axios';
-import { disabled, token } from '../config/Constants';
+import { disabled, getToken } from '../config/Constants';
 import FormModalAddNew from '../modal/form/FormModalAddNew';
 import { assertPipelinePrimaryTopicReference } from '@babel/types';
 import { useRecoilValue } from 'recoil';
@@ -15,6 +15,7 @@ import * as XLSX from 'xlsx';
 
 const FormTemplate = () => {
     //const { idForm, prefixTable, menuName } = useSelector(state => state);
+    const token = getToken();
     const menusForm = useRecoilValue(menusState);
     const dispatch = useDispatch();
     const [columns, setColumns] = useState([]);
@@ -102,7 +103,7 @@ const FormTemplate = () => {
 
             setIsWorkflow(response.data.needApproval);
             //console.log('getFormcode', getFormcode);
-            fetchData(formCode[0]);
+            // fetchData(formCode[0]);
             setColumnVisibility(
                 Object.fromEntries(columnsWithManualStatus.map(column => [column.accessor, true])));
         } catch (error) {
@@ -181,51 +182,18 @@ const FormTemplate = () => {
             });
     };
 
-    // const fetchFilteredData = (formCodePass, filterBy, filterOperation, value) => {
-    //     console.log('formcode', formCode);
-    //     console.log('codeFormPass', formCodePass);
-
-    //     return axios
-    //       .get(`${FORM_SERVICE_LOAD_DATA}?f=${formCodePass}&page=${currentPage}&size=${pageSize}&filterBy=${filterBy}&filterValue=${value}&operation=${filterOperation}`, { headers })
-    //       .then((response) => {
-    //         setAccountData(response.data.data);
-    //         setTotalItems(response.data.totalAllData);
-    //         // console.log('Response get Data : ', accountData);
-    //         // console.log('Response get ')
-    //       })
-    //       .catch((error) => {
-    //         console.log('Error fetching data:', error);
-    //       });
-    //   };
-
-
-    // const fetchFilteredData = (formCodePass, filterBy, filterOperation, value) => {
-    //     console.log('formcode', formCode);
-    //     console.log('codeFormPass', formCodePass);
-
-    //     return axios
-    //       .get(`${FORM_SERVICE_LOAD_DATA}?f=${formCodePass}&page=${currentPage}&size=${pageSize}&filterBy=${filterBy}&filterValue=${value}&operation=${filterOperation}`, { headers })
-    //       .then((response) => {
-    //         setAccountData(response.data.data);
-    //         setTotalItems(response.data.totalAllData);
-    //         // console.log('Response get Data : ', accountData);
-    //         // console.log('Response get ')
-    //       })
-    //       .catch((error) => {
-    //         console.log('Error fetching data:', error);
-    //       });
-    //   };
-
-    // useEffect(() => {
-    //     fetchHeader();
-    // }, []);
+    useEffect(() => {
+        fetchHeader();
+    }, [idForm])
 
     useEffect(() => {
         // console.log('Response get Data : ', accountData);
-        fetchHeader();
-        fetchData(getFormcode);
-    }, [pageSize, currentPage, filterStatus, primaryKeyColumn, idForm]);
-
+        if (getFormcode) {
+            fetchData(getFormcode);
+        }
+        // fetchData(getFormcode);
+    }, [pageSize, currentPage, filterStatus, getFormcode ]);
+    
     const [isCustomizeOpen, setIsCustomizeOpen] = useState(false);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
 

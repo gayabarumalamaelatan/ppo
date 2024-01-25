@@ -10,7 +10,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { Fragment } from 'react';
 import { FORM_SERVICE_DELETE_DATA, FORM_SERVICE_LOAD_DATA, FORM_SERVICE_LOAD_FIELD, FORM_SERVICE_UPDATE_STATUS, FORM_SERVICE_VIEW_DATA } from '../config/ConfigApi';
-import { approved, reject, rework, token, verified } from '../config/Constants';
+import { approved, getToken, reject, rework, verified } from '../config/Constants';
 import axios from 'axios';
 import FormEdit from '../modal/form/FormEdit';
 import { NumericFormat } from 'react-number-format';
@@ -20,6 +20,7 @@ import FormDetail from './FormDetail';
 
 const FormTableMasterDetail = ({ idForm, tableNameDetail, columns, data, columnVisibility, pageSize, totalItems, currentPage, onPageChange, formCode, menuName, refecthCallBack, primaryKey, isLoadingTable, canCreate, canVerify, canAuth, editPermission, deletePermission, isWorkflow }) => {
 
+    const token = getToken();
     //console.log('primary', primayKey);
     console.log('columnVis', columnVisibility);
     console.log('columns', columns);

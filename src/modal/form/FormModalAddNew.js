@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
-import { token } from '../../config/Constants';
+import { getToken } from '../../config/Constants';
 import { FORM_SERVICE_INSERT_DATA, FORM_SERVICE_LOAD_DATA } from '../../config/ConfigApi';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSave, faSyncAlt, faTimes } from '@fortawesome/free-solid-svg-icons';
@@ -12,6 +12,7 @@ import 'admin-lte/dist/css/adminlte.min.css'; // Import AdminLTE styles
 import 'admin-lte/plugins/fontawesome-free/css/all.min.css';
 
 const FormModalAddNew = ({ isOpen, onClose, columns, menuName, formCode, tableNameDetail, reFormfetchCallback }) => {
+  const token = getToken();
   const headers = { Authorization: `Bearer ${token}` };
   const [lookupTableData, setLookupTableData] = useState({});
   const [formData, setFormData] = useState({});
