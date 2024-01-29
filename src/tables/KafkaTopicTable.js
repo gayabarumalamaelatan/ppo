@@ -85,8 +85,6 @@ const KafkaTopicTable = ({deletePermission, refreshTableStatus, onRowClick}) => 
         }
     );
 
-
-
     // Pagination properties
     const pageCount = Math.ceil(totalItem / pageSize);
     const startIndex = (currentPage) * pageSize + 1;
