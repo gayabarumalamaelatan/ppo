@@ -101,6 +101,10 @@ export default function Content() {
         moduleName: 'gritsmartinmodule',
         componentName: 'SmartinUpload'
       },
+      {
+        moduleName: 'gritsmartinmodule',
+        componentName: 'SocketManager'
+      },
       // ... other components SmartinEndpoints
     ]
   };

@@ -8,6 +8,7 @@ const dynamicImportMap = {
   AllServerDashboard: () => import('gritsmartinmodule/AllServerDashboard'),
   SmartinEndpoints: () => import('gritsmartinmodule/SmartinEndpoints'),
   SmartinUpload: () => import('gritsmartinmodule/SmartinUpload'),
+  SocketManager: () => import('gritsmartinmodule/SocketManager')
   // Tambahkan lebih banyak mapping sesuai kebutuhan
 };
 
