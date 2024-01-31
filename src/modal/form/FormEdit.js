@@ -253,9 +253,9 @@ const FormEdit = ({ isOpen, onClose, columns, menuName, getFormCode, data, keyCo
                                                     lookupTableData[column.accessor].map((option, optionIndex) => (
                                                         <option
                                                             key={optionIndex}
-                                                            value={Object.values(option)[1]}
+                                                            value={Object.values(option)[2]}
                                                         >
-                                                            {Object.values(option)[2]}
+                                                            {`${Object.values(option)[2]} - ${Object.values(option)[3]}`}
                                                         </option>
                                                     ))}
                                             </Form.Control>

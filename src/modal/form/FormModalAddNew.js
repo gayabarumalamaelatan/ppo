@@ -56,7 +56,7 @@ const FormModalAddNew = ({ isOpen, onClose, columns, menuName, formCode, tableNa
             }
           });
 
-          // console.log('lookupTableData:', lookupData);
+           console.log('lookupTableData:', lookupData);
           setLookupTableData(lookupData);
         })
         .catch((error) => {
@@ -179,10 +179,10 @@ const FormModalAddNew = ({ isOpen, onClose, columns, menuName, formCode, tableNa
                         {Array.isArray(lookupTableData[column.accessor]) &&
                           lookupTableData[column.accessor].map((option, index) => (
                             <option
-                              key={Object.values(option)[3] || index}
-                              value={Object.values(option)[1]}
+                              key={Object.values(option)[2] || index}
+                              value={Object.values(option)[2]}
                             >
-                              {Object.values(option)[2]}
+                              {`${Object.values(option)[2]} - ${Object.values(option)[3]}`}
                             </option>
                           ))}
                       </Form.Control>
