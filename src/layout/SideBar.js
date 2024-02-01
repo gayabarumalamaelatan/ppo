@@ -3,7 +3,6 @@ import React, { Fragment, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { MENU_SERVICE_MODULES } from '../config/ConfigApi';
-import FormTemplate from '../content/FormTemplate';
 import { useDispatch } from 'react-redux';
 import { updateFormData } from '../store/actions/FormAction';
 import { useRecoilState } from 'recoil';
