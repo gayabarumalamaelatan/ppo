@@ -1,6 +1,8 @@
 import React from "react";
 import { Pagination } from "react-bootstrap";
 
+// For 1 based pagination
+
 const FormPagination = ({
   totalItems,
   pageSize,

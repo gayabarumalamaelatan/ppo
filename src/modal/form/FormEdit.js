@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
-import { pending, token } from '../../config/Constants';
+import { getToken, pending } from '../../config/Constants';
 import { FORM_SERVICE_INSERT_DATA, FORM_SERVICE_LOAD_DATA, FORM_SERVICE_UPDATE_DATA, FORM_SERVICE_UPDATE_STATUS, FORM_SERVICE_VIEW_DATA } from '../../config/ConfigApi';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSave, faSyncAlt, faTimes } from '@fortawesome/free-solid-svg-icons';
@@ -13,6 +13,7 @@ import 'admin-lte/dist/css/adminlte.min.css'; // Import AdminLTE styles
 import 'admin-lte/plugins/fontawesome-free/css/all.min.css';
 
 const FormEdit = ({ isOpen, onClose, columns, menuName, getFormCode, data, keyCol, refecthCallBack, isWorkflow, tableNameDetail }) => {
+    const token = getToken();
     const headers = { Authorization: `Bearer ${token}` };
     const [lookupTableData, setLookupTableData] = useState({});
     const [formDataEdit, setFormDataEdit] = useState({});
@@ -21,6 +22,7 @@ const FormEdit = ({ isOpen, onClose, columns, menuName, getFormCode, data, keyCo
     console.log('formcode', getFormCode);
     console.log('data Edit', data);
 
+    const [formErrors, setFormErrors] = useState({});
 
 
     const initialFormValues = {};
@@ -30,7 +32,7 @@ const FormEdit = ({ isOpen, onClose, columns, menuName, getFormCode, data, keyCo
     });
 
     const fetchData = async () => {
-        console.log('Fetch DATA', data);
+        console.log('Log Fetch Data Detail for Edit', data);
 
 
         if (data !== null) {
@@ -57,43 +59,48 @@ const FormEdit = ({ isOpen, onClose, columns, menuName, getFormCode, data, keyCo
 
     }
 
-
+    const fetchLookupTable = async () => {
+        const columnsWithLookupTable = columns.filter((column) => column.lookupTable != null);
+    
+        if (columnsWithLookupTable.length > 0) {
+          // Create an array of promises for fetching data
+          const fetchPromises = columnsWithLookupTable.map((column) =>
+            fetch(`${FORM_SERVICE_LOAD_DATA}?t=${column.lookupTable}&lookup=YES`, { headers })
+              .then((response) => response.json())
+              .then((data) => {
+                //console.log('API Response for', column.accessor, ':', data.data);
+                return data; // Return data to preserve it in the promise chain
+              })
+          );
+    
+          // Execute all fetch promises in parallel
+          Promise.all(fetchPromises)
+            .then((dataArray) => {
+              //console.log('dataArray:', dataArray);
+              const lookupData = {};
+    
+              // Ensure that dataArray matches the order of columnsWithLookupTable
+              columnsWithLookupTable.forEach((column, index) => {
+                if (dataArray[index].data && Array.isArray(dataArray[index].data)) {
+                  // Ensure dataArray[index].data is an array before using it
+                  lookupData[column.accessor] = dataArray[index].data;
+                }
+              });
+    
+               console.log('lookupTableData:', lookupData);
+              setLookupTableData(lookupData);
+            })
+            .catch((error) => {
+              console.error('Error loading data from API:', error);
+            });
+        }
+    }
 
     useEffect(() => {
-        const columnsWithLookupTable = columns.filter((column) => column.lookupTable !== null);
+        fetchLookupTable()
+    }, [columns])
 
-        if (columnsWithLookupTable.length > 0) {
-            // Create an array of promises for fetching data
-            const fetchPromises = columnsWithLookupTable.map((column) =>
-                fetch(`${FORM_SERVICE_LOAD_DATA}?t=${column.lookupTable}&lookup=YES`, { headers })
-                    .then((response) => response.json())
-                    .then((data) => {
-                        // console.log('API Response for', column.accessor, ':', data.data);
-                        return data; // Return data to preserve it in the promise chain
-                    })
-            );
-
-            // Execute all fetch promises in parallel
-            Promise.all(fetchPromises)
-                .then((dataArray) => {
-                    //console.log('dataArray:', dataArray);
-                    const lookupData = {};
-
-                    // Ensure that dataArray matches the order of columnsWithLookupTable
-                    columnsWithLookupTable.forEach((column, index) => {
-                        if (dataArray[index].data && Array.isArray(dataArray[index].data)) {
-                            // Ensure dataArray[index].data is an array before using it
-                            lookupData[column.accessor] = dataArray[index].data;
-                        }
-                    });
-
-                    // console.log('lookupTableData:', lookupData);
-                    setLookupTableData(lookupData);
-                })
-                .catch((error) => {
-                    console.error('Error loading data from API:', error);
-                });
-        }
+    useEffect(() => {
         fetchData();
     }, [data]);
 
@@ -198,15 +205,24 @@ const FormEdit = ({ isOpen, onClose, columns, menuName, getFormCode, data, keyCo
             });
     };
 
+    const validateForm = () => {
+        const error = {};
+        columns.forEach(column => {
+            if (column.isMandatory && !formDataEdit[column.accessor]) {
+                error[column.accessor] = 'This field is required';
+            }
+        });
+        setFormErrors(error);
+        return Object.keys(error).length === 0;
+    }
 
     const handleEditSave = () => {
-        setIsLoading(true);
-        // Call the sendDataToAPI function with the formData
-        sendDataToAPI(formDataEdit, () => {
-            // This function is called when the API request is successful
-            // You can close the modal or perform other actions here
-            onClose(); // Close the modal
-        });
+        if (validateForm()) {
+            setIsLoading(true);
+            sendDataToAPI(formDataEdit, () => {
+                onClose();
+            })
+        };
     };
 
     const handleReset = () => {
@@ -232,8 +248,9 @@ const FormEdit = ({ isOpen, onClose, columns, menuName, getFormCode, data, keyCo
                             .map((column, index) => (
                                 <div className="col-md-6" key={column.accessor || index}>
                                     <Form.Group>
-                                        <Form.Label htmlFor={column.accessor}>{column.Header}</Form.Label>
+                                        <Form.Label htmlFor={column.accessor}>{column.Header} {column.isMandatory && <span className="text-danger"> *</span>}</Form.Label>
                                         {column.lookupTable !== null ? (
+                                            <>
                                             <Form.Control
                                                 as="select"
                                                 id={column.accessor}
@@ -245,6 +262,7 @@ const FormEdit = ({ isOpen, onClose, columns, menuName, getFormCode, data, keyCo
                                                         [column.accessor]: e.target.value,
                                                     })
                                                 }
+                                                isInvalid={!!formErrors[column.accessor]}
                                             >
                                                 <option value="">
                                                     Select an option: {column.accessor}
@@ -259,7 +277,14 @@ const FormEdit = ({ isOpen, onClose, columns, menuName, getFormCode, data, keyCo
                                                         </option>
                                                     ))}
                                             </Form.Control>
+                                            {formErrors[column.accessor] && (
+                                                <Form.Control.Feedback type="invalid">
+                                                    {formErrors[column.accessor]}
+                                                </Form.Control.Feedback>
+                                            )}
+                                            </>
                                         ) : column.displayFormat === 'DATE' ? (
+                                            <>
                                             <div className="input-group date">
                                               <DatePicker
                                                 className="form-control"
@@ -273,6 +298,7 @@ const FormEdit = ({ isOpen, onClose, columns, menuName, getFormCode, data, keyCo
                                                   })
                                                 }
                                                 dateFormat="yyyy-MM-dd" // Specify the desired date format
+                                                isInvalid={!!formErrors[column.accessor]}
                                               />
                                               <div className="input-group-append">
                                                 <div className="input-group-text">
@@ -280,7 +306,14 @@ const FormEdit = ({ isOpen, onClose, columns, menuName, getFormCode, data, keyCo
                                                 </div>
                                               </div>
                                             </div>
-                                        ):( 
+                                            {formErrors[column.accessor] && (
+                                                <div className="invalid-feedback d-block">
+                                                    {formErrors[column.accessor]}
+                                                </div>
+                                            )}
+                                            </>
+                                        ):(
+                                            <> 
                                             <Form.Control
                                                 type="text"
                                                 id={column.accessor}
@@ -293,8 +326,16 @@ const FormEdit = ({ isOpen, onClose, columns, menuName, getFormCode, data, keyCo
                                                     })
                                                 }
                                                 disabled={column.accessor === keyCol}
+                                                isInvalid={!!formErrors[column.accessor]}
                                             />
+                                            {formErrors[column.accessor] && (
+                                                <Form.Control.Feedback type="invalid">
+                                                    {formErrors[column.accessor]}
+                                                </Form.Control.Feedback>
+                                            )}
+                                            </>
                                         )}
+
                                     </Form.Group>
                                 </div>
                             ))}

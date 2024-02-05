@@ -73,12 +73,12 @@ const FormTableView = ({
       let response;
       if (tableName) {
         response = await axios.get(
-          `${FORM_SERVICE_VIEW_DATA}?t=${tableName}&column=${primayKey}&value=${firstValue}`,
+          `${FORM_SERVICE_VIEW_DATA}?t=${tableName}&column=${primayKey}&value=${firstValue}&viewOnly=true`,
           { headers }
         );
       } else {
         response = await axios.get(
-          `${FORM_SERVICE_VIEW_DATA}?f=${formCode}&column=${primayKey}&value=${firstValue}`,
+          `${FORM_SERVICE_VIEW_DATA}?f=${formCode}&column=${primayKey}&value=${firstValue}&viewOnly=true`,
           { headers }
         );
       }

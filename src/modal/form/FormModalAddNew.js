@@ -17,6 +17,7 @@ const FormModalAddNew = ({ isOpen, onClose, columns, menuName, formCode, tableNa
   const [lookupTableData, setLookupTableData] = useState({});
   const [formData, setFormData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [formErrors, setFormErrors] = useState({});
 
   console.log('tableNameDetail', tableNameDetail);
 
@@ -28,8 +29,8 @@ const FormModalAddNew = ({ isOpen, onClose, columns, menuName, formCode, tableNa
     //console.log('init', initialFormValues);
   });
 
-  useEffect(() => {
-    const columnsWithLookupTable = columns.filter((column) => column.lookupTable !== null);
+  const fetchLookupTable = async () => {
+    const columnsWithLookupTable = columns.filter((column) => column.lookupTable != null);
 
     if (columnsWithLookupTable.length > 0) {
       // Create an array of promises for fetching data
@@ -63,6 +64,10 @@ const FormModalAddNew = ({ isOpen, onClose, columns, menuName, formCode, tableNa
           console.error('Error loading data from API:', error);
         });
     }
+  }
+
+  useEffect(() => {
+    fetchLookupTable();
   }, [columns]);
 
   const sendDataToAPI = (formData, successCallback) => {
@@ -128,16 +133,24 @@ const FormModalAddNew = ({ isOpen, onClose, columns, menuName, formCode, tableNa
   };
 
 
-  const handleSave = () => {
-    setIsLoading(true);
-    // Call the sendDataToAPI function with the formData
-    sendDataToAPI(formData, () => {
-      // This function is called when the API request is successful
-      // You can close the modal or perform other actions here
-
-
-      onClose(); // Close the modal
+  const validateForm = () => {
+    const error = {};
+    columns.forEach(column => {
+        if (column.isMandatory && !formData[column.accessor]) {
+            error[column.accessor] = 'This field is required';
+        }
     });
+    setFormErrors(error);
+    return Object.keys(error).length === 0;
+}
+
+  const handleSave = () => {
+    if (validateForm()) {
+      setIsLoading(true);
+      sendDataToAPI(formData, () => {
+          onClose();
+      })
+  };
   };
 
   const handleReset = () => {
@@ -162,8 +175,9 @@ const FormModalAddNew = ({ isOpen, onClose, columns, menuName, formCode, tableNa
               .map((column) => (
                 <div className="col-md-6" key={column.accessor}>
                   <Form.Group>
-                    <Form.Label htmlFor={column.accessor}>{column.Header}</Form.Label>
+                    <Form.Label htmlFor={column.accessor}>{column.Header} {column.isMandatory && <span className="text-danger"> *</span>}</Form.Label>
                     {column.lookupTable !== null ? (
+                      <>
                       <Form.Control
                         as="select"
                         id={column.accessor}
@@ -172,6 +186,7 @@ const FormModalAddNew = ({ isOpen, onClose, columns, menuName, formCode, tableNa
                         onChange={(e) =>
                           setFormData({ ...formData, [column.accessor]: e.target.value })
                         }
+                        isInvalid={!!formErrors[column.accessor]}
                       >
                         <option value="">
                           Select an option: {column.accessor}
@@ -186,7 +201,14 @@ const FormModalAddNew = ({ isOpen, onClose, columns, menuName, formCode, tableNa
                             </option>
                           ))}
                       </Form.Control>
+                        {formErrors[column.accessor] && (
+                          <Form.Control.Feedback type="invalid">
+                              {formErrors[column.accessor]}
+                          </Form.Control.Feedback>
+                      )}
+                      </>
                     ) : column.displayFormat === 'DATE' ? (
+                      <>
                       <div className="input-group date">
                         <DatePicker
                           className="form-control"
@@ -200,6 +222,7 @@ const FormModalAddNew = ({ isOpen, onClose, columns, menuName, formCode, tableNa
                             })
                           }
                           dateFormat="yyyy-MM-dd" // Specify the desired date format
+                          isInvalid={!!formErrors[column.accessor]}
                         />
                         <div className="input-group-append">
                           <div className="input-group-text">
@@ -207,7 +230,14 @@ const FormModalAddNew = ({ isOpen, onClose, columns, menuName, formCode, tableNa
                           </div>
                         </div>
                       </div>
+                        {formErrors[column.accessor] && (
+                          <div className="invalid-feedback d-block">
+                              {formErrors[column.accessor]}
+                          </div>
+                      )}
+                      </>
                     ) : (
+                      <>
                       <Form.Control
                         type="text"
                         id={column.accessor}
@@ -219,7 +249,14 @@ const FormModalAddNew = ({ isOpen, onClose, columns, menuName, formCode, tableNa
                             [column.accessor]: e.target.value,
                           })
                         }
+                        isInvalid={!!formErrors[column.accessor]}
                       />
+                      {formErrors[column.accessor] && (
+                          <Form.Control.Feedback type="invalid">
+                              {formErrors[column.accessor]}
+                          </Form.Control.Feedback>
+                      )}  
+                      </>       
                     )}
                   </Form.Group>
                 </div>

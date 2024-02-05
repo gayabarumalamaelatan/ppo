@@ -86,6 +86,7 @@ const FormMasterDetail = () => {
                     sortType: 'basic',
                     lookupTable: apiColumn.lookupTable,
                     displayFormat: apiColumn.displayFormat,
+                    isMandatory: apiColumn.isMandatory,
                     // Add other properties based on your requirements
                 }))
                 : [];
