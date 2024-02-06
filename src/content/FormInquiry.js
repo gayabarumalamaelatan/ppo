@@ -37,15 +37,9 @@ const FormInquiry = () => {
   const [filterStatus, setFilterStatus] = useState(false);
   const [primaryKeyColumn, setPrimaryKeyColumn] = useState(null);
   const [isLoadingTable, setIsLoadingTable] = useState(false);
-  const [isWorkflow, setIsWorkflow] = useState(false);
 
   const idForm = menusForm["idForm"];
   const menuName = menusForm["menuName"];
-  const canCreate = menusForm["create"];
-  const canUpdate = menusForm["update"];
-  const canDelete = menusForm["delete"];
-  const canVerify = menusForm["verify"];
-  const canAuth = menusForm["auth"];
 
   const fetchHeader = async () => {
     try {
@@ -100,16 +94,14 @@ const FormInquiry = () => {
       // Set the combined columns in the state
       setColumns(columnsWithManualStatus);
 
-      setIsWorkflow(response.data.needApproval);
-
       setColumnVisibility(
         Object.fromEntries(
           columnsWithManualStatus.map((column) => [column.accessor, true])
         )
       );
     } catch (error) {
-        console.log("Error fetching data:", error);
-        showDynamicSweetAlert('Error!',"Error Fetching Data", 'error');
+      console.log("Error fetching data:", error);
+      showDynamicSweetAlert("Error!", "Error Fetching Data", "error");
     }
   };
 
@@ -135,7 +127,7 @@ const FormInquiry = () => {
       })
       .catch((error) => {
         console.log("Error fetching data:", error);
-        showDynamicSweetAlert('Error!',"Error Fetching Data", 'error');
+        showDynamicSweetAlert("Error!", "Error Fetching Data", "error");
         setIsLoadingTable(false);
         setAccountData([]);
       });
@@ -566,16 +558,9 @@ const FormInquiry = () => {
               currentPage={currentPage}
               onPageChange={handlePageChange}
               formCode={getFormcode}
-              refecthCallBack={() => fetchData(getFormcode)}
               menuName={menuName}
               primayKey={primaryKeyColumn}
               isLoadingTable={isLoadingTable}
-              canCreate={canCreate}
-              editPermission={canUpdate}
-              deletePermission={canDelete}
-              canVerify={canVerify}
-              canAuth={canAuth}
-              isWorkflow={isWorkflow}
             />
           </div>
         </div>

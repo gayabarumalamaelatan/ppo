@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import {
   FaCogs,
   FaDownload,
@@ -6,7 +6,6 @@ import {
   FaSyncAlt,
   FaTimes,
 } from "react-icons/fa";
-import { Fragment } from "react";
 import {
   FORM_SERVICE_LOAD_DATA,
   FORM_SERVICE_LOAD_FIELD,

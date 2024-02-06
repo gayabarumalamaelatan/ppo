@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useTable, useSortBy } from "react-table";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "admin-lte/dist/css/adminlte.min.css";
 import { FaEye } from "react-icons/fa";
-import { useEffect } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
