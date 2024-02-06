@@ -19,6 +19,7 @@ import { useRecoilValue } from "recoil";
 import { menusState } from "../store/RecoilFormTemplate";
 import * as XLSX from "xlsx";
 import FormTableView from "../tables/FormViewTable";
+import { showDynamicSweetAlert } from "../toast/Swal";
 
 const FormView = () => {
   const token = getToken();
@@ -81,21 +82,8 @@ const FormView = () => {
       );
     } catch (error) {
       console.log("Error fetching data:", error);
+      showDynamicSweetAlert('Error!',"Error Fetching Data", 'error');
     }
-  };
-
-  const getDataFormService = ({ urlParams, onSuccess, onError }) => {
-    axios
-      .get(`${FORM_SERVICE_LOAD_DATA}?${urlParams}`, { headers })
-      .then((response) => {
-        setTimeout(() => {
-          onSuccess(response);
-        }, 1000);
-      })
-      .catch((error) => {
-        if (onError) onError(error);
-        else console.log("Error fetching data:", error);
-      });
   };
 
   const fetchData = (formCode, tableName) => {
@@ -106,32 +94,33 @@ const FormView = () => {
     if (filterColumn !== "" && filterOperation !== "" && filterValue !== "") {
       if (tableName) {
         urlParams = `t=${tableName}&page=${currentPage}&size=${pageSize}&filterBy=${filterColumn}&filterValue=${filterValue}&operation=${filterOperation}&viewOnly=true`;
-        console.log("Log Point - Set UrlParam", urlParams);
       } else {
         urlParams = `f=${formCode}&page=${currentPage}&size=${pageSize}&filterBy=${filterColumn}&filterValue=${filterValue}&operation=${filterOperation}&viewOnly=true`;
-        console.log("Log Point - Set UrlParam", urlParams);
       }
     } else {
       if (tableName) {
         urlParams = `t=${tableName}&page=${currentPage}&size=${pageSize}&viewOnly=true`;
-        console.log("Log Point - Set UrlParam", urlParams);
       } else {
         urlParams = `f=${formCode}&page=${currentPage}&size=${pageSize}&viewOnly=true`;
-        console.log("Log Point - Set UrlParam", urlParams);
       }
     }
 
-    getDataFormService({
-      urlParams: urlParams,
-      onSuccess: (response) => {
-        setAccountData(response.data.data);
-        setTotalItems(response.data.totalAllData);
-        setIsLoadingTable(false);
-      },
-      onError: (error) => {
+    return axios
+      .get(`${FORM_SERVICE_LOAD_DATA}?${urlParams}`, { headers })
+      .then((response) => {
+        setTimeout(() => {
+          setAccountData(response.data.data);
+          setTotalItems(response.data.totalAllData);
+          setIsLoadingTable(false);
+        }, 1000);
+      })
+      .catch((error) => {
         console.log("Error fetching data:", error);
-      },
-    });
+        showDynamicSweetAlert('Error!',"Error Fetching Data", 'error');
+        setIsLoadingTable(false);
+        setAccountData([]);
+      });
+
   };
 
   useEffect(() => {

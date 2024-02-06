@@ -1,25 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import FormTable from '../tables/FormTable';
-import { FaAddressBook, FaCog, FaCogs, FaDownload, FaFilter, FaNewspaper, FaSearch, FaSyncAlt, FaTimes } from 'react-icons/fa';
+import { FaAddressBook, FaCogs, FaDownload, FaFilter, FaSyncAlt, FaTimes } from 'react-icons/fa';
 import { Fragment } from 'react';
-import { useLocation } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { FORM_SERVICE_DELETE_DATA, FORM_SERVICE_LOAD_DATA, FORM_SERVICE_LOAD_FIELD, FORM_SERVICE_REPORT_DATA, FORM_SERVICE_REPORT_DATA_CSV, FORM_SERVICE_REPORT_DATA_EXCEL } from '../config/ConfigApi';
+import {  FORM_SERVICE_LOAD_DATA, FORM_SERVICE_LOAD_FIELD, FORM_SERVICE_REPORT_DATA_CSV, FORM_SERVICE_REPORT_DATA_EXCEL } from '../config/ConfigApi';
 import axios from 'axios';
 import FormModalAddNew from '../modal/form/FormModalAddNew';
-import { assertPipelinePrimaryTopicReference } from '@babel/types';
 import { useRecoilValue } from 'recoil';
 import { menusState } from '../store/RecoilFormTemplate';
 import * as XLSX from 'xlsx';
 import FormTableMasterDetail from '../tables/FormTableMasterDetail';
 import { getToken } from '../config/Constants';
+import { showDynamicSweetAlert } from '../toast/Swal';
 
 const FormMasterDetail = () => {
-    //const { idForm, prefixTable, menuName } = useSelector(state => state);
     const menusForm = useRecoilValue(menusState);
-    const dispatch = useDispatch();
     const [columns, setColumns] = useState([]);
-    const [formCode, setFormCode] = useState('');
     const [accountData, setAccountData] = useState([]);
     const token = getToken();
     const headers = { Authorization: `Bearer ${token}` };
@@ -38,17 +32,13 @@ const FormMasterDetail = () => {
     const [isWorkflow, setIsWorkflow] = useState(false);
     const [tableNameDetail, setTableNameDetail] = useState('');
 
-    console.log('MenusForm', menusForm);
     const idForm = menusForm["idForm"];
-    const prefixTable = menusForm["prefixTable"];
     const menuName = menusForm["menuName"];
     const canCreate = menusForm["create"];
     const canUpdate = menusForm["update"];
     const canDelete = menusForm["delete"];
     const canVerify = menusForm["verify"];
     const canAuth = menusForm["auth"];
-
-    console.log('ID FORM', idForm);
 
     const openModal = () => {
         setIsModalOpen(true);
@@ -105,8 +95,6 @@ const FormMasterDetail = () => {
             // Set the combined columns in the state
             setColumns(columnsWithManualStatus);
 
-
-
             setIsWorkflow(response.data.needApproval);
             console.log('set table name', response.data.tableDetail);
             if (response.data.tableDetail !== null) {
@@ -127,83 +115,44 @@ const FormMasterDetail = () => {
 
     const fetchData = (formCodePass) => {
         setIsLoadingTable(true);
+
         console.log("Log Point: Initial Fetching Data")
-        let apiUrl;
+
+        let urlParams;
         
         console.log("tableNameDetail", tableNameDetail);
         if (filterColumn !== '' && filterOperation !== '' && filterValue !== '') {
             if (tableNameDetail){
                 console.log("Log Point: Get Data with Filter for Master Detail", tableNameDetail)
-                apiUrl = `${FORM_SERVICE_LOAD_DATA}?f=${formCodePass}&page=${currentPage}&size=${pageSize}&filterBy=${filterColumn}&filterValue=${filterValue}&operation=${filterOperation}&detail=true&showAll=YES`;
+                urlParams = `f=${formCodePass}&page=${currentPage}&size=${pageSize}&filterBy=${filterColumn}&filterValue=${filterValue}&operation=${filterOperation}&detail=true&showAll=YES`;
             } else {
                 console.log("Log Point: Get Data with Filter without Master Detail", tableNameDetail)
-                apiUrl = `${FORM_SERVICE_LOAD_DATA}?f=${formCodePass}&page=${currentPage}&size=${pageSize}&filterBy=${filterColumn}&filterValue=${filterValue}&operation=${filterOperation}`;
+                urlParams = `f=${formCodePass}&page=${currentPage}&size=${pageSize}&filterBy=${filterColumn}&filterValue=${filterValue}&operation=${filterOperation}`;
             }
-            return axios
-                .get(apiUrl, { headers })
-                .then((response) => {
-                    setTimeout(() => {
-                        setAccountData(response.data.data);
-                        setTotalItems(response.data.totalAllData);
-                        setIsLoadingTable(false); // Stop loading
-                    }, 1000);
-                })
-                .catch((error) => {
-                    console.log('Error fetching data:', error);
-                });
         } else {
             if(tableNameDetail){
                 console.log("Log Point: Get Data for Master Detail", tableNameDetail)
-                apiUrl = `${FORM_SERVICE_LOAD_DATA}?f=${formCodePass}&page=${currentPage}&size=${pageSize}&showAll=YES`;
+                urlParams = `f=${formCodePass}&page=${currentPage}&size=${pageSize}&showAll=YES`;
             } else {
                 console.log("Log Point: Get Data without Master Detail", tableNameDetail)
-                apiUrl = `${FORM_SERVICE_LOAD_DATA}?f=${formCodePass}&page=${currentPage}&size=${pageSize}`;
+                urlParams = `f=${formCodePass}&page=${currentPage}&size=${pageSize}`;
             }
-            return axios
-                .get(apiUrl, { headers })
-                .then((response) => {
-
-                    setTimeout(() => {
-                        setAccountData(response.data.data);
-                        setTotalItems(response.data.totalAllData);
-                        setTotalPage(response.data.totalPage);
-                        console.log("Log Point: Get Data without Filter", response.data.data)
-                        // if (totalPage != response.data.totalPage && currentPage === totalPage) {
-                        //     setCurrentPage(response.data.totalPage);
-                        //     console.log("Log Point ", response.data.totalPage);
-                        //    }
-                        setIsLoadingTable(false); // Stop loading
-                    }, 1000);
-                })
-                .catch((error) => {
-                    console.log('Error fetching data:', error);
-                });
         }
 
-    };
-
-    const fetchfilteredData = (formCodePass, filterBy, filterOperation, value) => {
-        setIsLoadingTable(true);
-        console.log('formcode', formCode);
-        console.log('codeFormPass', formCodePass);
-        let apiUrl;
-        if(tableNameDetail){
-            apiUrl = `${FORM_SERVICE_LOAD_DATA}?f=${formCodePass}&page=${currentPage}&size=${pageSize}&filterBy=${filterBy}&filterValue=${value}&operation=${filterOperation}&detail=true&showAll=YES`;
-        } else {
-            apiUrl = `${FORM_SERVICE_LOAD_DATA}?f=${formCodePass}&page=${currentPage}&size=${pageSize}&filterBy=${filterBy}&filterValue=${value}&operation=${filterOperation}`;
-        }
         return axios
-            .get(apiUrl, { headers })
+            .get(`${FORM_SERVICE_LOAD_DATA}?${urlParams}`, { headers })
             .then((response) => {
-
-                setTimeout(() => {
-                    setAccountData(response.data.data);
-                    setTotalItems(response.data.totalAllData);
-                    setIsLoadingTable(false); // Stop loading
-                }, 1000);
+            setTimeout(() => {
+                setAccountData(response.data.data);
+                setTotalItems(response.data.totalAllData);
+                setIsLoadingTable(false);
+                setTotalPage(response.data.totalPage);
+            }, 1000);
             })
             .catch((error) => {
-                console.log('Error fetching data:', error);
+                showDynamicSweetAlert('Error!',"Error Fetching Data", 'error');
+                setIsLoadingTable(false);
+                setAccountData([]);
             });
     };
 
@@ -212,11 +161,15 @@ const FormMasterDetail = () => {
     }, [idForm])
 
     useEffect(() => {
-        // console.log('Response get Data : ', accountData);
+        if (currentPage > totalPage) {
+            setCurrentPage(Math.max(totalPage, 1)); // Ensure currentPage is not less than 1
+        }
+    }, [totalPage, currentPage]);
+
+    useEffect(() => {
         if (getFormcode) {
             fetchData(getFormcode);
         }
-        // fetchData(getFormcode);
     }, [pageSize, currentPage, filterStatus, getFormcode ]);
 
     const [isCustomizeOpen, setIsCustomizeOpen] = useState(false);
@@ -442,7 +395,7 @@ const FormMasterDetail = () => {
                                     <button
                                         type="button"
                                         className="btn btn-default"
-                                        onClick={() => fetchData(getFormcode)}
+                                        onClick={handleRefresh}
                                     >
                                         <FaSyncAlt />
                                     </button>

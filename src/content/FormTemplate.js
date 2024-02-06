@@ -1,25 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import FormTable from '../tables/FormTable';
-import { FaAddressBook, FaCog, FaCogs, FaDownload, FaFilter, FaNewspaper, FaSearch, FaSyncAlt, FaTimes } from 'react-icons/fa';
+import { FaAddressBook, FaCogs, FaDownload, FaFilter,  FaSyncAlt, FaTimes } from 'react-icons/fa';
 import { Fragment } from 'react';
-import { useLocation } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { FORM_SERVICE_DELETE_DATA, FORM_SERVICE_LOAD_DATA, FORM_SERVICE_LOAD_FIELD, FORM_SERVICE_REPORT_DATA, FORM_SERVICE_REPORT_DATA_CSV, FORM_SERVICE_REPORT_DATA_EXCEL } from '../config/ConfigApi';
+import { FORM_SERVICE_LOAD_DATA, FORM_SERVICE_LOAD_FIELD,  FORM_SERVICE_REPORT_DATA_CSV, FORM_SERVICE_REPORT_DATA_EXCEL } from '../config/ConfigApi';
 import axios from 'axios';
-import { disabled, getToken } from '../config/Constants';
+import { getToken } from '../config/Constants';
 import FormModalAddNew from '../modal/form/FormModalAddNew';
-import { assertPipelinePrimaryTopicReference } from '@babel/types';
 import { useRecoilValue } from 'recoil';
 import { menusState } from '../store/RecoilFormTemplate';
 import * as XLSX from 'xlsx';
+import { showDynamicSweetAlert } from '../toast/Swal';
 
 const FormTemplate = () => {
-    //const { idForm, prefixTable, menuName } = useSelector(state => state);
     const token = getToken();
     const menusForm = useRecoilValue(menusState);
-    const dispatch = useDispatch();
     const [columns, setColumns] = useState([]);
-    const [formCode, setFormCode] = useState('');
     const [accountData, setAccountData] = useState([]);
     const headers = { Authorization: `Bearer ${token}` };
     const [getFormcode, setGetFormCode] = useState();
@@ -36,17 +31,13 @@ const FormTemplate = () => {
     const [isLoadingTable, setIsLoadingTable] = useState(false);
     const [isWorkflow, setIsWorkflow] = useState(false);
 
-    console.log('MenusForm', menusForm);
     const idForm = menusForm["idForm"];
-    const prefixTable = menusForm["prefixTable"];
     const menuName = menusForm["menuName"];
     const canCreate = menusForm["create"];
     const canUpdate = menusForm["update"];
     const canDelete = menusForm["delete"];
     const canVerify = menusForm["verify"];
     const canAuth = menusForm["auth"];
-
-    console.log('ID FORM', idForm);
 
     const openModal = () => {
         setIsModalOpen(true);
@@ -100,86 +91,40 @@ const FormTemplate = () => {
             // Set the combined columns in the state
             setColumns(columnsWithManualStatus);
 
-
-
             setIsWorkflow(response.data.needApproval);
-            //console.log('getFormcode', getFormcode);
-            // fetchData(formCode[0]);
+
             setColumnVisibility(
                 Object.fromEntries(columnsWithManualStatus.map(column => [column.accessor, true])));
         } catch (error) {
-            console.log('Error fetching data:', error);
+            showDynamicSweetAlert('Error!',"Error Fetching Data", 'error');
         }
     };
 
-    const fetchData = (formCodePass) => {
+    const fetchData = (formCode) => {
         setIsLoadingTable(true);
+
+        let urlParams;
 
         if (filterColumn !== '' && filterOperation !== '' && filterValue !== '') {
-            return axios
-                .get(`${FORM_SERVICE_LOAD_DATA}?f=${formCodePass}&page=${currentPage}&size=${pageSize}&filterBy=${filterColumn}&filterValue=${filterValue}&operation=${filterOperation}`, { headers })
-                .then((response) => {
-                    setTimeout(() => {
-                        setAccountData(response.data.data);
-                        setTotalItems(response.data.totalAllData);
-                        setIsLoadingTable(false); // Stop loading
-                    }, 1000);
-
-                    //console.log('Log Point: Fetch Filtered Data')
-                    // console.log('Response get Data : ', accountData);
-                    // console.log('Response get ')
-                })
-                .catch((error) => {
-                    console.log('Error fetching data:', error);
-                });
+            urlParams = `f=${formCode}&page=${currentPage}&size=${pageSize}&filterBy=${filterColumn}&filterValue=${filterValue}&operation=${filterOperation}`;
         } else {
-            return axios
-                .get(`${FORM_SERVICE_LOAD_DATA}?f=${formCodePass}&page=${currentPage}&size=${pageSize}`, { headers })
-                .then((response) => {
-
-                    setTimeout(() => {
-                        setAccountData(response.data.data);
-                        setTotalItems(response.data.totalAllData);
-                        setTotalPage(response.data.totalPage);
-                        if (totalPage != response.data.totalPage && currentPage === totalPage) {
-                            setCurrentPage(response.data.totalPage);
-                            // console.log('Log Point: Fetch Data to Last Page')
-                            //console.log('Redirect from last page', totalPage, 'to newest last page', response.data.totalPage);
-                        }
-                        // console.log('Log Point: Fetch Data')
-                        setIsLoadingTable(false); // Stop loading
-                    }, 1000);
-
-
-                    // console.log('Response get Data : ', accountData);
-                    // console.log('Response get ')
-                })
-                .catch((error) => {
-                    console.log('Error fetching data:', error);
-                });
+            urlParams = `f=${formCode}&page=${currentPage}&size=${pageSize}`;
         }
 
-    };
-
-    const fetchfilteredData = (formCodePass, filterBy, filterOperation, value) => {
-        setIsLoadingTable(true);
-        console.log('formcode', formCode);
-        console.log('codeFormPass', formCodePass);
         return axios
-            .get(`${FORM_SERVICE_LOAD_DATA}?f=${formCodePass}&page=${currentPage}&size=${pageSize}&filterBy=${filterBy}&filterValue=${value}&operation=${filterOperation}`, { headers })
+            .get(`${FORM_SERVICE_LOAD_DATA}?${urlParams}`, { headers })
             .then((response) => {
-
-                setTimeout(() => {
-                    setAccountData(response.data.data);
-                    setTotalItems(response.data.totalAllData);
-                    setIsLoadingTable(false); // Stop loading
-                }, 1000);
-
-                // console.log('Response get Data : ', accountData);
-                // console.log('Response get ')
+            setTimeout(() => {
+                setAccountData(response.data.data);
+                setTotalItems(response.data.totalAllData);
+                setIsLoadingTable(false);
+                setTotalPage(response.data.totalPage);
+            }, 1000);
             })
             .catch((error) => {
-                console.log('Error fetching data:', error);
+                showDynamicSweetAlert('Error!',"Error Fetching Data", 'error');
+                setIsLoadingTable(false);
+                setAccountData([]);
             });
     };
 
@@ -188,11 +133,15 @@ const FormTemplate = () => {
     }, [idForm])
 
     useEffect(() => {
-        // console.log('Response get Data : ', accountData);
+        if (currentPage > totalPage) {
+            setCurrentPage(Math.max(totalPage, 1)); // Ensure currentPage is not less than 1
+        }
+    }, [totalPage, currentPage]);
+
+    useEffect(() => {
         if (getFormcode) {
             fetchData(getFormcode);
         }
-        // fetchData(getFormcode);
     }, [pageSize, currentPage, filterStatus, getFormcode ]);
     
     const [isCustomizeOpen, setIsCustomizeOpen] = useState(false);
@@ -402,18 +351,6 @@ const FormTemplate = () => {
                                         <option value="50">50</option>
                                         <option value="100">100</option>
                                     </select>
-                                    {/* <div className="input-group input-group-sm" >
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            placeholder="Search"
-                                        />
-                                        <div className="input-group-append">
-                                            <button className="btn btn-primary">
-                                                <FaSearch />
-                                            </button>
-                                        </div>
-                                    </div> */}
                                 </div>
                             </div>
                             <div className="col-md-8 d-flex justify-content-end align-items-center">
@@ -430,7 +367,7 @@ const FormTemplate = () => {
                                     <button
                                         type="button"
                                         className="btn btn-default"
-                                        onClick={() => fetchData(getFormcode)}
+                                        onClick={handleRefresh}
                                     >
                                         <FaSyncAlt />
                                     </button>
@@ -610,8 +547,6 @@ const FormTemplate = () => {
                 />
             </section >
         </Fragment >
-
-        //<FormTable columns={columns} data={accountData} />
     );
 };
 
