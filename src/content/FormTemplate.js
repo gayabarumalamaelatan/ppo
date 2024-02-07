@@ -49,7 +49,6 @@ const FormTemplate = () => {
 
     const fetchHeader = async () => {
         try {
-            // console.log('Exec Fetch Header');
             const response = await axios.get(`${FORM_SERVICE_LOAD_FIELD}?formId=${idForm}`, { headers });
             const formCode = response.data.coreFields.map(getFormcode => getFormcode.formCode);
             console.log('Get Form code', formCode);
