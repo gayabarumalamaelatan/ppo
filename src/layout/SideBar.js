@@ -141,7 +141,7 @@ export default function SideBar() {
         const isFormMenu = menuItem.url === '/form';
 
       return shouldRenderMenuItem ? (
-        <li className="nav-item sub-nav-item" key={menuItem.menuName}>
+        <li className="nav-item" key={menuItem.menuName}>
           <Link
             to={menuItem.url}
             className="nav-link"
