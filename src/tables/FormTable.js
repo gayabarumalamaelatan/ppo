@@ -184,7 +184,7 @@ const FormTable = ({
       for (const data of selectedData) {
         // Ubah data sesuai dengan struktur body request yang diinginkan
         const requestData = {
-          idTrx: data.id, // Menggunakan ID dari data terpilih
+          idTrx: data.ID, // Menggunakan ID dari data terpilih
           status: verified, // Ganti dengan nilai status yang sesuai, atau sesuaikan sesuai kebutuhan
         };
 
