@@ -67,7 +67,7 @@ const FormView = () => {
       const transformedColumns = Array.isArray(response.data.coreFields)
         ? response.data.coreFields.map((apiColumn) => ({
             Header: apiColumn.description,
-            accessor: apiColumn.fieldName,
+            accessor: apiColumn.fieldName.toUpperCase(),
             sortType: "basic",
             lookupTable: apiColumn.lookupTable,
             displayFormat: apiColumn.displayFormat,
@@ -107,8 +107,13 @@ const FormView = () => {
     return axios
       .get(`${FORM_SERVICE_LOAD_DATA}?${urlParams}`, { headers })
       .then((response) => {
+        const transformedData = response.data.data.map(item => 
+          Object.keys(item).reduce((acc, key) => {
+              acc[key.toUpperCase()] = item[key];
+              return acc;
+          }, {}));
         setTimeout(() => {
-          setAccountData(response.data.data);
+          setAccountData(transformedData);
           setTotalItems(response.data.totalAllData);
           setIsLoadingTable(false);
         }, 1000);

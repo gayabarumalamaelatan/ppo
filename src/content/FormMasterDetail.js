@@ -89,7 +89,7 @@ const FormMasterDetail = () => {
       const transformedColumns = Array.isArray(response.data.coreFields)
         ? response.data.coreFields.map((apiColumn) => ({
             Header: apiColumn.description,
-            accessor: apiColumn.fieldName,
+            accessor: apiColumn.fieldName.toUpperCase(),
             sortType: "basic",
             lookupTable: apiColumn.lookupTable,
             displayFormat: apiColumn.displayFormat,
@@ -101,7 +101,7 @@ const FormMasterDetail = () => {
       // Create a manual status column
       const manualStatusColumn = {
         Header: "Status",
-        accessor: "status", // Replace 'status' with the actual accessor for the status column
+        accessor: "STATUS", // Replace 'status' with the actual accessor for the status column
         sortType: "basic",
         // Add other properties for the status column if needed
       };
@@ -177,8 +177,13 @@ const FormMasterDetail = () => {
     return axios
       .get(`${FORM_SERVICE_LOAD_DATA}?${urlParams}`, { headers })
       .then((response) => {
+        const transformedData = response.data.data.map(item => 
+          Object.keys(item).reduce((acc, key) => {
+              acc[key.toUpperCase()] = item[key];
+              return acc;
+          }, {}));
         setTimeout(() => {
-          setAccountData(response.data.data);
+          setAccountData(transformedData);
           setTotalItems(response.data.totalAllData);
           setIsLoadingTable(false);
           setTotalPage(response.data.totalPage);

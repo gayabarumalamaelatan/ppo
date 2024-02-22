@@ -11,9 +11,9 @@ const SchedulerManagement = () => {
     const [showNewSchedulerModal, setShowNewSchedulerModal] = useState(false);
     const [refreshTableStatus, setRefreshTableStatus] = useState(false);
 
-    const canCreateSchedule = permissions["Integration"]["Scheduler"]["create"];
-    const canDeleteSchedule = permissions["Integration"]["Scheduler"]["delete"];
-    const canUpdateSchedule = permissions["Integration"]["Scheduler"]["update"];
+    const canCreateSchedule = permissions["Configuration"]["Scheduler"]["create"];
+    const canDeleteSchedule = permissions["Configuration"]["Scheduler"]["delete"];
+    const canUpdateSchedule = permissions["Configuration"]["Scheduler"]["update"];
 
     const handleCloseModal = () => {
         setShowNewSchedulerModal(false);

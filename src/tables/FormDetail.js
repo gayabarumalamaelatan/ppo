@@ -51,7 +51,7 @@ const FormDetail = ({ idForm, getFormCode, tableNameDetail, headers, rowData, ke
             // Assuming coreFields is an array
             const transformedColumns = response.data.coreFields.map(apiColumn => ({
                 Header: apiColumn.description,
-                accessor: apiColumn.fieldName,
+                accessor: apiColumn.fieldName.toUpperCase(),
                 sortType: 'basic',
                 lookupTable: apiColumn.lookupTable,
                 displayFormat: apiColumn.displayFormat,
@@ -70,9 +70,13 @@ const FormDetail = ({ idForm, getFormCode, tableNameDetail, headers, rowData, ke
         setIsLoadingTableDetail(true);
         try {
             const response = await axios.get(`${FORM_SERVICE_LOAD_DATA}?t=${tableNameDetail}&filterBy=${keyCol}&filterValue=${rowData}&operation=EQUAL&page=${currentPageDetail}&size=${pageSizeDetail}&detail=true&showAll=YES`, { headers });
-
+            const transformedData = response.data.data.map(item =>
+                Object.keys(item).reduce((acc, key) => {
+                  acc[key.toUpperCase()] = item[key];
+                  return acc;
+                }, {}));
             setTimeout(() => {
-                setData(response.data.data);
+                setData(transformedData);
                 setTotalItems(response.data.totalAllData);
                 setIsLoadingTableDetail(false);
             }, 1000);
