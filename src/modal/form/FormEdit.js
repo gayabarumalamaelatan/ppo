@@ -37,7 +37,7 @@ const FormEdit = ({ isOpen, onClose, columns, menuName, getFormCode, data, keyCo
 
         if (data !== null) {
             console.log('masuk');
-            const firstValue = data.id;
+            const firstValue = data.ID;
             const firstObject = columns[0].accessor;
             let apiUrl;
             if (tableNameDetail) {
@@ -108,7 +108,7 @@ const FormEdit = ({ isOpen, onClose, columns, menuName, getFormCode, data, keyCo
 
         console.log('Form Edit:', formDataEdit);
 
-        const { status, id, ...formDataWithoutStatusAndId } = formDataEdit;
+        const { STATUS, ID, ...formDataWithoutStatusAndId } = formDataEdit;
         console.log('Form Edit:', formDataWithoutStatusAndId);
 
         const firstValue = Object.values(data)[1];
@@ -152,7 +152,7 @@ const FormEdit = ({ isOpen, onClose, columns, menuName, getFormCode, data, keyCo
                     setTimeout(async () => {
                         try {
                             const requestData = {
-                                idTrx: formDataEdit.id,
+                                idTrx: formDataEdit.ID,
                                 status: pending,
                                 // Other properties in your requestData object
                             };

@@ -16,8 +16,8 @@ const KafkaTopic = () => {
     const [showTopicTable, setShowTopicTable] = useState(true);
 
     // Permission call
-    const canCreateTopic = permissions["Integration"]["Topics"]["create"];
-    const canDeleteTopic = permissions["Integration"]["Topics"]["delete"];
+    const canCreateTopic = permissions["Configuration"]["Topics"]["create"];
+    const canDeleteTopic = permissions["Configuration"]["Topics"]["delete"];
 
     const handleCloseModal = () => {
         setShowNewTopicModal(false);

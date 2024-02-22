@@ -105,7 +105,7 @@ const FormTable = ({
   const handleDelete = async (data) => {
     setIsLoading(true);
     console.log("data view ", data);
-    const columnKey = data.original.id;
+    const columnKey = data.original.ID;
     console.log("column key ", columnKey);
     try {
       await axios.delete(
@@ -232,7 +232,7 @@ const FormTable = ({
       for (const data of selectedData) {
         // Ubah data sesuai dengan struktur body request yang diinginkan
         const requestData = {
-          idTrx: data.id, // Menggunakan ID dari data terpilih
+          idTrx: data.ID, // Menggunakan ID dari data terpilih
           status: approved, // Ganti dengan nilai status yang sesuai, atau sesuaikan sesuai kebutuhan
         };
 
@@ -279,7 +279,7 @@ const FormTable = ({
       for (const data of selectedData) {
         // Ubah data sesuai dengan struktur body request yang diinginkan
         const requestData = {
-          idTrx: data.id, // Menggunakan ID dari data terpilih
+          idTrx: data.ID, // Menggunakan ID dari data terpilih
           status: reject, // Ganti dengan nilai status yang sesuai, atau sesuaikan sesuai kebutuhan
         };
 
@@ -325,7 +325,7 @@ const FormTable = ({
       for (const data of selectedData) {
         // Ubah data sesuai dengan struktur body request yang diinginkan
         const requestData = {
-          idTrx: data.id, // Menggunakan ID dari data terpilih
+          idTrx: data.ID, // Menggunakan ID dari data terpilih
           status: rework, // Ganti dengan nilai status yang sesuai, atau sesuaikan sesuai kebutuhan
         };
 
@@ -352,7 +352,7 @@ const FormTable = ({
       console.error("Error during Rework:", error);
       showDynamicSweetAlert("Error!", error, "error");
     } finally {
-      setIsRejecting(false);
+      setIsReworking(false);
       setIsLoading(false);
     }
   };
