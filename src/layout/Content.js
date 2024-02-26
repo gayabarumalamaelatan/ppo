@@ -105,6 +105,10 @@ export default function Content() {
         moduleName: 'gritsmartinmodule',
         componentName: 'SocketManager'
       },
+      {
+        moduleName: 'gritmoneymarketmodule',
+        componentName: 'Customers'
+      },
       // ... other components SmartinEndpoints
     ]
   };

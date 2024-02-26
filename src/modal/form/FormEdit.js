@@ -21,7 +21,7 @@ const FormEdit = ({ isOpen, onClose, columns, menuName, getFormCode, data, keyCo
 
     console.log('formcode', getFormCode);
     console.log('data Edit', data);
-
+    console.log('col ', columns);
     const [formErrors, setFormErrors] = useState({});
 
 
@@ -48,7 +48,26 @@ const FormEdit = ({ isOpen, onClose, columns, menuName, getFormCode, data, keyCo
             try {
                 const response = await axios.get(apiUrl, { headers })
                 console.log('Data Edit:', response.data);
-                setFormDataEdit(response.data);
+                // Check if response.data is defined and it is an object
+                if (response.data && typeof response.data === 'object') {
+                    // Convert the object into an array with a single element
+                    const dataArray = [response.data];
+
+                    // Perform mapping or any other operations on the array
+                    const transformedData = dataArray.map(item =>
+                        Object.keys(item).reduce((acc, key) => {
+                            acc[key.toUpperCase()] = item[key];
+                            return acc;
+                        }, {})
+                    );
+
+                    console.log('Data Edit:', transformedData);
+                    setFormDataEdit(transformedData[0]);
+                } else {
+                    console.error('Invalid response data:', response.data);
+                    // Handle the error appropriately, such as displaying a message to the user.
+                }
+
 
             } catch (error) {
                 console.error('Error View data:', error);
@@ -61,38 +80,38 @@ const FormEdit = ({ isOpen, onClose, columns, menuName, getFormCode, data, keyCo
 
     const fetchLookupTable = async () => {
         const columnsWithLookupTable = columns.filter((column) => column.lookupTable != null);
-    
+
         if (columnsWithLookupTable.length > 0) {
-          // Create an array of promises for fetching data
-          const fetchPromises = columnsWithLookupTable.map((column) =>
-            fetch(`${FORM_SERVICE_LOAD_DATA}?t=${column.lookupTable}&lookup=YES`, { headers })
-              .then((response) => response.json())
-              .then((data) => {
-                //console.log('API Response for', column.accessor, ':', data.data);
-                return data; // Return data to preserve it in the promise chain
-              })
-          );
-    
-          // Execute all fetch promises in parallel
-          Promise.all(fetchPromises)
-            .then((dataArray) => {
-              //console.log('dataArray:', dataArray);
-              const lookupData = {};
-    
-              // Ensure that dataArray matches the order of columnsWithLookupTable
-              columnsWithLookupTable.forEach((column, index) => {
-                if (dataArray[index].data && Array.isArray(dataArray[index].data)) {
-                  // Ensure dataArray[index].data is an array before using it
-                  lookupData[column.accessor] = dataArray[index].data;
-                }
-              });
-    
-               console.log('lookupTableData:', lookupData);
-              setLookupTableData(lookupData);
-            })
-            .catch((error) => {
-              console.error('Error loading data from API:', error);
-            });
+            // Create an array of promises for fetching data
+            const fetchPromises = columnsWithLookupTable.map((column) =>
+                fetch(`${FORM_SERVICE_LOAD_DATA}?t=${column.lookupTable}&lookup=YES&page=1&size=500`, { headers })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        //console.log('API Response for', column.accessor, ':', data.data);
+                        return data; // Return data to preserve it in the promise chain
+                    })
+            );
+
+            // Execute all fetch promises in parallel
+            Promise.all(fetchPromises)
+                .then((dataArray) => {
+                    //console.log('dataArray:', dataArray);
+                    const lookupData = {};
+
+                    // Ensure that dataArray matches the order of columnsWithLookupTable
+                    columnsWithLookupTable.forEach((column, index) => {
+                        if (dataArray[index].data && Array.isArray(dataArray[index].data)) {
+                            // Ensure dataArray[index].data is an array before using it
+                            lookupData[column.accessor] = dataArray[index].data;
+                        }
+                    });
+
+                    console.log('lookupTableData:', lookupData);
+                    setLookupTableData(lookupData);
+                })
+                .catch((error) => {
+                    console.error('Error loading data from API:', error);
+                });
         }
     }
 
@@ -118,13 +137,13 @@ const FormEdit = ({ isOpen, onClose, columns, menuName, getFormCode, data, keyCo
         }
 
         let apiUrl;
-        if(tableNameDetail){
+        if (tableNameDetail) {
             apiUrl = `${FORM_SERVICE_UPDATE_DATA}?t=${tableNameDetail}&column=id&value=${firstValue}`
-        }else{
+        } else {
             apiUrl = `${FORM_SERVICE_UPDATE_DATA}?f=${getFormCode}&column=id&value=${firstValue}`;
         }
         // Define the API endpoint URL for your POST request
-        
+
 
         // Create the request options, including method, headers, and body
         const requestOptions = {
@@ -251,88 +270,88 @@ const FormEdit = ({ isOpen, onClose, columns, menuName, getFormCode, data, keyCo
                                         <Form.Label htmlFor={column.accessor}>{column.Header} {column.isMandatory && <span className="text-danger"> *</span>}</Form.Label>
                                         {column.lookupTable !== null ? (
                                             <>
-                                            <Form.Control
-                                                as="select"
-                                                id={column.accessor}
-                                                name={column.accessor}
-                                                value={formDataEdit[column.accessor] || ''}
-                                                onChange={(e) =>
-                                                    setFormDataEdit({
-                                                        ...formDataEdit,
-                                                        [column.accessor]: e.target.value,
-                                                    })
-                                                }
-                                                isInvalid={!!formErrors[column.accessor]}
-                                            >
-                                                <option value="">
-                                                    Select an option: {column.accessor}
-                                                </option>
-                                                {Array.isArray(lookupTableData[column.accessor]) &&
-                                                    lookupTableData[column.accessor].map((option, optionIndex) => (
-                                                        <option
-                                                            key={optionIndex}
-                                                            value={Object.values(option)[2]}
-                                                        >
-                                                            {`${Object.values(option)[2]} - ${Object.values(option)[3]}`}
-                                                        </option>
-                                                    ))}
-                                            </Form.Control>
-                                            {formErrors[column.accessor] && (
-                                                <Form.Control.Feedback type="invalid">
-                                                    {formErrors[column.accessor]}
-                                                </Form.Control.Feedback>
-                                            )}
+                                                <Form.Control
+                                                    as="select"
+                                                    id={column.accessor}
+                                                    name={column.accessor}
+                                                    value={formDataEdit[column.accessor] || ''}
+                                                    onChange={(e) =>
+                                                        setFormDataEdit({
+                                                            ...formDataEdit,
+                                                            [column.accessor]: e.target.value,
+                                                        })
+                                                    }
+                                                    isInvalid={!!formErrors[column.accessor]}
+                                                >
+                                                    <option value="">
+                                                        Select an option: {column.accessor}
+                                                    </option>
+                                                    {Array.isArray(lookupTableData[column.accessor]) &&
+                                                        lookupTableData[column.accessor].map((option, optionIndex) => (
+                                                            <option
+                                                                key={optionIndex}
+                                                                value={Object.values(option)[2]}
+                                                            >
+                                                                {`${Object.values(option)[2]} - ${Object.values(option)[3]}`}
+                                                            </option>
+                                                        ))}
+                                                </Form.Control>
+                                                {formErrors[column.accessor] && (
+                                                    <Form.Control.Feedback type="invalid">
+                                                        {formErrors[column.accessor]}
+                                                    </Form.Control.Feedback>
+                                                )}
                                             </>
                                         ) : column.displayFormat === 'DATE' ? (
                                             <>
-                                            <div className="input-group date">
-                                              <DatePicker
-                                                className="form-control"
-                                                id={column.accessor}
-                                                name={column.accessor}
-                                                selected={formDataEdit[column.accessor] ? new Date(formDataEdit[column.accessor]) : null}
-                                                onChange={(date) =>
-                                                  setFormDataEdit({
-                                                    ...formDataEdit,
-                                                    [column.accessor]: date.toISOString().split('T')[0],
-                                                  })
-                                                }
-                                                dateFormat="yyyy-MM-dd" // Specify the desired date format
-                                                isInvalid={!!formErrors[column.accessor]}
-                                              />
-                                              <div className="input-group-append">
-                                                <div className="input-group-text">
-                                                  <i className="fa fa-calendar"></i>
+                                                <div className="input-group date">
+                                                    <DatePicker
+                                                        className="form-control"
+                                                        id={column.accessor}
+                                                        name={column.accessor}
+                                                        selected={formDataEdit[column.accessor] ? new Date(formDataEdit[column.accessor]) : null}
+                                                        onChange={(date) =>
+                                                            setFormDataEdit({
+                                                                ...formDataEdit,
+                                                                [column.accessor]: date.toISOString().split('T')[0],
+                                                            })
+                                                        }
+                                                        dateFormat="yyyy-MM-dd" // Specify the desired date format
+                                                        isInvalid={!!formErrors[column.accessor]}
+                                                    />
+                                                    <div className="input-group-append">
+                                                        <div className="input-group-text">
+                                                            <i className="fa fa-calendar"></i>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                              </div>
-                                            </div>
-                                            {formErrors[column.accessor] && (
-                                                <div className="invalid-feedback d-block">
-                                                    {formErrors[column.accessor]}
-                                                </div>
-                                            )}
+                                                {formErrors[column.accessor] && (
+                                                    <div className="invalid-feedback d-block">
+                                                        {formErrors[column.accessor]}
+                                                    </div>
+                                                )}
                                             </>
-                                        ):(
-                                            <> 
-                                            <Form.Control
-                                                type="text"
-                                                id={column.accessor}
-                                                name={column.accessor}
-                                                value={formDataEdit[column.accessor] || ''}
-                                                onChange={(e) =>
-                                                    setFormDataEdit({
-                                                        ...formDataEdit,
-                                                        [column.accessor]: e.target.value,
-                                                    })
-                                                }
-                                                disabled={column.accessor === keyCol}
-                                                isInvalid={!!formErrors[column.accessor]}
-                                            />
-                                            {formErrors[column.accessor] && (
-                                                <Form.Control.Feedback type="invalid">
-                                                    {formErrors[column.accessor]}
-                                                </Form.Control.Feedback>
-                                            )}
+                                        ) : (
+                                            <>
+                                                <Form.Control
+                                                    type="text"
+                                                    id={column.accessor}
+                                                    name={column.accessor}
+                                                    value={formDataEdit[column.accessor] || ''}
+                                                    onChange={(e) =>
+                                                        setFormDataEdit({
+                                                            ...formDataEdit,
+                                                            [column.accessor]: e.target.value,
+                                                        })
+                                                    }
+                                                    disabled={column.accessor === keyCol}
+                                                    isInvalid={!!formErrors[column.accessor]}
+                                                />
+                                                {formErrors[column.accessor] && (
+                                                    <Form.Control.Feedback type="invalid">
+                                                        {formErrors[column.accessor]}
+                                                    </Form.Control.Feedback>
+                                                )}
                                             </>
                                         )}
 

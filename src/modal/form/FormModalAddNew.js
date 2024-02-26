@@ -35,7 +35,7 @@ const FormModalAddNew = ({ isOpen, onClose, columns, menuName, formCode, tableNa
     if (columnsWithLookupTable.length > 0) {
       // Create an array of promises for fetching data
       const fetchPromises = columnsWithLookupTable.map((column) =>
-        fetch(`${FORM_SERVICE_LOAD_DATA}?t=${column.lookupTable}&lookup=YES`, { headers })
+        fetch(`${FORM_SERVICE_LOAD_DATA}?t=${column.lookupTable}&lookup=YES&page=1&size=500`, { headers })
           .then((response) => response.json())
           .then((data) => {
             //console.log('API Response for', column.accessor, ':', data.data);
@@ -71,6 +71,8 @@ const FormModalAddNew = ({ isOpen, onClose, columns, menuName, formCode, tableNa
   }, [columns]);
 
   const sendDataToAPI = (formData, successCallback) => {
+
+    console.log('Form Add New:', formData);
     let apiUrl;
 
     console.log("table", tableNameDetail);
@@ -83,6 +85,7 @@ const FormModalAddNew = ({ isOpen, onClose, columns, menuName, formCode, tableNa
     }
 
     // Create the request options, including method, headers, and body
+    delete formData.STATUS;
     const requestOptions = {
       method: 'POST',
       headers: {

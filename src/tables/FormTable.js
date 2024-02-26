@@ -134,9 +134,29 @@ const FormTable = ({
         { headers }
       );
       console.log("Data View successfully:", response.data);
-      setDataToView(response.data);
-      setShowDeleteModal(false);
-      setDataToDelete(null);
+      // Check if response.data is defined and it is an object
+      if (response.data && typeof response.data === 'object') {
+        // Convert the object into an array with a single element
+        const dataArray = [response.data];
+
+        // Perform mapping or any other operations on the array
+        const transformedData = dataArray.map(item =>
+          Object.keys(item).reduce((acc, key) => {
+            acc[key.toUpperCase()] = item[key];
+            return acc;
+          }, {})
+        );
+
+        console.log('Data Edit:', transformedData);
+        setDataToView(transformedData[0]);
+        setShowDeleteModal(false);
+        setDataToDelete(null);
+      } else {
+        console.error('Invalid response data:', response.data);
+        // Handle the error appropriately, such as displaying a message to the user.
+      }
+
+
     } catch (error) {
       console.error("Error View data:", error);
     }
@@ -618,7 +638,7 @@ const FormTable = ({
             totalItems={totalItems}
             pageSize={pageSize}
             currentPage={currentPage}
-            onPageChange={handlePageChange}  
+            onPageChange={handlePageChange}
           />
         </div>
       </div>
@@ -659,7 +679,7 @@ const FormTable = ({
                       <strong>{formatKey(column.accessor)}:</strong>
                       <span className="ml-2 flex-fill">
                         {column.displayFormat === "CURRENCY" ||
-                        column.displayFormat === "DECIMAL" ? (
+                          column.displayFormat === "DECIMAL" ? (
                           <NumericFormat
                             value={dataToView[column.accessor]}
                             displayType={"text"}
