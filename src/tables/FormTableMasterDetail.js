@@ -97,7 +97,7 @@ const FormTableMasterDetail = ({
   const handleDelete = async (data) => {
     setIsLoading(true);
     console.log("data view ", data);
-    const columnKey = data.original.id;
+    const columnKey = data.original.ID;
     console.log("columnKey ", columnKey);
     try {
       await axios.delete(

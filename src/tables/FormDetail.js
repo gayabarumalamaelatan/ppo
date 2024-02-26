@@ -72,8 +72,8 @@ const FormDetail = ({ idForm, getFormCode, tableNameDetail, headers, rowData, ke
             const response = await axios.get(`${FORM_SERVICE_LOAD_DATA}?t=${tableNameDetail}&filterBy=${keyCol}&filterValue=${rowData}&operation=EQUAL&page=${currentPageDetail}&size=${pageSizeDetail}&detail=true&showAll=YES`, { headers });
             const transformedData = response.data.data.map(item =>
                 Object.keys(item).reduce((acc, key) => {
-                  acc[key.toUpperCase()] = item[key];
-                  return acc;
+                    acc[key.toUpperCase()] = item[key];
+                    return acc;
                 }, {}));
             setTimeout(() => {
                 setData(transformedData);
@@ -128,14 +128,24 @@ const FormDetail = ({ idForm, getFormCode, tableNameDetail, headers, rowData, ke
 
     const handleView = async (data) => {
         console.log('data view ', data);
-        const firstValue = data.id;
+        const firstValue = data.ID;
         // console.log('First object ', firstObject);
         console.log('First Value ', firstValue);
 
         try {
             const response = await axios.get(`${FORM_SERVICE_VIEW_DATA}?t=${tableNameDetail}&column=id&value=${firstValue}`, { headers })
             console.log('Data View successfully:', response.data);
-            setDataToView(response.data);
+
+            const dataArray = [response.data];
+
+            // Perform mapping or any other operations on the array
+            const transformedData = dataArray.map(item =>
+                Object.keys(item).reduce((acc, key) => {
+                    acc[key.toUpperCase()] = item[key];
+                    return acc;
+                }, {})
+            );
+            setDataToView(transformedData[0]);
             setShowDeleteModal(false);
             setDataToDelete(null);
         } catch (error) {
@@ -146,7 +156,7 @@ const FormDetail = ({ idForm, getFormCode, tableNameDetail, headers, rowData, ke
     const handleDelete = async (data) => {
         setIsLoading(true);
         console.log('data view ', data);
-        const columnKey = data.original.id;
+        const columnKey = data.original.ID;
         console.log('column key ', columnKey);
         try {
             const response = await axios.delete(`${FORM_SERVICE_DELETE_DATA}?t=${tableNameDetail}&column=id&value=${columnKey}`, { headers })
@@ -230,7 +240,7 @@ const FormDetail = ({ idForm, getFormCode, tableNameDetail, headers, rowData, ke
         XLSX.utils.book_append_sheet(wb, ws, "Sheet1");  // Anda bisa mengganti "Sheet1" dengan nama yang Anda inginkan
         XLSX.writeFile(wb, `${menuName}_Detail-${getCurrentDateTime()}.csv`, { bookType: 'csv' });  // Note the added bookType parameter for CSV
     };
-   
+
     return (
         <div >
             <div className="row align-items-center">
@@ -521,7 +531,7 @@ const FormDetail = ({ idForm, getFormCode, tableNameDetail, headers, rowData, ke
                         data={dataToEdit}
                         keyCol={keyCol}
                         refecthCallBack={() => fetchDataDetail(tableNameDetail)}
-                        //isWorkflow={isWorkflow}
+                    //isWorkflow={isWorkflow}
                     />
                 </div>
             </div>

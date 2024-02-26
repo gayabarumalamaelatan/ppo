@@ -73,7 +73,17 @@ const FormTableInquiry = ({
         { headers }
       );
       console.log("Data View successfully:", response.data);
-      setDataToView(response.data);
+
+      const dataArray = [response.data];
+
+            // Perform mapping or any other operations on the array
+            const transformedData = dataArray.map(item =>
+                Object.keys(item).reduce((acc, key) => {
+                    acc[key.toUpperCase()] = item[key];
+                    return acc;
+                }, {})
+            );
+      setDataToView(transformedData[0]);
     } catch (error) {
       console.error("Error View data:", error);
     }

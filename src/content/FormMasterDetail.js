@@ -82,7 +82,7 @@ const FormMasterDetail = () => {
 
       //console.log('Key', primaryKeyColumnObj.primaryKeyColumn);
 
-      setPrimaryKeyColumn(primaryKeyColumnObj.fieldName);
+      setPrimaryKeyColumn(primaryKeyColumnObj.fieldName.toUpperCase());
       console.log("Log Point ", primaryKeyColumnObj.fieldName);
 
       // Check if coreFields is an array before mapping
@@ -112,6 +112,7 @@ const FormMasterDetail = () => {
         manualStatusColumn,
       ];
 
+      
       // Set the combined columns in the state
       setColumns(columnsWithManualStatus);
 
