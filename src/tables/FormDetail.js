@@ -499,7 +499,8 @@ const FormDetail = ({ idForm, getFormCode, tableNameDetail, headers, rowData, ke
                             <Modal.Title>Confirmation</Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
-                            Are you sure you want to delete data: {dataToDelete && dataToDelete.index}
+                            Are you sure you want to delete data: <b>{keyCol}{" "}
+                                {dataToDelete && dataToDelete.original[keyCol]} </b>?
                         </Modal.Body>
                         <Modal.Footer>
                             <Button variant='secondary' onClick={() => setShowDeleteModal(false)}>

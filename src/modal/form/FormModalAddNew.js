@@ -132,6 +132,10 @@ const FormModalAddNew = ({ isOpen, onClose, columns, menuName, formCode, tableNa
         // Handle any errors that occurred during the fetch
         console.error('Error sending data to API:', error);
         showDynamicSweetAlert('Error', error.message, 'error');
+        const resetData = { ...initialFormValues };
+            // Update the form data state to trigger a re-render with the reset values
+            setFormData(resetData);
+        setIsLoading(false);
       });
   };
 

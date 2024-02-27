@@ -369,8 +369,8 @@ const FormTableMasterDetail = ({
             <Modal.Title>Confirmation</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            Are you sure you want to delete data:{" "}
-            {dataToDelete && dataToDelete.index}
+          Are you sure you want to delete data: <b>{primaryKey}{" "}
+            {dataToDelete && dataToDelete.original[primaryKey]} </b>?
           </Modal.Body>
           <Modal.Footer>
             <Button

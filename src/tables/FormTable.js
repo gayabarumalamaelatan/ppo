@@ -50,6 +50,7 @@ const FormTable = ({
   console.log("columnVis", columnVisibility);
   console.log("columns", columns);
   console.log("Data", data);
+  console.log("PrimayKey", primayKey);
 
   const [selectedRows, setSelectedRows] = useState([]);
   const [isVerifying, setIsVerifying] = useState(false);
@@ -102,9 +103,11 @@ const FormTable = ({
 
   const headers = { Authorization: `Bearer ${token}` };
 
+
+
   const handleDelete = async (data) => {
     setIsLoading(true);
-    console.log("data view ", data);
+    console.log("data delete ", data);
     const columnKey = data.original.ID;
     console.log("column key ", columnKey);
     try {
@@ -647,8 +650,8 @@ const FormTable = ({
           <Modal.Title>Confirmation</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          Are you sure you want to delete data:{" "}
-          {dataToDelete && dataToDelete.index}
+        Are you sure you want to delete data: <b>{primayKey}{" "}
+  {dataToDelete && dataToDelete.original[primayKey]} </b>?
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>

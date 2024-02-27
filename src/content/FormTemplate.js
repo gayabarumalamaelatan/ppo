@@ -61,7 +61,7 @@ const FormTemplate = () => {
 
             //console.log('Key', primaryKeyColumnObj.primaryKeyColumn);
 
-            setPrimaryKeyColumn(primaryKeyColumnObj.fieldName);
+            setPrimaryKeyColumn(primaryKeyColumnObj.fieldName.toUpperCase());
 
             // Check if coreFields is an array before mapping
             const transformedColumns = Array.isArray(response.data.coreFields)

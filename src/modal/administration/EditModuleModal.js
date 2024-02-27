@@ -7,12 +7,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSave, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { showDynamicSweetAlert } from '../../toast/Swal';
 
-const { token, active } = require('../../config/Constants');
+const { getToken, active } = require('../../config/Constants');
 
 const EditModuleModal = ({ isOpenModal, handleClose, dataModule ,reloadData}) => {
 
    // console.log('module',dataModule);
     const [isLoading, setIsLoading] = useState(false);
+    const token =  getToken();
     const headers = { Authorization: `Bearer ${token}` };
     const initialUserData = {
         element: '',

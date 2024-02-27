@@ -8,7 +8,7 @@ const disabled = "DISABLED";
 const expired = "EXPIRED";
 const lock = "LOCKED";
 const expiredPass = "EXPIRED_PASSWORD";
-const userLoggin = sessionStorage.getItem('userId');
+const userLoggin = () => sessionStorage.getItem('userId');
 const getToken = () => sessionStorage.getItem('accessToken');
 const token = sessionStorage.getItem('accessToken')
 const idUser = sessionStorage.getItem('id');

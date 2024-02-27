@@ -4,10 +4,11 @@ import { MENU_SERVICE_CORE_MODULE_ADD } from '../../config/ConfigApi';
 import { Button, Form, Modal } from 'react-bootstrap';
 import { showDynamicSweetAlert } from '../../toast/Swal';
 
-const { token, active } = require('../../config/Constants');
+const { getToken, active } = require('../../config/Constants');
 
 const AddModuleModal = ({ isOpenModal, handleClose, reloadData}) => {
     const [isLoading, setIsLoading] = useState(false);
+    const token =  getToken();
     const headers = { Authorization: `Bearer ${token}` };
     const initialUserData = {
         element: '',
