@@ -10,6 +10,7 @@ const dynamicImportMap = {
   SmartinUpload: () => import('gritsmartinmodule/SmartinUpload'),
   SocketManager: () => import('gritsmartinmodule/SocketManager'),
   Customers: () => import('gritmoneymarketmodule/Customers'),
+  CreateTransaction: () => import('grittrademodule/CreateTransaction'),
   // Tambahkan lebih banyak mapping sesuai kebutuhan
 };
 

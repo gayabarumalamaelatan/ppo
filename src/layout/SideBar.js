@@ -94,6 +94,7 @@ export default function SideBar() {
       menuName: menuItem.menuName,
       subMenuName: subMenuItem ? subMenuItem.menuName : null,
     });
+    sessionStorage.setItem("idForm", subMenuItem ? subMenuItem.idForm : menuItem.idForm);
     const itemWithForm =
       subMenuItem && subMenuItem.idForm
         ? subMenuItem
