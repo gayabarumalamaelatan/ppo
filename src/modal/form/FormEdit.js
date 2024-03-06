@@ -7,6 +7,7 @@ import { faSave, faSyncAlt, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { showSuccessToast } from '../../toast/toast';
 import axios from 'axios';
 import { showDynamicSweetAlert } from '../../toast/Swal';
+import Select from 'react-select';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import 'admin-lte/dist/css/adminlte.min.css'; // Import AdminLTE styles
@@ -262,40 +263,29 @@ const FormEdit = ({ isOpen, onClose, columns, menuName, getFormCode, data, keyCo
                 <Form>
                     {/* Form untuk mengedit data */}
                     <div className="row">
-                        {columns
-                            .filter((column) => column.Header !== 'Status') // Exclude the 'Status' column
+                        {columns.filter((column) => column.Header !== 'Status') // Exclude the 'Status' column
                             .map((column, index) => (
                                 <div className="col-md-6" key={column.accessor || index}>
                                     <Form.Group>
                                         <Form.Label htmlFor={column.accessor}>{column.Header} {column.isMandatory && <span className="text-danger"> *</span>}</Form.Label>
                                         {column.lookupTable !== null ? (
                                             <>
-                                                <Form.Control
-                                                    as="select"
+                                                <Select
                                                     id={column.accessor}
                                                     name={column.accessor}
-                                                    value={formDataEdit[column.accessor] || ''}
-                                                    onChange={(e) =>
+                                                    value={{ label: formDataEdit[column.accessor], value: formDataEdit[column.accessor] }}
+                                                    onChange={(selectedOption) =>
                                                         setFormDataEdit({
                                                             ...formDataEdit,
-                                                            [column.accessor]: e.target.value,
+                                                            [column.accessor]: selectedOption.value,
                                                         })
                                                     }
+                                                    options={(lookupTableData[column.accessor] || []).map((option) => ({
+                                                        label: `${Object.values(option)[2]} - ${Object.values(option)[3]}`,
+                                                        value: Object.values(option)[2],
+                                                    }))}
                                                     isInvalid={!!formErrors[column.accessor]}
-                                                >
-                                                    <option value="">
-                                                        Select an option: {column.accessor}
-                                                    </option>
-                                                    {Array.isArray(lookupTableData[column.accessor]) &&
-                                                        lookupTableData[column.accessor].map((option, optionIndex) => (
-                                                            <option
-                                                                key={optionIndex}
-                                                                value={Object.values(option)[2]}
-                                                            >
-                                                                {`${Object.values(option)[2]} - ${Object.values(option)[3]}`}
-                                                            </option>
-                                                        ))}
-                                                </Form.Control>
+                                                />
                                                 {formErrors[column.accessor] && (
                                                     <Form.Control.Feedback type="invalid">
                                                         {formErrors[column.accessor]}

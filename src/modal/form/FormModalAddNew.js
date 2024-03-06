@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSave, faSyncAlt, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { showSuccessToast } from '../../toast/toast';
 import { showDynamicSweetAlert } from '../../toast/Swal';
+import Select from 'react-select';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import 'admin-lte/dist/css/adminlte.min.css'; // Import AdminLTE styles
@@ -57,7 +58,7 @@ const FormModalAddNew = ({ isOpen, onClose, columns, menuName, formCode, tableNa
             }
           });
 
-           console.log('lookupTableData:', lookupData);
+          console.log('lookupTableData:', lookupData);
           setLookupTableData(lookupData);
         })
         .catch((error) => {
@@ -133,8 +134,8 @@ const FormModalAddNew = ({ isOpen, onClose, columns, menuName, formCode, tableNa
         console.error('Error sending data to API:', error);
         showDynamicSweetAlert('Error', error.message, 'error');
         const resetData = { ...initialFormValues };
-            // Update the form data state to trigger a re-render with the reset values
-            setFormData(resetData);
+        // Update the form data state to trigger a re-render with the reset values
+        setFormData(resetData);
         setIsLoading(false);
       });
   };
@@ -143,21 +144,21 @@ const FormModalAddNew = ({ isOpen, onClose, columns, menuName, formCode, tableNa
   const validateForm = () => {
     const error = {};
     columns.forEach(column => {
-        if (column.isMandatory && !formData[column.accessor]) {
-            error[column.accessor] = 'This field is required';
-        }
+      if (column.isMandatory && !formData[column.accessor]) {
+        error[column.accessor] = 'This field is required';
+      }
     });
     setFormErrors(error);
     return Object.keys(error).length === 0;
-}
+  }
 
   const handleSave = () => {
     if (validateForm()) {
       setIsLoading(true);
       sendDataToAPI(formData, () => {
-          onClose();
+        onClose();
       })
-  };
+    };
   };
 
   const handleReset = () => {
@@ -185,85 +186,81 @@ const FormModalAddNew = ({ isOpen, onClose, columns, menuName, formCode, tableNa
                     <Form.Label htmlFor={column.accessor}>{column.Header} {column.isMandatory && <span className="text-danger"> *</span>}</Form.Label>
                     {column.lookupTable !== null ? (
                       <>
-                      <Form.Control
-                        as="select"
-                        id={column.accessor}
-                        name={column.accessor}
-                        value={formData[column.accessor] || ''}
-                        onChange={(e) =>
-                          setFormData({ ...formData, [column.accessor]: e.target.value })
-                        }
-                        isInvalid={!!formErrors[column.accessor]}
-                      >
-                        <option value="">
-                          Select an option: {column.accessor}
-                        </option>
-                        {Array.isArray(lookupTableData[column.accessor]) &&
-                          lookupTableData[column.accessor].map((option, index) => (
-                            <option
-                              key={Object.values(option)[2] || index}
-                              value={Object.values(option)[2]}
-                            >
-                              {`${Object.values(option)[2]} - ${Object.values(option)[3]}`}
-                            </option>
-                          ))}
-                      </Form.Control>
+                        <Select
+                          id={column.accessor}
+                          name={column.accessor}
+                          value={{
+                            label: formData[column.accessor] || '',
+                            value: formData[column.accessor] || '',
+                          }}
+                          onChange={(selectedOption) =>
+                            setFormData({
+                              ...formData,
+                              [column.accessor]: selectedOption.value,
+                            })
+                          }
+                          options={lookupTableData[column.accessor]?.map((option) => ({
+                            label: `${Object.values(option)[2]} - ${Object.values(option)[3]}`,
+                            value: Object.values(option)[2],
+                          })) || []}
+                          isInvalid={!!formErrors[column.accessor]}
+                        />
                         {formErrors[column.accessor] && (
                           <Form.Control.Feedback type="invalid">
-                              {formErrors[column.accessor]}
+                            {formErrors[column.accessor]}
                           </Form.Control.Feedback>
-                      )}
+                        )}
                       </>
                     ) : column.displayFormat === 'DATE' ? (
                       <>
-                      <div className="input-group date">
-                        <DatePicker
-                          className="form-control"
-                          id={column.accessor}
-                          name={column.accessor}
-                          selected={formData[column.accessor] ? new Date(formData[column.accessor]) : null}
-                          onChange={(date) =>
-                            setFormData({
-                              ...formData,
-                              [column.accessor]: date.toISOString().split('T')[0],
-                            })
-                          }
-                          dateFormat="yyyy-MM-dd" // Specify the desired date format
-                          isInvalid={!!formErrors[column.accessor]}
-                        />
-                        <div className="input-group-append">
-                          <div className="input-group-text">
-                            <i className="fa fa-calendar"></i>
+                        <div className="input-group date">
+                          <DatePicker
+                            className="form-control"
+                            id={column.accessor}
+                            name={column.accessor}
+                            selected={formData[column.accessor] ? new Date(formData[column.accessor]) : null}
+                            onChange={(date) =>
+                              setFormData({
+                                ...formData,
+                                [column.accessor]: date.toISOString().split('T')[0],
+                              })
+                            }
+                            dateFormat="yyyy-MM-dd" // Specify the desired date format
+                            isInvalid={!!formErrors[column.accessor]}
+                          />
+                          <div className="input-group-append">
+                            <div className="input-group-text">
+                              <i className="fa fa-calendar"></i>
+                            </div>
                           </div>
                         </div>
-                      </div>
                         {formErrors[column.accessor] && (
                           <div className="invalid-feedback d-block">
-                              {formErrors[column.accessor]}
+                            {formErrors[column.accessor]}
                           </div>
-                      )}
+                        )}
                       </>
                     ) : (
                       <>
-                      <Form.Control
-                        type="text"
-                        id={column.accessor}
-                        name={column.accessor}
-                        value={formData[column.accessor] || ''}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            [column.accessor]: e.target.value,
-                          })
-                        }
-                        isInvalid={!!formErrors[column.accessor]}
-                      />
-                      {formErrors[column.accessor] && (
+                        <Form.Control
+                          type="text"
+                          id={column.accessor}
+                          name={column.accessor}
+                          value={formData[column.accessor] || ''}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              [column.accessor]: e.target.value,
+                            })
+                          }
+                          isInvalid={!!formErrors[column.accessor]}
+                        />
+                        {formErrors[column.accessor] && (
                           <Form.Control.Feedback type="invalid">
-                              {formErrors[column.accessor]}
+                            {formErrors[column.accessor]}
                           </Form.Control.Feedback>
-                      )}  
-                      </>       
+                        )}
+                      </>
                     )}
                   </Form.Group>
                 </div>

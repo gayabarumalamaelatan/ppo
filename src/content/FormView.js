@@ -62,7 +62,7 @@ const FormView = () => {
       const primaryKeyColumnObj = response.data.coreFields.find(
         (apiColumn) => apiColumn.isPrimaryKey === true
       );
-      setPrimaryKeyColumn(primaryKeyColumnObj.fieldName);
+      setPrimaryKeyColumn(primaryKeyColumnObj.fieldName.toUpperCase());
 
       const transformedColumns = Array.isArray(response.data.coreFields)
         ? response.data.coreFields.map((apiColumn) => ({

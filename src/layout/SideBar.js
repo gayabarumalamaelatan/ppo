@@ -8,6 +8,8 @@ import { updateFormData } from "../store/actions/FormAction";
 import { useRecoilState } from "recoil";
 import { permissionsState } from "../store/Permission";
 import { menusState } from "../store/RecoilFormTemplate";
+import { menusIdState } from "../store/MenuId";
+import { updateMenuData } from "../store/actions/MenuAction";
 
 const { getToken } = require("../config/Constants");
 
@@ -15,6 +17,7 @@ export default function SideBar() {
   const [menuData, setMenuData] = useState([]);
   const [permissions, setPermissions] = useRecoilState(permissionsState);
   const [menuForm, setMenuForm] = useRecoilState(menusState);
+  const [menuId, setMenuId] = useRecoilState(menusIdState);
   const [activeItem, setActiveItem] = useState({
     moduleName: null,
     menuName: null,
@@ -26,6 +29,7 @@ export default function SideBar() {
   const userId = sessionStorage.id;
   const token = getToken();
   const headers = { Authorization: `Bearer ${token}` };
+  console.log("Current menuId:", menuId);
 
   const fetchData = async () => {
     try {
@@ -94,13 +98,19 @@ export default function SideBar() {
       menuName: menuItem.menuName,
       subMenuName: subMenuItem ? subMenuItem.menuName : null,
     });
+    console.log(menuItem.menuId);
+    setMenuId(menuItem);
+    dispatch(
+      updateMenuData(menuItem.menuId, menuItem.menuName, menuItem.formCode || "")
+    )
+    sessionStorage.setItem("idForm", subMenuItem ? subMenuItem.idForm : menuItem.idForm);
     const itemWithForm =
       subMenuItem && subMenuItem.idForm
         ? subMenuItem
         : menuItem.idForm
           ? menuItem
           : null;
-
+      console.log("itemWithForm:", itemWithForm);
     if (itemWithForm) {
       setMenuForm(itemWithForm); // Assuming setMenuForm can accept either menuItem or subMenuItem
       dispatch(

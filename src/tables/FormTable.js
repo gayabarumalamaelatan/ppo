@@ -650,8 +650,8 @@ const FormTable = ({
           <Modal.Title>Confirmation</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-        Are you sure you want to delete data: <b>{primayKey}{" "}
-  {dataToDelete && dataToDelete.original[primayKey]} </b>?
+          Are you sure you want to delete data: <b>{primayKey}{" "}
+            {dataToDelete && dataToDelete.original[primayKey]} </b>?
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>

@@ -104,3 +104,9 @@ export const SCHEDULER_SERVICE_BASE = process.env.REACT_APP_API_SCHEDULER_SERVIC
     export const SCHEDULER_SERVICE_ADD = `${SCHEDULER_SERVICE_BASE}/scheduler-service/core-schduler/add`
     export const SCHEDULER_SERVICE_UPDATE = `${SCHEDULER_SERVICE_BASE}/scheduler-service/core-schduler/update`
     export const SCHEDULER_SERVICE_UPDATE_STATUS = `${SCHEDULER_SERVICE_BASE}/scheduler-service/core-schduler/update-status`
+
+export const REPORT_SERVICE_BASE = process.env.REACT_APP_API_REPORT_SERVICE_BASE;
+
+    export const REPORT_SERVICE_GET_PARAM = `${REPORT_SERVICE_BASE}/report-service/get-param`;
+    export const REPORT_SERVICE_GENERATE_REPORT = `${REPORT_SERVICE_BASE}/report-service/generate-report`
+    export const REPORT_SERVICE_DOWNLOAD_REPORT = `${REPORT_SERVICE_BASE}/report-service/download-report`
