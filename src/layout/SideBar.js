@@ -102,7 +102,7 @@ export default function SideBar() {
     setMenuId(menuItem);
     dispatch(
       updateMenuData(menuItem.menuId, menuItem.menuName, menuItem.formCode || "")
-    )
+    );
     sessionStorage.setItem("idForm", subMenuItem ? subMenuItem.idForm : menuItem.idForm);
     const itemWithForm =
       subMenuItem && subMenuItem.idForm
