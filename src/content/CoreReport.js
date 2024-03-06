@@ -3,7 +3,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useRecoilValue } from "recoil";
 import { getToken } from "../config/Constants";
-import { REPORT_SERVICE_GENERATE_REPORT, REPORT_SERVICE_GET_PARAM } from "../config/ConfigApi";
+import { REPORT_SERVICE_DOWNLOAD_REPORT, REPORT_SERVICE_GENERATE_REPORT, REPORT_SERVICE_GET_PARAM } from "../config/ConfigApi";
 import { showDynamicSweetAlert } from "../toast/Swal";
 import axios from "axios";
 import { menusIdState } from "../store/MenuId";
@@ -59,21 +59,52 @@ const CoreReport = () => {
 
     };
 
-    const handleExport = () => {
+    const handleExport = async () => {
         // Implementasi logika ekspor sesuai dengan jenis yang dipilih
-        if (exportType === "PDF") {
-            // Logika ekspor PDF
-        } else if (exportType === "XLSX") {
-            // Logika ekspor XLSX
-        } else if (exportType === "HTML") {
-            // Logika ekspor HTML
-            const element = document.createElement("a");
-            const file = new Blob([reportHtml], { type: 'text/html' });
-            element.href = URL.createObjectURL(file);
-            element.download = "report.html";
-            document.body.appendChild(element); // Required for this to work in FireFox
-            element.click();
+        const urlParams = new URLSearchParams(formData);
+        const urlString = urlParams.toString();
+        console.log("urlString", urlString);
+        try {
+            const response = await axios.get(`${REPORT_SERVICE_DOWNLOAD_REPORT}?${urlString}&menuId=${menuId}&format=${exportType}`, { headers });
+        
+            // Create a Blob object from the PDF response
+            const blob = new Blob([response.data]);
+        
+            // Create a temporary URL for the Blob
+            const url = window.URL.createObjectURL(blob);
+        
+            // Create a temporary link element
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'report.pdf'; // Set the download attribute
+            document.body.appendChild(link);
+        
+            // Trigger the click event on the link to start the download
+            link.click();
+        
+            // Clean up
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error('Error fetching or saving PDF:', error);
+            showDynamicSweetAlert('Error!', "Error Fetching Data", 'error');
         }
+        
+
+
+        // if (exportType === "PDF") {
+        //     // Logika ekspor PDF
+        // } else if (exportType === "XLSX") {
+        //     // Logika ekspor XLSX
+        // } else if (exportType === "HTML") {
+        //     // Logika ekspor HTML
+        //     const element = document.createElement("a");
+        //     const file = new Blob([reportHtml], { type: 'text/html' });
+        //     element.href = URL.createObjectURL(file);
+        //     element.download = "report.html";
+        //     document.body.appendChild(element); // Required for this to work in FireFox
+        //     element.click();
+        // }
     };
     return (
         <Fragment>
