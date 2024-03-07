@@ -59,36 +59,47 @@ const CoreReport = () => {
 
     };
 
+    const getCurrentDateTime = () => {
+        const date = new Date();
+        return `${date.getFullYear()}${String(date.getMonth() + 1).padStart(2, '0')}${String(date.getDate()).padStart(2, '0')}_${String(date.getHours()).padStart(2, '0')}${String(date.getMinutes()).padStart(2, '0')}${String(date.getSeconds()).padStart(2, '0')}`;
+    };
+
     const handleExport = async () => {
-        // Implementasi logika ekspor sesuai dengan jenis yang dipilih
         const urlParams = new URLSearchParams(formData);
         const urlString = urlParams.toString();
         console.log("urlString", urlString);
         try {
-            const response = await axios.get(`${REPORT_SERVICE_DOWNLOAD_REPORT}?${urlString}&menuId=${menuId}&format=${exportType}`, { headers });
-        
-            // Create a Blob object from the PDF response
-            const blob = new Blob([response.data]);
-        
-            // Create a temporary URL for the Blob
+            // Mengirim permintaan berdasarkan format yang dipilih (PDF atau xlsx)
+            const response = await axios.get(`${REPORT_SERVICE_DOWNLOAD_REPORT}?${urlString}&menuId=${menuId}&format=${exportType}`, { headers, responseType: 'blob' });
+            
+            // Membuat objek URL dari data blob yang diterima
+            const blob = new Blob([response.data], { type: 'application/octet-stream' });
             const url = window.URL.createObjectURL(blob);
-        
-            // Create a temporary link element
+            
+            // Membuat link untuk diunduh
             const link = document.createElement('a');
             link.href = url;
-            link.download = 'report.pdf'; // Set the download attribute
+            
+            // Menentukan nama file yang akan diunduh sesuai format yang dipilih
+            if (exportType === 'PDF') {
+                link.setAttribute('download', `${menuName}-${getCurrentDateTime()}.pdf`);
+            } else if (exportType === 'XLSX') {
+                link.setAttribute('download', `${menuName}-${getCurrentDateTime()}.xlsx`);
+            }
+            
+            // Menambahkan link ke dalam dokumen dan mengkliknya untuk memulai unduhan
             document.body.appendChild(link);
-        
-            // Trigger the click event on the link to start the download
             link.click();
-        
-            // Clean up
-            document.body.removeChild(link);
+            link.parentNode.removeChild(link);
+            
+            // Membersihkan objek URL setelah pengunduhan selesai
             window.URL.revokeObjectURL(url);
         } catch (error) {
             console.error('Error fetching or saving PDF:', error);
             showDynamicSweetAlert('Error!', "Error Fetching Data", 'error');
         }
+    
+    
         
 
 
@@ -112,12 +123,12 @@ const CoreReport = () => {
                 <div className="container-fluid">
                     <div className="row mb-2">
                         <div className="col-sm-6">
-                            <h1>Report</h1>
+                            <h1>{menuName}</h1>
                         </div>
                         <div className="col-sm-6">
                             <ol className="breadcrumb float-sm-right">
                                 <li className="breadcrumb-item"><a href="/">Home</a></li>
-                                <li className="breadcrumb-item active">Report</li>
+                                <li className="breadcrumb-item active">{menuName}</li>
                             </ol>
                         </div>
                     </div>
@@ -129,7 +140,7 @@ const CoreReport = () => {
                     <div class="row">
                         <div class="col-12">
                             <div className="card-header">
-                                <h2 className="card-title">Generate Report</h2>
+                                <h2 className="card-title">{menuName}</h2>
                             </div>
                             <div className="card-body">
                                 <div className="row">
