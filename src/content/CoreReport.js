@@ -3,10 +3,11 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useRecoilValue } from "recoil";
 import { getToken } from "../config/Constants";
-import { REPORT_SERVICE_DOWNLOAD_REPORT, REPORT_SERVICE_GENERATE_REPORT, REPORT_SERVICE_GET_PARAM } from "../config/ConfigApi";
+import { FORM_SERVICE_LOAD_DATA, REPORT_SERVICE_DOWNLOAD_REPORT, REPORT_SERVICE_GENERATE_REPORT, REPORT_SERVICE_GET_PARAM } from "../config/ConfigApi";
 import { showDynamicSweetAlert } from "../toast/Swal";
 import axios from "axios";
 import { menusIdState } from "../store/MenuId";
+import Select from 'react-select';
 
 const CoreReport = () => {
     const initialFormState = {};
@@ -17,6 +18,8 @@ const CoreReport = () => {
     const [reportHtml, setReportHtml] = useState(""); // Tambahkan state baru untuk menyimpan respons HTML
     const [exportType, setExportType] = useState("PDF"); // State untuk jenis ekspor
     const [getParam, setGetParam] = useState([]);
+    const [lookupTableData, setLookupTableData] = useState({});
+
     const token = getToken();
     const headers = { Authorization: `Bearer ${token}` };
 
@@ -32,6 +35,47 @@ const CoreReport = () => {
         }
     };
 
+    const fetchLookupTable = async () => {
+        const columnsWithLookupTable = getParam.filter((getParam) => getParam.tableName != null);
+
+        if (columnsWithLookupTable.length > 0) {
+            // Create an array of promises for fetching data
+            const fetchPromises = columnsWithLookupTable.map((getParam) =>
+                fetch(`${FORM_SERVICE_LOAD_DATA}?t=${getParam.tableName}&lookup=YES&page=1&size=500`, { headers })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        console.log('API Response for', getParam.accessor, ':', data.data);
+                        return data; // Return data to preserve it in the promise chain
+                    })
+            );
+
+            // Execute all fetch promises in parallel
+            Promise.all(fetchPromises)
+                .then((dataArray) => {
+                    //console.log('dataArray:', dataArray);
+                    const lookupData = {};
+
+                    // Ensure that dataArray matches the order of columnsWithLookupTable
+                    columnsWithLookupTable.forEach((column, index) => {
+                        if (dataArray[index].data && Array.isArray(dataArray[index].data)) {
+                            // Ensure dataArray[index].data is an array before using it
+                            lookupData[column.accessor] = dataArray[index].data;
+                        }
+                    });
+
+                    console.log('lookupTableData:', lookupData);
+                    setLookupTableData(lookupData);
+                })
+                .catch((error) => {
+                    console.error('Error loading data from API:', error);
+                });
+        }
+    }
+
+    useEffect(() => {
+        fetchLookupTable();
+    }, [getParam]);
+
     useEffect(() => {
         fetchParam();
     }, [menuId]);
@@ -41,6 +85,7 @@ const CoreReport = () => {
             ...formData,
             [name]: value
         });
+        console.log(name, value);
     };
 
     const handleSubmit = async (e) => { // Ubah menjadi async function untuk melakukan request ke backend
@@ -71,51 +116,33 @@ const CoreReport = () => {
         try {
             // Mengirim permintaan berdasarkan format yang dipilih (PDF atau xlsx)
             const response = await axios.get(`${REPORT_SERVICE_DOWNLOAD_REPORT}?${urlString}&menuId=${menuId}&format=${exportType}`, { headers, responseType: 'blob' });
-            
+
             // Membuat objek URL dari data blob yang diterima
             const blob = new Blob([response.data], { type: 'application/octet-stream' });
             const url = window.URL.createObjectURL(blob);
-            
+
             // Membuat link untuk diunduh
             const link = document.createElement('a');
             link.href = url;
-            
+
             // Menentukan nama file yang akan diunduh sesuai format yang dipilih
             if (exportType === 'PDF') {
                 link.setAttribute('download', `${menuName}-${getCurrentDateTime()}.pdf`);
             } else if (exportType === 'XLSX') {
                 link.setAttribute('download', `${menuName}-${getCurrentDateTime()}.xlsx`);
             }
-            
+
             // Menambahkan link ke dalam dokumen dan mengkliknya untuk memulai unduhan
             document.body.appendChild(link);
             link.click();
             link.parentNode.removeChild(link);
-            
+
             // Membersihkan objek URL setelah pengunduhan selesai
             window.URL.revokeObjectURL(url);
         } catch (error) {
             console.error('Error fetching or saving PDF:', error);
             showDynamicSweetAlert('Error!', "Error Fetching Data", 'error');
         }
-    
-    
-        
-
-
-        // if (exportType === "PDF") {
-        //     // Logika ekspor PDF
-        // } else if (exportType === "XLSX") {
-        //     // Logika ekspor XLSX
-        // } else if (exportType === "HTML") {
-        //     // Logika ekspor HTML
-        //     const element = document.createElement("a");
-        //     const file = new Blob([reportHtml], { type: 'text/html' });
-        //     element.href = URL.createObjectURL(file);
-        //     element.download = "report.html";
-        //     document.body.appendChild(element); // Required for this to work in FireFox
-        //     element.click();
-        // }
     };
     return (
         <Fragment>
@@ -143,45 +170,55 @@ const CoreReport = () => {
                                 <h2 className="card-title">{menuName}</h2>
                             </div>
                             <div className="card-body">
-                                <div className="row">
-                                    <form onSubmit={handleSubmit} className="row">
-                                        {getParam.map((field, index) => (
-                                            <div className="form-group col-md-4" key={index}>
-                                                <label htmlFor={field.parameter}>{field.parameter}</label>
-                                                <div className={"input-group"}>
-                                                    {field.typeData === "date" ? (
-                                                        <div className="input-group">
-                                                            <DatePicker
-                                                                className="form-control"
-                                                                selected={formData[field.parameter] ? new Date(formData[field.parameter]) : null}
-                                                                onChange={(date) => handleChange(field.parameter, date ? date.toISOString().split('T')[0] : null)}
-                                                                dateFormat="yyyy-MM-dd"
-                                                            />
-                                                            <div className="input-group-append">
-                                                                <div className="input-group-text">
-                                                                    <i className="fa fa-calendar"></i>
-                                                                </div>
+                                <form onSubmit={handleSubmit} className="row">
+                                    {getParam.map((field, index) => (
+                                        <div className="form-group col-md-4" key={index}>
+                                            <label htmlFor={field.parameter}>{field.parameter}</label>
+                                            <div className={"input-group"}>
+                                                {field.typeData === "date" ? (
+                                                    <div className="input-group">
+                                                        <DatePicker
+                                                            className="form-control"
+                                                            selected={formData[field.parameter] ? new Date(formData[field.parameter]) : null}
+                                                            onChange={(date) => handleChange(field.parameter, date ? date.toISOString().split('T')[0] : null)}
+                                                            dateFormat="yyyy-MM-dd"
+                                                        />
+                                                        <div className="input-group-append">
+                                                            <div className="input-group-text">
+                                                                <i className="fa fa-calendar"></i>
                                                             </div>
                                                         </div>
-                                                    ) : (
-                                                        <input
-                                                            type={field.typeData}
-                                                            className="form-control"
-                                                            id={field.parameter}
-                                                            name={field.parameter}
-                                                            value={formData[field.parameter] || ''}
-                                                            onChange={(e) => handleChange(field.parameter, e.target.value)}
+                                                    </div>
+                                                ) : field.tableName ? (
+                                                    <>
+                                                        <Select
+                                                           // className="form" // Tambahkan class form-control di sini
+                                                            options={lookupTableData[field.accessor]?.map((option) => ({
+                                                                label: `${Object.values(option)[2]} - ${Object.values(option)[3]}`,
+                                                                value: Object.values(option)[3], // Menggunakan nilai status dari opsi
+                                                            })) || []}
+                                                            //value={formData[field.parameter] || ''} // Tambahkan value prop untuk menentukan nilai default
+                                                            onChange={(selectedOption) => handleChange(field.parameter, selectedOption.value)}
                                                         />
-                                                    )}
-                                                </div>
+                                                    </>
+                                                ) : (
+                                                    <input
+                                                        type={field.typeData}
+                                                        className="form-control"
+                                                        id={field.parameter}
+                                                        name={field.parameter}
+                                                        value={formData[field.parameter] || ''}
+                                                        onChange={(e) => handleChange(field.parameter, e.target.value)}
+                                                    />
+                                                )}
                                             </div>
-                                        ))}
-                                        <div className="form-group col-md-12 text-right">
-                                            <button type="submit" className="btn btn-primary">Load Report</button>
                                         </div>
-                                    </form>
+                                    ))}
+                                    <div className="form-group col-md-12 text-right">
+                                        <button type="submit" className="btn btn-primary">Load Report</button>
+                                    </div>
+                                </form>
 
-                                </div>
 
                             </div>
                         </div>
