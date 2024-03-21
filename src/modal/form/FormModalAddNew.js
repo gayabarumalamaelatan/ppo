@@ -119,7 +119,8 @@ const FormModalAddNew = ({ isOpen, onClose, columns, menuName, formCode, tableNa
             reFormfetchCallback();
             const resetData = { ...initialFormValues };
             // Update the form data state to trigger a re-render with the reset values
-            setFormData(resetData);
+            setFormData({});
+            //console.log('formDataUpdated', formData);
             setIsLoading(false);
           }, 1000);
 

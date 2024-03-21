@@ -117,6 +117,10 @@ export default function Content() {
       {
         moduleName: 'grittrademodule',
         componentName: 'CreateTransaction'
+      },
+      {
+        moduleName : 'gritmoneymarketmodule',
+        componentName : 'Settlement'
       }
       // ... other components SmartinEndpoints
     ]
