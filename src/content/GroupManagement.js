@@ -3,14 +3,15 @@ import axios from 'axios';
 import GroupManagementTable from '../tables/GroupManagementTable';
 import RoleMapping from '../tables/RoleMapping';
 import { Modal, Button } from 'react-bootstrap';
-import { USER_SERVICE_GROUP_ADD, USER_SERVICE_GROUP_LIST, USER_SERVICE_GROUP_ROLE_LIST, USER_SERVICE_ROLE_LIST } from '../config/ConfigApi';
+import { USER_SERVICE_BRANCH_LIST, USER_SERVICE_GROUP_ADD, USER_SERVICE_GROUP_LIST, USER_SERVICE_GROUP_ROLE_LIST, USER_SERVICE_ROLE_LIST } from '../config/ConfigApi';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSave, faTimes } from '@fortawesome/free-solid-svg-icons';
-import {  useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { permissionsState } from '../store/Permission';
 import { showDynamicSweetAlert } from '../toast/Swal';
+import ReactSelect from 'react-select';
 
-const { userLoggin, getToken } = require('../config/Constants');
+const { userLoggin, getToken, getBranch } = require('../config/Constants');
 
 const GroupManagement = () => {
     const [selectedGroup, setSelectedGroup] = useState(null);
@@ -25,11 +26,14 @@ const GroupManagement = () => {
     const [isLoadingTable, setIsLoadingTable] = useState(false);
     const permissions = useRecoilValue(permissionsState);
     const token = getToken();
+    const branchId = getBranch();
+    const [branchOptions, setBranchOptions] = useState([]);
+    const [selectedBranch, setSelectedBranch] = useState(null);
 
-    console.log('permissions ',permissions);
+    console.log('permissions ', permissions);
 
     const canCreateGroup = permissions["Administration"]["Group Management"]["create"];
-    
+
     const canUpdateGroup = permissions["Administration"]["Group Management"]["update"];
     const canDeleteGroup = permissions["Administration"]["Group Management"]["delete"];
 
@@ -38,7 +42,7 @@ const GroupManagement = () => {
 
     const loadGroupsData = () => {
         setIsLoadingTable(true);
-        axios.get(`${USER_SERVICE_GROUP_LIST}`, { headers })
+        axios.get(`${USER_SERVICE_GROUP_LIST}?branch=${branchId}`, { headers })
             .then(response => {
                 setTimeout(() => {
                     setGroupsData(response.data);
@@ -48,7 +52,7 @@ const GroupManagement = () => {
             })
             .catch(error => {
                 console.error('Error fetching group data:', error);
-                showDynamicSweetAlert('Error!',error, 'error');
+                showDynamicSweetAlert('Error!', error, 'error');
             });
     };
 
@@ -63,7 +67,7 @@ const GroupManagement = () => {
             })
             .catch(error => {
                 console.error('Error fetching group data:', error);
-                showDynamicSweetAlert('Error!',error, 'error');
+                showDynamicSweetAlert('Error!', error, 'error');
             });
     };
 
@@ -76,7 +80,7 @@ const GroupManagement = () => {
             })
             .catch(error => {
                 console.error('Error fetching role data:', error);
-                showDynamicSweetAlert('Error!',error, 'error');
+                showDynamicSweetAlert('Error!', error, 'error');
             });
     };
 
@@ -87,6 +91,22 @@ const GroupManagement = () => {
         // loadGroupsRoleData();
     }, []);
 
+    const fetchBranchData = async () => {
+        try {
+            const response = await axios.get(USER_SERVICE_BRANCH_LIST, { headers });
+            const branches = response.data.map(branch => ({
+                value: branch.id,
+                label: branch.branchName
+            }));
+            setBranchOptions(branches);
+        } catch (error) {
+            console.error('Error fetching branch data:', error);
+            // Handle error
+        }
+    };
+    useEffect(() => {
+        fetchBranchData();
+    }, []);
 
     const handleGroupSelect = (group) => {
         setSelectedGroup(group);
@@ -115,6 +135,7 @@ const GroupManagement = () => {
             setIsLoading(true);
             const postData = {
                 groupName: newGroupName,
+                branchId: selectedBranch ? selectedBranch.value : null
             };
 
             const response = await axios.post(`${USER_SERVICE_GROUP_ADD}`, postData, { headers });
@@ -129,7 +150,7 @@ const GroupManagement = () => {
         } catch (error) {
             console.error('Error creating group:', error);
             setNewGroupName("");
-            showDynamicSweetAlert('Error!',error, 'error');
+            showDynamicSweetAlert('Error!', error, 'error');
 
         }
     };
@@ -174,8 +195,9 @@ const GroupManagement = () => {
                                     handleLoadMapping={handleLoadMapping}
                                     isLoadingTable={isLoadingTable}
                                     refetchCallback={() => loadGroupsData()}
-                                    editPermission = {canUpdateGroup}
-                                    deletePermission = {canDeleteGroup}
+                                    editPermission={canUpdateGroup}
+                                    deletePermission={canDeleteGroup}
+                                    branchOptions={branchOptions}
                                 />
                                 {/* Render the role mapping if a group is selected and mapping is visible */}
                                 {selectedGroup && mappingVisible && (
@@ -184,7 +206,8 @@ const GroupManagement = () => {
                                         allRoles={rolesData}
                                         setMappedRoles={setMappedRoles}
                                         groupRoleData={groupsRoleData}
-                                        editPermission = {canUpdateGroup}
+                                        editPermission={canUpdateGroup}
+                                        
                                     />
                                 )}
                             </div>
@@ -216,6 +239,15 @@ const GroupManagement = () => {
                                 placeholder="Enter group name"
                                 value={newGroupName}
                                 onChange={(e) => setNewGroupName(e.target.value)}
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="selectBranch">Select Branch:</label>
+                            <ReactSelect
+                                id="selectBranch"
+                                options={branchOptions}
+                                value={selectedBranch}
+                                onChange={setSelectedBranch}
                             />
                         </div>
                     </form>

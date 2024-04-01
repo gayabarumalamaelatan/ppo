@@ -19,7 +19,7 @@ import { useRecoilValue } from "recoil";
 import { menusState } from "../store/RecoilFormTemplate";
 import * as XLSX from "xlsx";
 import FormTableMasterDetail from "../tables/FormTableMasterDetail";
-import { getToken } from "../config/Constants";
+import { getToken, getBranch } from "../config/Constants";
 import { showDynamicSweetAlert } from "../toast/Swal";
 
 const FormMasterDetail = () => {
@@ -27,6 +27,7 @@ const FormMasterDetail = () => {
   const [columns, setColumns] = useState([]);
   const [accountData, setAccountData] = useState([]);
   const token = getToken();
+  const branchId = getBranch();
   const headers = { Authorization: `Bearer ${token}` };
   const [getFormcode, setGetFormCode] = useState();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -154,24 +155,24 @@ const FormMasterDetail = () => {
           "Log Point: Get Data with Filter for Master Detail",
           tableNameDetail
         );
-        urlParams = `f=${formCodePass}&page=${currentPage}&size=${pageSize}&filterBy=${filterColumn}&filterValue=${filterValue}&operation=${filterOperation}&detail=true&showAll=YES`;
+        urlParams = `f=${formCodePass}&branchId=${branchId}&page=${currentPage}&size=${pageSize}&filterBy=${filterColumn}&filterValue=${filterValue}&operation=${filterOperation}&detail=true&showAll=YES`;
       } else {
         console.log(
           "Log Point: Get Data with Filter without Master Detail",
           tableNameDetail
         );
-        urlParams = `f=${formCodePass}&page=${currentPage}&size=${pageSize}&filterBy=${filterColumn}&filterValue=${filterValue}&operation=${filterOperation}`;
+        urlParams = `f=${formCodePass}&branchId=${branchId}&page=${currentPage}&size=${pageSize}&filterBy=${filterColumn}&filterValue=${filterValue}&operation=${filterOperation}`;
       }
     } else {
       if (tableNameDetail) {
         console.log("Log Point: Get Data for Master Detail", tableNameDetail);
-        urlParams = `f=${formCodePass}&page=${currentPage}&size=${pageSize}&showAll=YES`;
+        urlParams = `f=${formCodePass}&branchId=${branchId}&page=${currentPage}&size=${pageSize}&showAll=YES`;
       } else {
         console.log(
           "Log Point: Get Data without Master Detail",
           tableNameDetail
         );
-        urlParams = `f=${formCodePass}&page=${currentPage}&size=${pageSize}`;
+        urlParams = `f=${formCodePass}&branchId=${branchId}&page=${currentPage}&size=${pageSize}`;
       }
     }
 

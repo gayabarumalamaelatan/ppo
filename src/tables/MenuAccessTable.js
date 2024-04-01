@@ -25,11 +25,13 @@ const MenuAccessTable = ({ selectedRole, menuRolesData, menuData,editPermission 
         return {
           id: menu.id,
           menuName: menu.menuName,
+          view: rolePermission ? rolePermission.view : false,
           create: rolePermission ? rolePermission.create : false,
           update: rolePermission ? rolePermission.update : false,
           delete: rolePermission ? rolePermission.delete : false,
           verify: rolePermission ? rolePermission.verify : false,
           auth: rolePermission ? rolePermission.auth : false,
+          rework: rolePermission ? rolePermission.rework : false,
         };
       });
       setUpdatedMenuRolesData(updatedData);
@@ -62,6 +64,8 @@ const MenuAccessTable = ({ selectedRole, menuRolesData, menuData,editPermission 
             delete: value,
             verify: value,
             auth: value,
+            view: value,
+            rework: value,
           }
         : item
     );
@@ -92,11 +96,13 @@ const MenuAccessTable = ({ selectedRole, menuRolesData, menuData,editPermission 
           )
         }).map(menuPermission => ({
           menuId: menuPermission.id,
+          permissionView: menuPermission.view,
           permissionCreate: menuPermission.create,
           permissionUpdate: menuPermission.update,
           permissionDelete: menuPermission.delete,
           permissionVerify: menuPermission.verify,
           permissionAuth: menuPermission.auth,
+          permissionRework: menuPermission.rework,
           roleId: selectedRole.id,
         })),
       }
@@ -139,11 +145,13 @@ const MenuAccessTable = ({ selectedRole, menuRolesData, menuData,editPermission 
                 disabled='true'
               />
             </th>
+            <th>View</th>
             <th>Create</th>
             <th>Update</th>
             <th>Delete</th>
             <th>Verify</th>
             <th>Auth</th>
+            <th>Rework</th>
           </tr>
         </thead>
         <tbody>
@@ -157,6 +165,14 @@ const MenuAccessTable = ({ selectedRole, menuRolesData, menuData,editPermission 
                     onChange={(e) => handleRowPermissionChange(menu.id, e.target.checked)}
                     disabled={!editMode}
                   />
+              </td>
+              <td>
+                <input
+                  type="checkbox"
+                  checked={menu.view}
+                  onChange={(e) => handlePermissionChange(menu.id, 'view', e.target.checked)}
+                  disabled={!editMode}
+                />
               </td>
               <td>
                 <input
@@ -195,6 +211,14 @@ const MenuAccessTable = ({ selectedRole, menuRolesData, menuData,editPermission 
                   type="checkbox"
                   checked={menu.auth}
                   onChange={(e) => handlePermissionChange(menu.id, 'auth', e.target.checked)}
+                  disabled={!editMode}
+                />
+              </td>
+              <td>
+                <input
+                  type="checkbox"
+                  checked={menu.rework}
+                  onChange={(e) => handlePermissionChange(menu.id, 'rework', e.target.checked)}
                   disabled={!editMode}
                 />
               </td>

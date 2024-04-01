@@ -41,6 +41,8 @@ const FormTable = ({
   canCreate,
   canVerify,
   canAuth,
+  canView,
+  canRework,
   editPermission,
   deletePermission,
   isWorkflow,
@@ -408,7 +410,7 @@ const FormTable = ({
     <Fragment>
       {isWorkflow && (
         <div className="mb-3">
-          {(canVerify || canAuth) && (
+          {(canRework) && (
             /* Tombol Rework */
             <button
               className="btn btn-warning btn-sm mr-3"

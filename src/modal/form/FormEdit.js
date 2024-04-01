@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
-import { getToken, pending } from '../../config/Constants';
+import { getToken, pending , getBranch } from '../../config/Constants';
 import { FORM_SERVICE_INSERT_DATA, FORM_SERVICE_LOAD_DATA, FORM_SERVICE_UPDATE_DATA, FORM_SERVICE_UPDATE_STATUS, FORM_SERVICE_VIEW_DATA } from '../../config/ConfigApi';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSave, faSyncAlt, faTimes } from '@fortawesome/free-solid-svg-icons';
@@ -15,6 +15,7 @@ import 'admin-lte/plugins/fontawesome-free/css/all.min.css';
 
 const FormEdit = ({ isOpen, onClose, columns, menuName, getFormCode, data, keyCol, refecthCallBack, isWorkflow, tableNameDetail }) => {
     const token = getToken();
+    const branchId = getBranch();
     const headers = { Authorization: `Bearer ${token}` };
     const [lookupTableData, setLookupTableData] = useState({});
     const [formDataEdit, setFormDataEdit] = useState({});
@@ -42,9 +43,9 @@ const FormEdit = ({ isOpen, onClose, columns, menuName, getFormCode, data, keyCo
             const firstObject = columns[0].accessor;
             let apiUrl;
             if (tableNameDetail) {
-                apiUrl = `${FORM_SERVICE_VIEW_DATA}?t=${tableNameDetail}&column=id&value=${firstValue}`;
+                apiUrl = `${FORM_SERVICE_VIEW_DATA}?t=${tableNameDetail}&branchId=${branchId}&column=id&value=${firstValue}`;
             } else {
-                apiUrl = `${FORM_SERVICE_VIEW_DATA}?f=${getFormCode}&column=id&value=${firstValue}`;
+                apiUrl = `${FORM_SERVICE_VIEW_DATA}?f=${getFormCode}&branchId=${branchId}&column=id&value=${firstValue}`;
             }
             try {
                 const response = await axios.get(apiUrl, { headers })
@@ -85,7 +86,7 @@ const FormEdit = ({ isOpen, onClose, columns, menuName, getFormCode, data, keyCo
         if (columnsWithLookupTable.length > 0) {
             // Create an array of promises for fetching data
             const fetchPromises = columnsWithLookupTable.map((column) =>
-                fetch(`${FORM_SERVICE_LOAD_DATA}?t=${column.lookupTable}&lookup=YES&page=1&size=500`, { headers })
+                fetch(`${FORM_SERVICE_LOAD_DATA}?t=${column.lookupTable}&lookup=YES&branchId=${branchId}&page=1&size=500`, { headers })
                     .then((response) => response.json())
                     .then((data) => {
                         //console.log('API Response for', column.accessor, ':', data.data);

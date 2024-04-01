@@ -4,7 +4,7 @@ import { FaAddressBook, FaCogs, FaDownload, FaFilter,  FaSyncAlt, FaTimes } from
 import { Fragment } from 'react';
 import { FORM_SERVICE_LOAD_DATA, FORM_SERVICE_LOAD_FIELD,  FORM_SERVICE_REPORT_DATA_CSV, FORM_SERVICE_REPORT_DATA_EXCEL } from '../config/ConfigApi';
 import axios from 'axios';
-import { getToken } from '../config/Constants';
+import { getToken, getBranch } from '../config/Constants';
 import FormModalAddNew from '../modal/form/FormModalAddNew';
 import { useRecoilValue } from 'recoil';
 import { menusState } from '../store/RecoilFormTemplate';
@@ -13,6 +13,7 @@ import { showDynamicSweetAlert } from '../toast/Swal';
 
 const FormTemplate = () => {
     const token = getToken();
+    const branchId = getBranch();
     const menusForm = useRecoilValue(menusState);
     const [columns, setColumns] = useState([]);
     const [accountData, setAccountData] = useState([]);
@@ -38,6 +39,8 @@ const FormTemplate = () => {
     const canDelete = menusForm["delete"];
     const canVerify = menusForm["verify"];
     const canAuth = menusForm["auth"];
+    const canView = menusForm["view"];
+    const canRework = menusForm["rework"];
 
     const openModal = () => {
         setIsModalOpen(true);
@@ -105,9 +108,9 @@ const FormTemplate = () => {
         let urlParams;
 
         if (filterColumn !== '' && filterOperation !== '' && filterValue !== '') {
-            urlParams = `f=${formCode}&page=${currentPage}&size=${pageSize}&filterBy=${filterColumn}&filterValue=${filterValue}&operation=${filterOperation}`;
+            urlParams = `f=${formCode}&branchId=${branchId}&page=${currentPage}&size=${pageSize}&filterBy=${filterColumn}&filterValue=${filterValue}&operation=${filterOperation}`;
         } else {
-            urlParams = `f=${formCode}&page=${currentPage}&size=${pageSize}`;
+            urlParams = `f=${formCode}&branchId=${branchId}&page=${currentPage}&size=${pageSize}`;
         }
 
         return axios
@@ -537,6 +540,8 @@ const FormTemplate = () => {
                             deletePermission={canDelete}
                             canVerify={canVerify}
                             canAuth={canAuth}
+                            canView={canView}
+                            canRework={canRework}
                             isWorkflow={isWorkflow}
                         />
                     </div>

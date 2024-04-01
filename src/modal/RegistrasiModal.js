@@ -1,18 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { AUTH_SERVICE_CHECK_USER, USER_SERVICE_ADD_USER, USER_SERVICE_GROUP_LIST } from '../config/ConfigApi';
+import { AUTH_SERVICE_CHECK_USER, USER_SERVICE_ADD_USER, USER_SERVICE_BRANCH_LIST, USER_SERVICE_GROUP_LIST } from '../config/ConfigApi';
 import { showSuccessToast, showErrorToast } from '../toast/toast';
 
 import { hasMinimumLength, hasNumber, hasUppercaseLetter, hasSpecialCharacter } from '../config/PasswordRules';
 import { showDynamicSweetAlert } from '../toast/Swal';
 import { Button, Modal } from 'react-bootstrap';
+import ReactSelect from 'react-select';
 
-const { userLoggin, getToken } = require('../config/Constants');
+const { userLoggin, getToken, getBranch } = require('../config/Constants');
 
 const RegisterModal = ({ show, handleClose, reloadData }) => {
   const token = getToken();
+  const branchId = getBranch();
   const [isLoading, setIsLoading] = useState(false);
   const headers = { Authorization: `Bearer ${token}` };
+  const [branchOptions, setBranchOptions] = useState([]);
+  const [selectedBranch, setSelectedBranch] = useState(null);
   const initialUserData = {
     userName: '',
     password: '',
@@ -35,7 +39,7 @@ const RegisterModal = ({ show, handleClose, reloadData }) => {
     // Fetch the list of groups from the API
     const fetchGroups = async () => {
       try {
-        const response = await axios.get(USER_SERVICE_GROUP_LIST, { headers });
+        const response = await axios.get(`${USER_SERVICE_GROUP_LIST}?branch=${branchId}`, { headers });
         setGroupList(response.data);
         console.log(groupList); // Assuming the API response directly provides the list of groups
       } catch (error) {
@@ -119,6 +123,7 @@ const RegisterModal = ({ show, handleClose, reloadData }) => {
       phoneNumber: userData.phoneNumber,
       groupId: parseInt(userData.group, 10),
       authBy: userData.authenticationMethod,
+      branchId: selectedBranch ? selectedBranch.value : null
     };
     try {
       setIsLoading(true);
@@ -128,13 +133,14 @@ const RegisterModal = ({ show, handleClose, reloadData }) => {
       console.log('API Response:', response.data);
 
 
-      handleClose();
+      
       setTimeout(() => {
         setUserData(initialUserData);
         setIsLoading(false);
         showDynamicSweetAlert('Success!', 'Registration Successfully.', 'success');
         //showSuccessToast('Registration successful!');
         reloadData();
+        handleClose();
       }, 1000);
 
     } catch (error) {
@@ -160,6 +166,23 @@ const RegisterModal = ({ show, handleClose, reloadData }) => {
   const handleReset = () => {
     setUserData(initialUserData);
   }
+
+  const fetchBranchData = async () => {
+    try {
+      const response = await axios.get(USER_SERVICE_BRANCH_LIST, { headers });
+      const branches = response.data.map(branch => ({
+        value: branch.id,
+        label: branch.branchName
+      }));
+      setBranchOptions(branches);
+    } catch (error) {
+      console.error('Error fetching branch data:', error);
+      // Handle error
+    }
+  };
+  useEffect(() => {
+    fetchBranchData();
+  }, []);
 
   return (
 
@@ -292,6 +315,15 @@ const RegisterModal = ({ show, handleClose, reloadData }) => {
                   value={userData.phoneNumber}
                   onChange={handleChange}
                   required
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="selectBranch">Select Branch:</label>
+                <ReactSelect
+                  id="selectBranch"
+                  options={branchOptions}
+                  value={selectedBranch}
+                  onChange={(selectedOption) => setSelectedBranch(selectedOption)}
                 />
               </div>
             </div>

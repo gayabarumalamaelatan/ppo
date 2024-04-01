@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
-import { getToken } from '../../config/Constants';
+import { getToken, getBranch } from '../../config/Constants';
 import { FORM_SERVICE_INSERT_DATA, FORM_SERVICE_LOAD_DATA } from '../../config/ConfigApi';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSave, faSyncAlt, faTimes } from '@fortawesome/free-solid-svg-icons';
@@ -14,6 +14,7 @@ import 'admin-lte/plugins/fontawesome-free/css/all.min.css';
 
 const FormModalAddNew = ({ isOpen, onClose, columns, menuName, formCode, tableNameDetail, reFormfetchCallback }) => {
   const token = getToken();
+  const branchId = getBranch();
   const headers = { Authorization: `Bearer ${token}` };
   const [lookupTableData, setLookupTableData] = useState({});
   const [formData, setFormData] = useState({});
@@ -36,7 +37,7 @@ const FormModalAddNew = ({ isOpen, onClose, columns, menuName, formCode, tableNa
     if (columnsWithLookupTable.length > 0) {
       // Create an array of promises for fetching data
       const fetchPromises = columnsWithLookupTable.map((column) =>
-        fetch(`${FORM_SERVICE_LOAD_DATA}?t=${column.lookupTable}&lookup=YES&page=1&size=500`, { headers })
+        fetch(`${FORM_SERVICE_LOAD_DATA}?t=${column.lookupTable}&lookup=YES&branchId=${branchId}&page=1&size=500`, { headers })
           .then((response) => response.json())
           .then((data) => {
             //console.log('API Response for', column.accessor, ':', data.data);

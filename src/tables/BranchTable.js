@@ -3,29 +3,27 @@ import { useTable } from 'react-table';
 import { Modal, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSave, faTimes, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { USER_SERVICE_GROUP_ROLE_UPDATE, USER_SERVICE_GROUP_ROLE_UPDATE_STATUS } from '../config/ConfigApi';
+import { USER_SERVICE_BRANCH_UPDATE, USER_SERVICE_BRANCH_UPDATE_STATUS, USER_SERVICE_GROUP_ROLE_UPDATE, USER_SERVICE_GROUP_ROLE_UPDATE_STATUS } from '../config/ConfigApi';
 import axios from 'axios';
 import { showDynamicSweetAlert } from '../toast/Swal';
-import ReactSelect from 'react-select';
 
 const { inactive, getToken } = require('../config/Constants');
 
 
-const GroupManagementTable = ({ groups, branchOptions, selectedGroup, handleGroupSelect, handleLoadMapping, isLoadingTable, refetchCallback, editPermission, deletePermission }) => {
+const BranchTable = ({ groups,selectedBranch,handleBranchSelect, handleLoadMapping, isLoadingTable, refetchCallback, editPermission, deletePermission }) => {
     const [editModalVisible, setEditModalVisible] = useState(false);
     const [editingGroup, setEditingGroup] = useState(null);
     const [deleteModalVisible, setDeleteModalVisible] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const token = getToken();
-    const [selectedBranch, setSelectedBranch] = useState(null);
 
-    console.log('branchOptions ', branchOptions);
-    console.log('deletePer ', deletePermission);
+    console.log('editPer ',editPermission);
+    console.log('deletePer ',deletePermission);
 
     const columns = React.useMemo(
         () => [
             { Header: 'ID', accessor: 'id' },
-            { Header: 'Group Name', accessor: 'groupName' },
+            { Header: 'Branch Name', accessor: 'branchName' },
             {
                 Header: 'Actions',
                 Cell: ({ row }) => (
@@ -65,24 +63,23 @@ const GroupManagementTable = ({ groups, branchOptions, selectedGroup, handleGrou
 
             // Prepare the request body based on the format you provided
             const requestBody = {
-                groupName: editingGroup.groupName, // Make sure to provide the correct value
-                id: selectedGroup.id,
-                branchId: editingGroup ? editingGroup.branchId : null
+                branchName: editingGroup.branchName, // Make sure to provide the correct value
+                id: selectedBranch.id,
             };
             console.log(requestBody);
             setIsLoading(true);
 
             // Send the PUT request to update the group data
-            const response = await axios.put(`${USER_SERVICE_GROUP_ROLE_UPDATE}`, requestBody, { headers });
+            const response = await axios.put(`${USER_SERVICE_BRANCH_UPDATE}`, requestBody, { headers });
             setTimeout(() => {
                 setEditModalVisible(false);
                 setIsLoading(false);
                 refetchCallback();
-                showDynamicSweetAlert('Success!', 'Group name updated successfully!', 'success');
+                showDynamicSweetAlert('Success!', 'Branch name updated successfully!', 'success');
             }, 1000);
         } catch (error) {
-            console.error('Error updating group:', error);
-            showDynamicSweetAlert('Error!', error, 'error');
+            console.error('Error updating Branch:', error);
+            showDynamicSweetAlert('Error!',error, 'error');
             setIsLoading(false);
             // Handle errors that occur during the API call
         }
@@ -101,23 +98,23 @@ const GroupManagementTable = ({ groups, branchOptions, selectedGroup, handleGrou
             // Prepare the request body based on the format you provided
             const requestBody = {
                 // Make sure to provide the correct value
-                id: selectedGroup.id,
+                id: selectedBranch.id,
                 status: inactive,
             };
             console.log(requestBody);
             setIsLoading(true);
 
             // Send the PUT request to update the group data
-            const response = await axios.put(`${USER_SERVICE_GROUP_ROLE_UPDATE_STATUS}`, requestBody, { headers });
+            const response = await axios.put(`${USER_SERVICE_BRANCH_UPDATE_STATUS}`, requestBody, { headers });
             setTimeout(() => {
                 setDeleteModalVisible(false);
                 setIsLoading(false);
                 refetchCallback();
-                showDynamicSweetAlert('Success!', 'Group name deleted successfully!', 'success');
+                showDynamicSweetAlert('Success!', 'Branch name deleted successfully!', 'success');
             }, 1000);
         } catch (error) {
-            console.error('Error updating group:', error);
-            showDynamicSweetAlert('Error!', error, 'error');
+            console.error('Error updating Branch:', error);
+            showDynamicSweetAlert('Error!',error, 'error'); 
             setIsLoading(false);
             // Handle errors that occur during the API call
         }
@@ -152,8 +149,8 @@ const GroupManagementTable = ({ groups, branchOptions, selectedGroup, handleGrou
                             return (
                                 <tr
                                     {...row.getRowProps()}
-                                    className={`${selectedGroup === row.original ? 'table-success' : ''}`}
-                                    onClick={() => handleGroupSelect(row.original)}
+                                    className={`${selectedBranch === row.original ? 'table-success' : ''}`}
+                                    onClick={() => handleBranchSelect(row.original)}
                                     style={{ cursor: 'pointer' }}
                                 >
                                     {row.cells.map((cell) => {
@@ -166,12 +163,7 @@ const GroupManagementTable = ({ groups, branchOptions, selectedGroup, handleGrou
                 </tbody>
             </table>
 
-            <div className="mt-2">
-                <button className="btn btn-primary btn-sm" onClick={() => handleLoadMapping(selectedGroup)}>
-                    Load Mapping
-                </button>
-                <hr />
-            </div>
+            
             {isLoading && (
                 <div className="full-screen-overlay">
                     <i className="fa-solid fa-spinner fa-spin full-screen-spinner"></i>
@@ -179,40 +171,31 @@ const GroupManagementTable = ({ groups, branchOptions, selectedGroup, handleGrou
             )}
 
             {/* Edit Group Modal */}
-            <Modal show={editModalVisible} onHide={() => { setEditModalVisible(false); handleGroupSelect(null); }}>
+            <Modal show={editModalVisible} onHide={() => { setEditModalVisible(false); handleBranchSelect(null); }}>
                 <Modal.Header>
                     <Modal.Title>Edit Group</Modal.Title>
                     {/* Ganti ikon tombol close (X) */}
-                    <Button variant="link default" onClick={() => { setEditModalVisible(false); handleGroupSelect(null); }}>
+                    <Button variant="link default" onClick={() => { setEditModalVisible(false); handleBranchSelect(null); }}>
                         <FontAwesomeIcon icon={faTimes} />
                     </Button>
                 </Modal.Header>
                 <Modal.Body>
                     <form onSubmit={handleEditSubmit}>
                         <div className="form-group">
-                            <label htmlFor="groupName">Group Name:</label>
+                            <label htmlFor="branchName">Branch Name:</label>
                             <input
                                 type="text"
                                 className="form-control"
-                                id="groupName"
-                                value={editingGroup ? editingGroup.groupName : ''}
-                                onChange={(e) => setEditingGroup({ ...editingGroup, groupName: e.target.value })}
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="selectBranch">Select Branch:</label>
-                            <ReactSelect
-                                id="selectBranch"
-                                options={branchOptions}
-                                value={branchOptions.find(option => option.value === editingGroup?.branchId)}
-                                onChange={(selectedOption) => setEditingGroup({ ...editingGroup, branchId: selectedOption.value })}
+                                id="branchName"
+                                value={editingGroup ? editingGroup.branchName : ''}
+                                onChange={(e) => setEditingGroup({ ...editingGroup, branchName: e.target.value })}
                             />
                         </div>
 
                     </form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <button className="btn btn-secondary" onClick={() => { setEditModalVisible(false); handleGroupSelect(null); }}>
+                    <button className="btn btn-secondary" onClick={() => { setEditModalVisible(false); handleBranchSelect(null); }}>
                         <FontAwesomeIcon icon={faTimes} /> Cancel
                     </button>
                     <button className="btn btn-primary" onClick={() => handleEditSubmit()}>
@@ -222,11 +205,11 @@ const GroupManagementTable = ({ groups, branchOptions, selectedGroup, handleGrou
             </Modal>
 
             {/* Delete Confirmation Modal */}
-            <Modal show={deleteModalVisible} onHide={() => { setDeleteModalVisible(false); handleGroupSelect(null); }}>
+            <Modal show={deleteModalVisible} onHide={() => { setDeleteModalVisible(false); handleBranchSelect(null); }}>
                 <Modal.Header>
                     <Modal.Title>Confirmation</Modal.Title>
                     {/* Ganti ikon tombol close (X) */}
-                    <Button variant="link default" onClick={() => { setDeleteModalVisible(false); handleGroupSelect(null); }}>
+                    <Button variant="link default" onClick={() => { setDeleteModalVisible(false); handleBranchSelect(null); }}>
                         <FontAwesomeIcon icon={faTimes} />
                     </Button>
                 </Modal.Header>
@@ -248,4 +231,4 @@ const GroupManagementTable = ({ groups, branchOptions, selectedGroup, handleGrou
     );
 };
 
-export default GroupManagementTable;
+export default BranchTable;

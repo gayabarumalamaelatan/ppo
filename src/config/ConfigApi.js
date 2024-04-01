@@ -45,7 +45,14 @@ export const USER_SERVICE_BASE = process.env.REACT_APP_API_USER_SERVICE_BASE;
      //Core role group mapping 
 
     export const USER_SERVICE_MAPPING_ROLE_GROUP_ADD = `${USER_SERVICE_BASE}/user-service/core-role-group/add`;
-// MENU-SERVICE
+    // CORE Branch
+
+    export const USER_SERVICE_BRANCH_LIST = `${USER_SERVICE_BASE}/user-service/core-branch/list`;
+    export const USER_SERVICE_BRANCH_ADD = `${USER_SERVICE_BASE}/user-service/core-branch/add`;
+    export const USER_SERVICE_BRANCH_UPDATE = `${USER_SERVICE_BASE}/user-service/core-branch/update`;
+    export const USER_SERVICE_BRANCH_UPDATE_STATUS = `${USER_SERVICE_BASE}/user-service/core-branch/update-status`;
+
+    // MENU-SERVICE
 export const MENU_SERVICE_BASE = process.env.REACT_APP_API_MENU_SERVICE_BASE;
     // MODULE CONTROLLER
     export const MENU_SERVICE_MODULES = `${MENU_SERVICE_BASE}/menu-service/core-module/module-with-menu`;

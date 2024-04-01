@@ -6,6 +6,7 @@ import { AUTH_SERVICE_LOGIN, LICENSE_SERVICE_CHECK } from '../config/ConfigApi';
 import { active, expired, expiredPass, pendingDelete } from '../config/Constants';
 import { Form } from 'react-bootstrap';
 import { showDynamicSweetAlert } from '../toast/Swal';
+import '../css/designCIMB.css';
 
 
 function LoginPage() {
@@ -77,6 +78,7 @@ function LoginPage() {
         sessionStorage.setItem('userId', response.data.userName);
         sessionStorage.setItem('accessToken', response.data.accessToken);
         sessionStorage.setItem('id', response.data.id);
+        sessionStorage.setItem('branch', response.data.branchId);
         checkLicense();
         navigate('/');
       } else if (response.status === 200 && response.data.status === expiredPass) {

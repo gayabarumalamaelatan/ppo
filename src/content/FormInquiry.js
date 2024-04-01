@@ -13,7 +13,7 @@ import {
   FORM_SERVICE_REPORT_DATA_EXCEL,
 } from "../config/ConfigApi";
 import axios from "axios";
-import { getToken } from "../config/Constants";
+import { getToken, getBranch } from "../config/Constants";
 import { useRecoilValue } from "recoil";
 import { menusState } from "../store/RecoilFormTemplate";
 import * as XLSX from "xlsx";
@@ -22,6 +22,7 @@ import { showDynamicSweetAlert } from "../toast/Swal";
 
 const FormInquiry = () => {
   const token = getToken();
+  const branchId = getBranch();
   const menusForm = useRecoilValue(menusState);
   const [columns, setColumns] = useState([]);
   const [accountData, setAccountData] = useState([]);
@@ -109,9 +110,9 @@ const FormInquiry = () => {
     let urlParams;
 
     if (filterColumn !== "" && filterOperation !== "" && filterValue !== "") {
-      urlParams = `f=${formCode}&page=${currentPage}&size=${pageSize}&filterBy=${filterColumn}&filterValue=${filterValue}&operation=${filterOperation}&showAll=YES`;
+      urlParams = `f=${formCode}&branchId=${branchId}&page=${currentPage}&size=${pageSize}&filterBy=${filterColumn}&filterValue=${filterValue}&operation=${filterOperation}&showAll=YES`;
     } else {
-      urlParams = `f=${formCode}&page=${currentPage}&size=${pageSize}&showAll=YES`;
+      urlParams = `f=${formCode}&branchId=${branchId}&page=${currentPage}&size=${pageSize}&showAll=YES`;
     }
 
     return axios

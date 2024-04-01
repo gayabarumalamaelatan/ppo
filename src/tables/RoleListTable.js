@@ -7,10 +7,11 @@ import { faSave, faTimes, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { USER_SERVICE_EDIT_ROLE, USER_SERVICE_UPDATE_STATUS_ROLE } from '../config/ConfigApi';
 import axios from 'axios';
 import { showDynamicSweetAlert } from '../toast/Swal';
+import ReactSelect from 'react-select';
 
 const { getToken } = require('../config/Constants');
 
-const RoleListTable = ({ roles,  handleRoleSelect, handleLoadMapping, selectedGroup, isLoadingTable, refetchCallback,editPermission,deletePermission }) => {
+const RoleListTable = ({ roles,  handleRoleSelect,branchOptions, handleLoadMapping, selectedGroup, isLoadingTable, refetchCallback,editPermission,deletePermission }) => {
 
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [editingRole, setEditingRole] = useState(null);
@@ -58,6 +59,7 @@ const RoleListTable = ({ roles,  handleRoleSelect, handleLoadMapping, selectedGr
       const data = {
         id: editingRole.id,
         roleName: editingRole.roleName,
+        branchId: editingRole ? editingRole.branchId : null
       };
       
       setIsLoading(true);
@@ -82,13 +84,14 @@ const RoleListTable = ({ roles,  handleRoleSelect, handleLoadMapping, selectedGr
   };
 
   const handleDeleteConfirm = async () => {
+    setIsLoading(true);
     try {
       const data = {
         id: editingRole.id,
         roleName: editingRole.roleName,
         status: "INACTIVE"
       };
-      setIsLoading(true);
+      
       const response = await axios.put(`${USER_SERVICE_UPDATE_STATUS_ROLE}`, data, { headers });
       setTimeout(() => {
         setDeleteModalVisible(false);
@@ -187,7 +190,12 @@ const RoleListTable = ({ roles,  handleRoleSelect, handleLoadMapping, selectedGr
                                 onChange={(e) => setEditingRole({ ...editingRole, roleName: e.target.value })}
                             />
                         </div>
-                        
+                        <ReactSelect
+                                id="selectBranch"
+                                options={branchOptions}
+                                value={branchOptions.find(option => option.value === editingRole?.branchId)}
+                                onChange={(selectedOption) => setEditingRole({ ...editingRole, branchId: selectedOption.value })}
+                            />
                     </form>
                 </Modal.Body>
                 <Modal.Footer>

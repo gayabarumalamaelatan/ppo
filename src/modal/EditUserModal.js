@@ -2,13 +2,14 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-import AUTH_SERVICE_UPDATE_USER, { USER_SERVICE_GROUP_LIST, USER_SERVICE_UPDATE_USER, USER_SERVICE_USER_DETAIL } from '../config/ConfigApi';
+import AUTH_SERVICE_UPDATE_USER, { USER_SERVICE_BRANCH_LIST, USER_SERVICE_GROUP_LIST, USER_SERVICE_UPDATE_USER, USER_SERVICE_USER_DETAIL } from '../config/ConfigApi';
 import { showSuccessToast, showErrorToast } from '../toast/toast';
 import { showDynamicSweetAlert } from '../toast/Swal';
 import { Button, Modal } from 'react-bootstrap';
+import ReactSelect from 'react-select';
 
 
-const { userLoggin, getToken } = require('../config/Constants');
+const { userLoggin, getToken, getBranch } = require('../config/Constants');
 
 const EditFormModal = ({ showEdit, handleClose, username, handleSubmit, reloadData }) => {
   const initialFormData = {
@@ -17,14 +18,35 @@ const EditFormModal = ({ showEdit, handleClose, username, handleSubmit, reloadDa
     email: '',
     phoneNumber: '',
     authBy: '',
-    group:[],
+    group: [],
   };
 
   const [formData, setFormData] = useState(initialFormData);
   const [isLoading, setIsLoading] = useState(false);
   const [groupList, setGroupList] = useState([]);
   const token = getToken();
+  const branchId = getBranch();
+  const headers = { Authorization: `Bearer ${token}` };
+  const [branchOptions, setBranchOptions] = useState([]);
+  const [selectedBranch, setSelectedBranch] = useState(null);
 
+
+  const fetchBranchData = async () => {
+    try {
+      const response = await axios.get(USER_SERVICE_BRANCH_LIST, { headers });
+      const branches = response.data.map(branch => ({
+        value: branch.id,
+        label: branch.branchName
+      }));
+      setBranchOptions(branches);
+    } catch (error) {
+      console.error('Error fetching branch data:', error);
+      // Handle error
+    }
+  };
+  useEffect(() => {
+    fetchBranchData();
+  }, []);
   // Function to fetch user details for editing
   useEffect(() => {
     const fetchUserData = async () => {
@@ -47,6 +69,7 @@ const EditFormModal = ({ showEdit, handleClose, username, handleSubmit, reloadDa
           id: userData.id,
           authBy: userData.authBy,
           group: groupName,
+          branch: userData.branchId,
         });
       } catch (error) {
         console.error('Error fetching user details:', error);
@@ -55,7 +78,7 @@ const EditFormModal = ({ showEdit, handleClose, username, handleSubmit, reloadDa
     const fetchGroups = async () => {
       try {
         const headers = { Authorization: `Bearer ${token}` };
-        const response = await axios.get(USER_SERVICE_GROUP_LIST, { headers });
+        const response = await axios.get(`${USER_SERVICE_GROUP_LIST}?branch=${branchId}`, { headers });
         setGroupList(response.data);
         console.log(groupList); // Assuming the API response directly provides the list of groups
       } catch (error) {
@@ -68,8 +91,6 @@ const EditFormModal = ({ showEdit, handleClose, username, handleSubmit, reloadDa
       fetchUserData();
       fetchGroups();
     }
-
-
   }, [showEdit, username]);
 
   const handleFormChange = (e) => {
@@ -91,6 +112,7 @@ const EditFormModal = ({ showEdit, handleClose, username, handleSubmit, reloadDa
         id: formData.id,
         authBy: formData.authBy,
         groupId: parseInt(formData.group, 10),
+        branchId: parseInt(formData.branch, 10),
       };
 
       setIsLoading(true);
@@ -147,6 +169,16 @@ const EditFormModal = ({ showEdit, handleClose, username, handleSubmit, reloadDa
             />
           </div>
           <div className="form-group">
+            <label htmlFor="selectBranch">Select Branch:</label>
+            <ReactSelect
+              id="selectBranch"
+              options={branchOptions}
+              value={branchOptions.find(option => option.value === formData?.branch)}
+              onChange={(selectedOption) => setFormData({ ...formData, branch: selectedOption.value })}
+            />
+
+          </div>
+          <div className="form-group">
             <label>Authentication Method</label>
             <select
               className="form-control"
@@ -163,7 +195,7 @@ const EditFormModal = ({ showEdit, handleClose, username, handleSubmit, reloadDa
           <div className="form-group">
             <label>User Group</label>
             <select
-               className="form-control"
+              className="form-control"
               name="group"
               value={formData.group}
               onChange={handleFormChange}

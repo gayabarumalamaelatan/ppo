@@ -13,7 +13,7 @@ import {
   FORM_SERVICE_REPORT_DATA_EXCEL,
 } from "../config/ConfigApi";
 import axios from "axios";
-import { getToken } from "../config/Constants";
+import { getToken, getBranch } from "../config/Constants";
 import { useRecoilValue } from "recoil";
 import { menusState } from "../store/RecoilFormTemplate";
 import * as XLSX from "xlsx";
@@ -22,6 +22,7 @@ import { showDynamicSweetAlert } from "../toast/Swal";
 
 const FormView = () => {
   const token = getToken();
+  const branchId = getBranch();
   const menusForm = useRecoilValue(menusState);
   const [columns, setColumns] = useState([]);
   const [accountData, setAccountData] = useState([]);
@@ -92,15 +93,15 @@ const FormView = () => {
 
     if (filterColumn !== "" && filterOperation !== "" && filterValue !== "") {
       if (tableName) {
-        urlParams = `t=${tableName}&page=${currentPage}&size=${pageSize}&filterBy=${filterColumn}&filterValue=${filterValue}&operation=${filterOperation}&viewOnly=true`;
+        urlParams = `t=${tableName}&branchId=${branchId}&page=${currentPage}&size=${pageSize}&filterBy=${filterColumn}&filterValue=${filterValue}&operation=${filterOperation}&viewOnly=true`;
       } else {
-        urlParams = `f=${formCode}&page=${currentPage}&size=${pageSize}&filterBy=${filterColumn}&filterValue=${filterValue}&operation=${filterOperation}&viewOnly=true`;
+        urlParams = `f=${formCode}&branchId=${branchId}&page=${currentPage}&size=${pageSize}&filterBy=${filterColumn}&filterValue=${filterValue}&operation=${filterOperation}&viewOnly=true`;
       }
     } else {
       if (tableName) {
-        urlParams = `t=${tableName}&page=${currentPage}&size=${pageSize}&viewOnly=true`;
+        urlParams = `t=${tableName}&branchId=${branchId}&page=${currentPage}&size=${pageSize}&viewOnly=true`;
       } else {
-        urlParams = `f=${formCode}&page=${currentPage}&size=${pageSize}&viewOnly=true`;
+        urlParams = `f=${formCode}&branchId=${branchId}&page=${currentPage}&size=${pageSize}&viewOnly=true`;
       }
     }
 
