@@ -130,7 +130,7 @@ hr{
     width: 100%;
     margin-left: -5px;
 }
-.image>img.img-logonew{
+.image>img.imgedit{
     width: 90%;
     padding: 0;
 }
@@ -217,7 +217,7 @@ button.btn.btn-sidebar:focus{
     font-weight: 700;
 }
 .mt-2>ul.nav.nav-pills.nav-sidebar.flex-column>li.nav-item {
-    color: #0066AE;
+    color: #f72f2b;
     font-family: 'inter';
 }
 .user-panel.mt-3.pb-3.mb-3.d-flex>.info>a.d-block{
@@ -686,23 +686,19 @@ ul.pagination>li.page-item:first-child>a.page-link{
     color: #f72f2b;
 }
 .col-md-12.d-flex.justify-content-end.align-items-center>button.btn.btn-secondary{
-    background-color: #0066AE;
-    border-color: #0066AE;
+    background-color: #f72f2b;
+    border-color: #f72f2b;
     font-family: 'inter';
     border-radius: 15px;
 }
 .col-md-8.d-flex.justify-content-end.align-items-center>.btn-group.ml-2>button.btn.btn-secondary{
-    border-color: #f72f2b;
-    color: #f72f2b;
-}
-.col-md-8.d-flex.justify-content-end.align-items-center>.btn-group.ml-2>button.btn.btn-secondary:hover{
     background-color: #f72f2b;
     color: #FFF;
+    border-color: #f72f2b;
 }
-.col-md-8.d-flex.justify-content-end.align-items-center>.btn-group.ml-2>button.btn.btn-secondary:focus{
-    border-color: #f72f2b!important;
-    color: #f72f2b!important;
-    background: transparent!important;
+.col-md-8.d-flex.justify-content-end.align-items-center>.btn-group.ml-2>button.btn.btn-secondary:hover{
+    background-color: #FFF;
+    color: #f72f2b;
 }
 .col-md-12.d-flex.justify-content-end.align-items-center>button.btn.btn-secondary{
     background-color: #f72f2b;
@@ -862,17 +858,17 @@ select.form-control{
     color: #FFF;
 }
 .dropdown>.btn.btn-default.dropdown-toggle.btn-sm.float-left{
-    background-color: #0066AE;
+    background-color: #f72f2b;
     color: #FFF;
-    border: 1px solid #0066AE;
+    border: 1px solid #f72f2b;
     border-radius: 10px;
 }
 .dropdown>.btn.btn-default.dropdown-toggle.btn-sm.float-left:hover{
     background: transparent;
-    color: #0066AE;
+    color: #f72f2b;
 }
 .dropdown.show>ul.dropdown-menu.show>li>button:hover{
-    background-color: #0066AE;
+    background-color: #f72f2b;
     color: #FFF;
     border: none;
 }
@@ -900,8 +896,8 @@ select.form-control{
     color: #f72f2b;
 }
 .btn-group.ml-2>button.btn.btn-default:hover{
-    color: #f72f2b;
-    background: transparent;
+    color: #FFF;
+    background: #f72f2b;
     border-color: #f72f2b;
 }
 ul.pagination>li.page-item.disabled:last-child>span.page-link{
@@ -940,14 +936,14 @@ ul.pagination>li.page-item.disabled:first-child>span.page-link{
     border-top-right-radius: 25px;
 }
 .card-footer.d-flex.justify-content-end>button.btn.btn-primary{
-    background-color: #0066AE;
+    background-color: #f72f2b;
     border-radius: 20px;
-    border: 1px solid #0066AE;
+    border: 1px solid #f72f2b;
     color: #FFF;
 }
 .card-footer.d-flex.justify-content-end>button.btn.btn-primary:hover{
     background-color: #FFF;
-    color: #0066AE;
+    color: #f72f2b;
 }
 ul.list-group>li.list-group-item.d-flex.justify-content-between.align-items-center>button.btn.btn-secondary.btn-sm{
     background-color: #00052E;
@@ -963,13 +959,13 @@ ul.list-group>li.list-group-item.d-flex.justify-content-between.align-items-cent
     color: #dc3545;
 }
 .card-footer.d-flex.justify-content-end>button.btn.btn-secondary{
-    background-color: #0066AE;
+    background-color: #f72f2b;
     border-radius: 20px;
-    border-color: #0066AE;
+    border-color: #f72f2b;
 }
 .card-footer.d-flex.justify-content-end>button.btn.btn-secondary:hover{
     background-color: #FFF;
-    color: #0066AE;
+    color: #f72f2b;
 }
 ul.list-group>li.list-group-item.d-flex.justify-content-between.align-items-center>button.btn.btn-primary.btn-sm{
     font-weight: 400;
@@ -1128,7 +1124,7 @@ table.table.table-bordered.table-hover>tbody>tr.table-row-hover:first-child>td:l
     border-color: #ad310f!important;
 }
 table.table.table-bordered.table-hover>tbody>tr.table-row-hover:first-child>td:last-child>div>button.btn.btn-outline-danger:last-child:hover{
-    color: #ad310f!important;
+    background: transparent!important;
 }
 .modal-content>.modal-body>form>div>.row>.col>input.form-control{
     background-color: rgba(173, 49, 15, .5);
@@ -1265,7 +1261,10 @@ table.table.table-bordered.table-hover>tbody>tr.table-row-hover:first-child>td:l
     border-radius: 10px;
 }
 .table-success, .table-success>td, .table-success>th{
-    background-color: #aeddff!important;
+    background-color: #f6b8ba!important;
+    border-bottom: #f6b8ba!important;
+    border-left-color: #dde2e6!important;
+    border-right-color: #dde2e6!important;
 }
 .table-success tbody+tbody, .table-success td, .table-success th, .table-success thead th{
     border-color: #9ad5ff;
@@ -1396,6 +1395,43 @@ section.content-header>.container.my-5>.row>.col-lg-2.mb-2 p{
     background: transparent;
     color: #da201a;
 }
-/* aside.main-sidebar.sidebar-dark-primary.elevation-4>.sidebar.os-host.os-theme-light.os-host-resize-disabled.os-host-transition.os-host-scrollbar-vertical-hidden.os-host-overflow.os-host-overflow-x{
-    display: ;
-} */
+section.content-header>.container.my-5{
+    float: left;
+}
+
+/* tabel */
+.card>.card-body>.table-responsive>table.table.table-bordered>thead>tr>th{
+    border-top: none!important;
+    background-color: #f72f2b;
+    color: #FFF;
+}
+.card-body>.table-container>table.table.table-bordered.table-hover>thead>tr>th{
+    background-color: #f72f2b;
+    color: #FFF;
+}
+.table-responsive>table.table.table-bordered.table-hover>thead>tr>th{
+    background-color: #f72f2b;
+    color: #FFF;
+}
+.card-body>.table-container>table.table.table-bordered>thead>tr>th{
+    background-color: #f72f2b;
+    color: #fff;
+}
+.col-12>.card-body>.table-container>.table.table-bordered.table-hover>thead>tr>th{
+    border-bottom: none;
+}
+.table-bordered>:not(caption)>*{
+    border: none;
+}
+.table-container>table.table.table-bordered.table-hover>tbody>tr:nth-child(odd)>td{
+    background-color: #EFF1F3;
+}
+.table-responsive>table.table.table-bordered.table-hover>tbody>tr:nth-child(odd)>td{
+    background-color: #EFF1F3;
+}
+.table-container>table.table.table-bordered>tbody>tr:nth-child(odd)>td{
+    background-color: #EFF1F3;
+}
+.table-responsive>table.table.table-bordered>tbody>tr:nth-child(odd)>td{
+    background-color: #EFF1F3;
+}

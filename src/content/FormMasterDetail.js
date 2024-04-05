@@ -649,6 +649,7 @@ const FormMasterDetail = () => {
               canAuth={canAuth}
               isWorkflow={isWorkflow}
               tableNameDetail={tableNameDetail}
+              branchId={branchId}
             />
           </div>
         </div>

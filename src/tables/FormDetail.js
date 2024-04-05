@@ -69,7 +69,7 @@ const FormDetail = ({ idForm, getFormCode, tableNameDetail, headers, rowData, ke
     const fetchDataDetail = async (tableNameDetail) => {
         setIsLoadingTableDetail(true);
         try {
-            const response = await axios.get(`${FORM_SERVICE_LOAD_DATA}?t=${tableNameDetail}&filterBy=${keyCol}&filterValue=${rowData}&operation=EQUAL&page=${currentPageDetail}&size=${pageSizeDetail}&detail=true&showAll=YES`, { headers });
+            const response = await axios.get(`${FORM_SERVICE_LOAD_DATA}?t=${tableNameDetail}&branchId=${branchId}&filterBy=${keyCol}&filterValue=${rowData}&operation=EQUAL&page=${currentPageDetail}&size=${pageSizeDetail}&detail=true&showAll=YES`, { headers });
             const transformedData = response.data.data.map(item =>
                 Object.keys(item).reduce((acc, key) => {
                     acc[key.toUpperCase()] = item[key];

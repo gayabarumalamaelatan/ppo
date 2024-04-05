@@ -40,6 +40,7 @@ const FormTableMasterDetail = ({
   editPermission,
   deletePermission,
   isWorkflow,
+  branchId,
 }) => {
   const token = getToken();
   const headers = { Authorization: `Bearer ${token}` };
@@ -473,6 +474,7 @@ const FormTableMasterDetail = ({
               keyCol={primaryKey}
               getFormCode={formCode}
               menuName={menuName}
+              branchId={branchId}
             />
           </div>
         </div>

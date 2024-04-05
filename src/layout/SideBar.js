@@ -235,7 +235,7 @@ export default function SideBar() {
               <img
                 src="../dist/img/logoptap.jpg"
                 // className="img-circle elevation-2"
-                className="img-logonew"
+                className="imgedit"
                 alt="User Image"
               />
             </div>

@@ -94,12 +94,12 @@ const CoreBranch = () => {
 
                     <div className="row mb-2">
                         <div className="col-sm-6">
-                            <h1>Group Management</h1>
+                            <h1>Branch</h1>
                         </div>
                         <div className="col-sm-6">
                             <ol className="breadcrumb float-sm-right">
                                 <li className="breadcrumb-item"><a href="/">Home</a></li>
-                                <li className="breadcrumb-item active">Maintenace Branch</li>
+                                <li className="breadcrumb-item active">Maintenance Branch</li>
                             </ol>
                         </div>
                     </div>
@@ -110,7 +110,7 @@ const CoreBranch = () => {
                     <div class="row">
                         <div class="col-12">
                             <div className="card-header">
-                                <h2 className="card-title">Maintenace Branch</h2>
+                                <h2 className="card-title">Maintenance Branch</h2>
                                 {canCreateGroup && (
                                     <a className="btn btn-success btn-sm float-right" onClick={() => setShowNewBranchModal(true)}>
                                         <i className="fas fa-users"></i> New
