@@ -140,9 +140,9 @@ const FormEdit = ({ isOpen, onClose, columns, menuName, getFormCode, data, keyCo
 
         let apiUrl;
         if (tableNameDetail) {
-            apiUrl = `${FORM_SERVICE_UPDATE_DATA}?t=${tableNameDetail}&column=id&value=${firstValue}`
+            apiUrl = `${FORM_SERVICE_UPDATE_DATA}?t=${tableNameDetail}&column=id&value=${firstValue}&branchId=${branchId}`
         } else {
-            apiUrl = `${FORM_SERVICE_UPDATE_DATA}?f=${getFormCode}&column=id&value=${firstValue}`;
+            apiUrl = `${FORM_SERVICE_UPDATE_DATA}?f=${getFormCode}&column=id&value=${firstValue}&branchId=${branchId}`;
         }
         // Define the API endpoint URL for your POST request
 
@@ -177,7 +177,7 @@ const FormEdit = ({ isOpen, onClose, columns, menuName, getFormCode, data, keyCo
                                 status: pending,
                                 // Other properties in your requestData object
                             };
-                            const response = await axios.post(`${FORM_SERVICE_UPDATE_STATUS}?f=${getFormCode}`, requestData, { headers });
+                            const response = await axios.post(`${FORM_SERVICE_UPDATE_STATUS}?f=${getFormCode}&branchId=${branchId}`, requestData, { headers });
 
                             // Call the successCallback function to close the modal
                             successCallback();

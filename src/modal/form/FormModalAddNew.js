@@ -81,9 +81,9 @@ const FormModalAddNew = ({ isOpen, onClose, columns, menuName, formCode, tableNa
     console.log("formCode", formCode);
     // Define the API endpoint URL for your POST request
     if (tableNameDetail) {
-      apiUrl = `${FORM_SERVICE_INSERT_DATA}?f=${formCode}&t=${tableNameDetail}&isDetail=true`;
+      apiUrl = `${FORM_SERVICE_INSERT_DATA}?f=${formCode}&t=${tableNameDetail}&branchId=${branchId}&isDetail=true`;
     } else {
-      apiUrl = `${FORM_SERVICE_INSERT_DATA}?f=${formCode}`;
+      apiUrl = `${FORM_SERVICE_INSERT_DATA}?f=${formCode}&branchId=${branchId}`;
     }
 
     // Create the request options, including method, headers, and body
