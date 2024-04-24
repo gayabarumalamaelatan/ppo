@@ -57,7 +57,7 @@ const GroupManagement = () => {
     };
 
     const loadGroupsRoleData = () => {
-        axios.get(`${USER_SERVICE_GROUP_ROLE_LIST}`, { headers })
+        axios.get(`${USER_SERVICE_GROUP_ROLE_LIST}?branch=${branchId}`, { headers })
             .then(response => {
                 const groupsWithRoles = response.data.map(group => ({
                     ...group,
@@ -73,7 +73,7 @@ const GroupManagement = () => {
 
 
     const loadRolesData = () => {
-        axios.get(`${USER_SERVICE_ROLE_LIST}`, { headers })
+        axios.get(`${USER_SERVICE_ROLE_LIST}?branch=${branchId}`, { headers })
             .then(response => {
                 setRolesData(response.data);
                 // console.log(response.data); // Log roles data here
