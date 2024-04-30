@@ -13,6 +13,7 @@ const dynamicImportMap = {
   MoneyMarketTransaction: () => import('gritmoneymarketmodule/MoneyMarketTransaction'),
   CreateTransaction: () => import('grittrademodule/CreateTransaction'),
   Settlement: () => import('gritmoneymarketmodule/Settlement'),
+  TransactionDetails: () => import('gritmoneymarketmodule/TransactionDetails'),
   // Tambahkan lebih banyak mapping sesuai kebutuhan
 };
 
