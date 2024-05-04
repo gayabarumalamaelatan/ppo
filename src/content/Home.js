@@ -1,9 +1,11 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import React, { Fragment, useEffect, useState } from 'react';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 import { MENU_SERVICE_MODULES } from '../config/ConfigApi';
-import axios from 'axios';
+import CardCarousel from './CardCarousel';
+import ShowTime from './DateTimeShow';
 const { getToken } = require("../config/Constants");
 
 const Home = () => {
@@ -46,7 +48,14 @@ const Home = () => {
 
     return (
         <Fragment>
-
+                <div class="jumbotron jumbotron-fluid">
+                    <div class="container">
+                        <h1 class="display-4">Welcome Aboard!</h1>
+                        <p class="lead">
+                            Now, it's <ShowTime/>.
+                        </p>
+                    </div>
+                </div>
             <section className="content-header">
                 {activeSubMenu && (
                     <div className="row mt-4">
@@ -55,13 +64,12 @@ const Home = () => {
                         </div>
                     </div>
                 )}
-                <div className="container my-5">
-
+                <div className="container menu d-flex">
                     {/* Displaying active parent menu or root menu */}
                     {activeParentMenu && (
                     <div className="row">
                         {(activeParentMenu && activeParentMenu.subMenu ? activeParentMenu.subMenu : menuData).map((menu, index) => (
-                            <div className="col-lg-2 mb-2" key={index}>
+                            <div className="col-lg-3 mb-2" key={index}>
                                 <div className="card" onClick={() => handleCardClick(menu.menu)}>
                                     <div className="card-body text-center">
                                         <i className={menu.icon} style={{ fontSize: '48px' }}></i>
@@ -78,7 +86,7 @@ const Home = () => {
                     {activeSubMenu && (
                         <div className="row">
                             {activeSubMenu.map((subMenuItem, subIndex) => (
-                                <div className="col-lg-2 mb-2" key={subIndex}>
+                                <div className="col-lg-3 mb-2" key={subIndex}>
                                     <div className="card">
                                         <div className="card-body text-center">
                                             <i className={subMenuItem.icon} style={{ fontSize: '48px' }}></i>
@@ -90,9 +98,11 @@ const Home = () => {
                             ))}
                         </div>
                     )}
-
+                    
                     {/* Button to go back to root menu */}
-
+                    <div className="container carousel" id='carousel'>
+                        <CardCarousel/>
+                    </div>
                 </div>
             </section>
         </Fragment>

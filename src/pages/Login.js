@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import axios from 'axios'; // Import axios
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AUTH_SERVICE_LOGIN, LICENSE_SERVICE_CHECK } from '../config/ConfigApi';
-import { active, expired, expiredPass, pendingDelete } from '../config/Constants';
-import { Form } from 'react-bootstrap';
-import { showDynamicSweetAlert } from '../toast/Swal';
+import { active, expiredPass, pendingDelete } from '../config/Constants';
 import '../css/designCIMB.css';
+import { showDynamicSweetAlert } from '../toast/Swal';
 
 
 function LoginPage() {
@@ -177,12 +176,12 @@ function LoginPage() {
               </div>
               <hr></hr>
               <div className="row">
-                <div className="col-8">
+                <div className="col-3">
                 </div>
 
-                <div className="col-4">
+                <div className="col-6">
                   <button type="submit" className="btn btn-primary btn-block">
-                    Sign In
+                    Log in
                   </button>
                 </div>
                 <hr></hr>
