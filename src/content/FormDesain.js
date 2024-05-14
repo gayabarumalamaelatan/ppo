@@ -14,21 +14,10 @@ const FormDesain = () => {
     });
 
     const [detailData, setDetailData] = useState([{
-        ID_FORM: '',
-        FORM_CODE: '',
+
         FIELD_NAME: '',
         DESCRIPTION: '',
-        LOOKUP_TABLE: '',
         DATA_TYPE: '',
-        MIN_LENGTH: '',
-        MAX_LENGTH: '',
-        STATUS: '',
-        CREATED_AT: '',
-        UPDATED_AT: '',
-        PRIMARY_KEY_COLUMN: '',
-        IS_PRIMARY_KEY: '',
-        DISPLAY_FORMAT: '',
-        IS_DETAIL: '',
         IS_MANDATORY: ''
     }]);
 
@@ -49,9 +38,10 @@ const FormDesain = () => {
     };
 
     const handleDetailChange = (index, e) => {
-        const { name, value } = e.target;
+        const { name, value, type, checked } = e.target;
+        const newValue = type === 'checkbox' ? (checked ? '1' : '0') : value; // Update value for checkbox
         const newDetailData = [...detailData];
-        newDetailData[index][name] = value;
+        newDetailData[index][name] = newValue;
         setDetailData(newDetailData);
     };
 
@@ -178,7 +168,7 @@ const FormDesain = () => {
                                     </div>
                                 </div>
                                 <div className="form-group row">
-                                <label htmlFor="description" className="col-sm-2 col-form-label">Workflow</label>
+                                    <label htmlFor="description" className="col-sm-2 col-form-label">Workflow</label>
                                     <div className="col-sm-10">
                                         <div className="form-check">
                                             <input
@@ -223,27 +213,7 @@ const FormDesain = () => {
                     <div className="card-body">
                         {detailData.map((detail, index) => (
                             <div key={index}>
-                                <div className="row">
-                                    <div className="col">
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            placeholder="ID Form"
-                                            name="ID_FORM"
-                                            value={detail.ID_FORM}
-                                            onChange={(e) => handleDetailChange(index, e)}
-                                        />
-                                    </div>
-                                    <div className="col">
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            placeholder="Form Code"
-                                            name="FORM_CODE"
-                                            value={detail.FORM_CODE}
-                                            onChange={(e) => handleDetailChange(index, e)}
-                                        />
-                                    </div>
+                                <div className="form-group row">
                                     <div className="col">
                                         <input
                                             type="text"
@@ -265,106 +235,38 @@ const FormDesain = () => {
                                         />
                                     </div>
                                     <div className="col">
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            placeholder="Lookup Table"
-                                            name="LOOKUP_TABLE"
-                                            value={detail.LOOKUP_TABLE}
-                                            onChange={(e) => handleDetailChange(index, e)}
-                                        />
-                                    </div>
-                                    <div className="col">
-                                        <input
-                                            type="text"
+                                        <select
                                             className="form-control"
                                             placeholder="Data Type"
                                             name="DATA_TYPE"
                                             value={detail.DATA_TYPE}
                                             onChange={(e) => handleDetailChange(index, e)}
-                                        />
+                                        >
+                                            <option value="">Select Data Type</option>
+                                            <option value="NUMERIC">NUMERIC</option>
+                                            <option value="DECIMAL">DECIMAL</option>
+                                            <option value="CHAR">CHAR</option>
+                                            <option value="DATE">DATE</option>
+                                            <option value="BOOLEAN">BOOLEAN</option>
+                                            {/* Add more options here if needed */}
+                                        </select>
                                     </div>
                                     <div className="col">
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            placeholder="Min Length"
-                                            name="MIN_LENGTH"
-                                            value={detail.MIN_LENGTH}
-                                            onChange={(e) => handleDetailChange(index, e)}
-                                        />
-                                    </div>
-                                    <div className="col">
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            placeholder="Max Length"
-                                            name="MAX_LENGTH"
-                                            value={detail.MAX_LENGTH}
-                                            onChange={(e) => handleDetailChange(index, e)}
-                                        />
-                                    </div>
-                                    <div className="col">
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            placeholder="Status"
-                                            name="STATUS"
-                                            value={detail.STATUS}
-                                            onChange={(e) => handleDetailChange(index, e)}
-                                        />
+                                        <div className="form-check">
+                                            <input
+                                                className="form-check-input"
+                                                type="checkbox"
+                                                id={`is_mandatory_${index}`}
+                                                name="IS_MANDATORY"
+                                                checked={detail.IS_MANDATORY === '1'} 
+                                                onChange={(e) => handleDetailChange(index, e)}
+                                            />
+                                            <label className="form-check-label" htmlFor={`is_mandatory_${index}`}>
+                                                Is Mandatory
+                                            </label>
+                                        </div>
                                     </div>
 
-                                    <div className="col">
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            placeholder="Primary Key Column"
-                                            name="PRIMARY_KEY_COLUMN"
-                                            value={detail.PRIMARY_KEY_COLUMN}
-                                            onChange={(e) => handleDetailChange(index, e)}
-                                        />
-                                    </div>
-                                    <div className="col">
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            placeholder="Is Primary Key"
-                                            name="IS_PRIMARY_KEY"
-                                            value={detail.IS_PRIMARY_KEY}
-                                            onChange={(e) => handleDetailChange(index, e)}
-                                        />
-                                    </div>
-                                    <div className="col">
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            placeholder="Display Format"
-                                            name="DISPLAY_FORMAT"
-                                            value={detail.DISPLAY_FORMAT}
-                                            onChange={(e) => handleDetailChange(index, e)}
-                                        />
-                                    </div>
-                                    <div className="col">
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            placeholder="Is Detail"
-                                            name="IS_DETAIL"
-                                            value={detail.IS_DETAIL}
-                                            onChange={(e) => handleDetailChange(index, e)}
-                                        />
-                                    </div>
-                                    <div className="col">
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            placeholder="Is Mandatory"
-                                            name="IS_MANDATORY"
-                                            value={detail.IS_MANDATORY}
-                                            onChange={(e) => handleDetailChange(index, e)}
-                                        />
-                                    </div>
                                     {/* Add other input fields */}
 
                                     <div className="col">

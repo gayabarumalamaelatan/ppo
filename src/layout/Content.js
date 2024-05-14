@@ -125,6 +125,14 @@ export default function Content() {
       {
         moduleName : 'gritmoneymarketmodule',
         componentName : 'TransactionDetails'
+      },
+      {
+        moduleName : 'gritmoneymarketmodule',
+        componentName : 'MmDashboard'
+      },
+      {
+        moduleName : 'gritmoneymarketmodule',
+        componentName : 'ExecuteEod'
       }
       // ... other components SmartinEndpoints
     ]

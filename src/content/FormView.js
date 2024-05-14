@@ -72,6 +72,7 @@ const FormView = () => {
             sortType: "basic",
             lookupTable: apiColumn.lookupTable,
             displayFormat: apiColumn.displayFormat,
+            dataType: apiColumn.dataType,
           }))
         : [];
       setColumns(transformedColumns);

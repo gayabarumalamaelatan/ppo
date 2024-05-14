@@ -248,87 +248,87 @@ const FormTableTrs = ({
     }
   };
 
-//   const handleAuthorize = async () => {
-//     setIsLoading(true);
-//     setIsAuthing(true);
+  //   const handleAuthorize = async () => {
+  //     setIsLoading(true);
+  //     setIsAuthing(true);
 
-//     try {
-//       // Ambil data yang terpilih
-//       const selectedData = selectedRows.map((index) => rows[index].original);
+  //     try {
+  //       // Ambil data yang terpilih
+  //       const selectedData = selectedRows.map((index) => rows[index].original);
 
-//       console.log('Selected Data:', selectedData);
+  //       console.log('Selected Data:', selectedData);
 
-//       // Loop melalui setiap data terpilih dan kirim permintaan API
-//       for (const data of selectedData) {
-//         // Ubah data sesuai dengan struktur body request yang diinginkan
-//         const requestData = {
-//           idTrx: data.ID, // Menggunakan ID dari data terpilih
-//           status: approved, // Ganti dengan nilai status yang sesuai, atau sesuaikan sesuai kebutuhan
-//         };
+  //       // Loop melalui setiap data terpilih dan kirim permintaan API
+  //       for (const data of selectedData) {
+  //         // Ubah data sesuai dengan struktur body request yang diinginkan
+  //         const requestData = {
+  //           idTrx: data.ID, // Menggunakan ID dari data terpilih
+  //           status: approved, // Ganti dengan nilai status yang sesuai, atau sesuaikan sesuai kebutuhan
+  //         };
 
-//         // Lakukan aksi verifikasi, misalnya, kirim data ke backend
-//         await axios.post(
-//           `${FORM_SERVICE_UPDATE_STATUS}?f=${formCode}`,
-//           requestData,
-//           { headers }
-//         );
+  //         // Lakukan aksi verifikasi, misalnya, kirim data ke backend
+  //         await axios.post(
+  //           `${FORM_SERVICE_UPDATE_STATUS}?f=${formCode}`,
+  //           requestData,
+  //           { headers }
+  //         );
 
-//         // Lakukan sesuatu dengan respons dari API, misalnya, tampilkan log atau lakukan pembaruan setelah verifikasi
-//         console.log(`Verification for ID ${data.id} successful. `);
-//       }
+  //         // Lakukan sesuatu dengan respons dari API, misalnya, tampilkan log atau lakukan pembaruan setelah verifikasi
+  //         console.log(`Verification for ID ${data.id} successful. `);
+  //       }
 
-//       setTimeout(() => {
-//         setSelectedRows([]);
-//         refecthCallBack();
-//       }, 1000);
-//       // Setelah semua verifikasi berhasil, kosongkan seleksi
-//       showDynamicSweetAlert(
-//         "Authorization Successful!",
-//         "Data has been authorized successfully.",
-//         "success"
-//       );
-//       setIsLoading(false);
-//       // Tambahkan logika atau panggil fungsi yang sesuai setelah verifikasi selesai
-//     } catch (error) {
-//       console.error("Error during verification:", error);
-//       showDynamicSweetAlert("Error!", error, "error");
-//     } finally {
-//       setIsAuthing(false);
-//       setIsLoading(false);
-//     }
-//   };
+  //       setTimeout(() => {
+  //         setSelectedRows([]);
+  //         refecthCallBack();
+  //       }, 1000);
+  //       // Setelah semua verifikasi berhasil, kosongkan seleksi
+  //       showDynamicSweetAlert(
+  //         "Authorization Successful!",
+  //         "Data has been authorized successfully.",
+  //         "success"
+  //       );
+  //       setIsLoading(false);
+  //       // Tambahkan logika atau panggil fungsi yang sesuai setelah verifikasi selesai
+  //     } catch (error) {
+  //       console.error("Error during verification:", error);
+  //       showDynamicSweetAlert("Error!", error, "error");
+  //     } finally {
+  //       setIsAuthing(false);
+  //       setIsLoading(false);
+  //     }
+  //   };
 
-const handleAuthorize = async () => {
+  const handleAuthorize = async () => {
     setIsLoading(true);
     setIsAuthing(true);
-  
+
     const skippedTradeIds = [];
 
     try {
       // Ambil data yang terpilih
       const selectedData = selectedRows.map((index) => rows[index].original);
-   
-  
+
+
       // Loop melalui setiap data terpilih
       for (const data of selectedData) {
         try {
           // Lakukan permintaan GET ke API untuk memeriksa keberadaan data
-          const response = await axios.get(`${FORM_SERVICE_LOAD_DATA}?t=TRY_FORMSETTLE&branchId=${branchId}&page=1&size=5&filterBy=TRADEID&filterValue=${data.TRADEID}&operation=EQUAL&viewOnly=true`,{ headers });
-  
+          const response = await axios.get(`${FORM_SERVICE_LOAD_DATA}?t=TRY_FORMSETTLE&branchId=${branchId}&page=1&size=5&filterBy=TRADEID&filterValue=${data.TRADEID}&operation=EQUAL&viewOnly=true`, { headers });
+
           // Jika ada data yang ditemukan, lakukan post ke API
-          console.log('data length: ',response.data.data.length);
+          console.log('data length: ', response.data.data.length);
           if (response.data.data.length > 0) {
             const requestData = {
               idTrx: data.ID,
               status: approved,
             };
-  
+
             await axios.post(
               `${FORM_SERVICE_UPDATE_STATUS}?f=${formCode}`,
               requestData,
               { headers }
             );
-  
+
             console.log(`Verification for TRADEID ${data.TRADEID} successful.`);
           } else {
             // Jika tidak ada data yang ditemukan, tampilkan pesan skip
@@ -341,12 +341,12 @@ const handleAuthorize = async () => {
           showDynamicSweetAlert("Error!", error, "error");
         }
       }
-  
+
       setTimeout(() => {
         setSelectedRows([]);
         refecthCallBack();
       }, 1000);
-  
+
       // Setelah semua verifikasi berhasil, kosongkan seleksi
       showDynamicSweetAlert(
         "Authorization Successful!",
@@ -362,18 +362,18 @@ const handleAuthorize = async () => {
       setIsAuthing(false);
       setIsLoading(false);
     }
-  
+
     // Tampilkan pesan swal untuk TRADEID yang di-skip
     if (skippedTradeIds.length > 0) {
-        showDynamicSweetAlert(
-          "Need Actions Settlement!",
-          `The following TRADEIDs were skipped as they do not have settlements: ${skippedTradeIds.join(", ")}`,
-          "warning"
-        );
-      }
-      
+      showDynamicSweetAlert(
+        "Need Actions Settlement!",
+        `The following TRADEIDs were skipped as they do not have settlements: ${skippedTradeIds.join(", ")}`,
+        "warning"
+      );
+    }
+
   };
-  
+
 
   const handleReject = async () => {
     setIsRejecting(true);
@@ -622,8 +622,17 @@ const handleAuthorize = async () => {
                     {row.cells.map((cell) => {
                       const column = cell.column;
                       return (
-                        <td key={column.id} {...cell.getCellProps()}>
-                          {column.displayFormat === "CURRENCY" ? (
+                        <td
+                          key={column.id}
+                          {...cell.getCellProps()}
+                          className={
+                            (column.displayFormat === "CURRENCY" || column.displayFormat === "DECIMAL") &&
+                              column.dataType === "DECIMAL"
+                              ? "text-right"
+                              : ""
+                          }
+                        >
+                          {column.displayFormat === "CURRENCY"  ? (
                             // Custom logic for formatting as integer or decimal
                             Number.isInteger(cell.value) ? (
                               // Format as integer
@@ -654,6 +663,7 @@ const handleAuthorize = async () => {
                             cell.render("Cell")
                           )}
                         </td>
+
                       );
                     })}
                     <td>

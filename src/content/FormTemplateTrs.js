@@ -76,6 +76,7 @@ const FormTemplateTrs = () => {
                     lookupTable: apiColumn.lookupTable,
                     displayFormat: apiColumn.displayFormat,
                     isMandatory: apiColumn.isMandatory,
+                    dataType: apiColumn.dataType,
                     // Add other properties based on your requirements
                 }))
                 : [];

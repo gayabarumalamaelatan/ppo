@@ -84,13 +84,13 @@ const FormTableView = ({
       console.log("Data View successfully:", response.data);
       const dataArray = [response.data];
 
-            // Perform mapping or any other operations on the array
-            const transformedData = dataArray.map(item =>
-                Object.keys(item).reduce((acc, key) => {
-                    acc[key.toUpperCase()] = item[key];
-                    return acc;
-                }, {})
-            );
+      // Perform mapping or any other operations on the array
+      const transformedData = dataArray.map(item =>
+        Object.keys(item).reduce((acc, key) => {
+          acc[key.toUpperCase()] = item[key];
+          return acc;
+        }, {})
+      );
       setDataToView(transformedData[0]);
     } catch (error) {
       console.error("Error View data:", error);
@@ -179,7 +179,16 @@ const FormTableView = ({
                     {row.cells.map((cell) => {
                       const column = cell.column;
                       return (
-                        <td key={column.id} {...cell.getCellProps()}>
+                        <td
+                          key={column.id}
+                          {...cell.getCellProps()}
+                          className={
+                            (column.displayFormat === "CURRENCY" || column.displayFormat === "DECIMAL") &&
+                              column.dataType === "DECIMAL"
+                              ? "text-right"
+                              : ""
+                          }
+                        >
                           {column.displayFormat === "CURRENCY" ? (
                             // Custom logic for formatting as integer or decimal
                             Number.isInteger(cell.value) ? (
@@ -211,6 +220,7 @@ const FormTableView = ({
                             cell.render("Cell")
                           )}
                         </td>
+
                       );
                     })}
                     <td>
@@ -279,7 +289,7 @@ const FormTableView = ({
                       <strong>{formatKey(column.accessor)}:</strong>
                       <span className="ml-2 flex-fill">
                         {column.displayFormat === "CURRENCY" ||
-                        column.displayFormat === "DECIMAL" ? (
+                          column.displayFormat === "DECIMAL" ? (
                           <NumericFormat
                             value={dataToView[column.accessor]}
                             displayType={"text"}
