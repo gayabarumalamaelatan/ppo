@@ -10,7 +10,9 @@ const FormDesain = () => {
         formCode: '',
         formName: '',
         description: '',
-        needApproval: 0
+        needApproval: 0,
+        workflowOption: 'default',
+        selectedUser: ''
     });
 
     const [detailData, setDetailData] = useState([{
@@ -84,7 +86,7 @@ const FormDesain = () => {
                 <div className="container-fluid">
                     <div className="row mb-2">
                         <div className="col-sm-6">
-                            <h1>Module</h1>
+                            <h1>Apps Screen</h1>
                         </div>
                     </div>
                 </div>
@@ -92,13 +94,13 @@ const FormDesain = () => {
             <section className="content">
                 <div className="card card-default">
                     <div className="card-header">
-                        <h3 className="card-title">Form Builder</h3>
+                        <h3 className="card-title">Screen Information</h3>
                     </div>
                     <div className="card-body">
                         <form onSubmit={handleSubmit}>
                             <div className="container">
                                 <div className="form-group row">
-                                    <label htmlFor="branch" className="col-sm-2 col-form-label">Departemen</label>
+                                    <label htmlFor="branch" className="col-sm-2 col-form-label">Department</label>
                                     <div className="col-sm-10">
                                         <input
                                             type="text"
@@ -107,7 +109,7 @@ const FormDesain = () => {
                                             name="branch"
                                             value={formData.module}
                                             onChange={handleChange}
-                                            placeholder="Enter Departemen"
+                                            placeholder="Enter Department"
                                         />
                                     </div>
                                 </div>
@@ -126,7 +128,7 @@ const FormDesain = () => {
                                     </div>
                                 </div>
                                 <div className="form-group row">
-                                    <label htmlFor="formCode" className="col-sm-2 col-form-label">Form Code</label>
+                                    <label htmlFor="formCode" className="col-sm-2 col-form-label">Screen Code</label>
                                     <div className="col-sm-10">
                                         <input
                                             type="text"
@@ -135,12 +137,12 @@ const FormDesain = () => {
                                             name="formCode"
                                             value={formData.formCode}
                                             onChange={handleChange}
-                                            placeholder="Enter Form Code"
+                                            placeholder="Enter Screen Code"
                                         />
                                     </div>
                                 </div>
                                 <div className="form-group row">
-                                    <label htmlFor="formName" className="col-sm-2 col-form-label">Form Name</label>
+                                    <label htmlFor="formName" className="col-sm-2 col-form-label">Screen Name</label>
                                     <div className="col-sm-10">
                                         <input
                                             type="text"
@@ -149,7 +151,7 @@ const FormDesain = () => {
                                             name="formName"
                                             value={formData.formName}
                                             onChange={handleChange}
-                                            placeholder="Enter Form Name"
+                                            placeholder="Enter Screen Name"
                                         />
                                     </div>
                                 </div>
@@ -198,7 +200,9 @@ const FormDesain = () => {
                                                 Custom
                                             </label>
                                         </div>
+
                                     </div>
+
                                 </div>
 
                             </div>
@@ -206,9 +210,34 @@ const FormDesain = () => {
                         </form>
                     </div>
                 </div>
+                {formData.workflowOption === 'custom' && (
+                    <div className="card card-default">
+                        <div className="card-header">
+                            <h3 className="card-title">Screen Workflow</h3>
+                        </div>
+                        <div className="card-body">
+                            <div className="col">
+                                <label htmlFor="userSelect">Select User</label>
+                                <select
+                                    className="form-control"
+                                    id="userSelect"
+                                    name="selectedUser"
+                                    value={formData.selectedUser}
+                                    onChange={handleChange}
+                                >
+                                    <option value="">-- Select a User --</option>
+                                    <option value="user1">User 1</option>
+                                    <option value="user2">User 2</option>
+                                    <option value="user3">User 3</option>
+                                    {/* Add more options as needed */}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                )}
                 <div className="card card-default">
                     <div className="card-header">
-                        <h3 className="card-title">Form Detail</h3>
+                        <h3 className="card-title">Screen Detail</h3>
                     </div>
                     <div className="card-body">
                         {detailData.map((detail, index) => (
@@ -258,11 +287,11 @@ const FormDesain = () => {
                                                 type="checkbox"
                                                 id={`is_mandatory_${index}`}
                                                 name="IS_MANDATORY"
-                                                checked={detail.IS_MANDATORY === '1'} 
+                                                checked={detail.IS_MANDATORY === '1'}
                                                 onChange={(e) => handleDetailChange(index, e)}
                                             />
                                             <label className="form-check-label" htmlFor={`is_mandatory_${index}`}>
-                                                Is Mandatory
+                                                Required
                                             </label>
                                         </div>
                                     </div>
