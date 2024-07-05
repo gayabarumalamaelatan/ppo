@@ -1,14 +1,14 @@
 /* eslint-disable no-undef */
-import React, { Fragment, useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import axios from "axios";
-import { MENU_SERVICE_MODULES } from "../config/ConfigApi";
+import React, { Fragment, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { updateFormData } from "../store/actions/FormAction";
+import { Link } from "react-router-dom";
 import { useRecoilState } from "recoil";
+import { MENU_SERVICE_MODULES } from "../config/ConfigApi";
+import { menusIdState } from "../store/MenuId";
 import { permissionsState } from "../store/Permission";
 import { menusState } from "../store/RecoilFormTemplate";
-import { menusIdState } from "../store/MenuId";
+import { updateFormData } from "../store/actions/FormAction";
 import { updateMenuData } from "../store/actions/MenuAction";
 
 const { getToken } = require("../config/Constants");
@@ -233,8 +233,8 @@ export default function SideBar() {
           <div className="user-panel mt-3 pb-3 mb-3 d-flex">
             <div className="image">
               <img
-                src="../dist/img/logoptap.jpg"
-                // className="img-circle elevation-2"
+                src="/dist/img/logoptap.jpg"
+                // className="img-circle elevation-2" 
                 className="imgedit"
                 alt="User Image"
               />

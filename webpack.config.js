@@ -82,11 +82,12 @@ module.exports = {
         new ModuleFederationPlugin({
             name: 'webeai-front', // Nama aplikasi host
             remotes: {
-                gritswiftmodule: 'gritswiftmodule@http://localhost:3001/remoteSwiftModule.js',
-                gritbifastmodule: 'gritbifastmodule@http://localhost:3002/bifastModule.js',
-                gritsmartinmodule: 'gritsmartinmodule@http://localhost:3003/smartinModule.js',
-                gritmoneymarketmodule: 'gritmoneymarketmodule@http://localhost:3004/moneyMarketModule.js',
-                grittrademodule: 'grittrademodule@http://localhost:3007/tradeModule.js',
+                // gritswiftmodule: 'gritswiftmodule@http://localhost:3001/remoteSwiftModule.js',
+                // gritbifastmodule: 'gritbifastmodule@http://localhost:3002/bifastModule.js',
+                // gritsmartinmodule: 'gritsmartinmodule@http://localhost:3003/smartinModule.js',
+                // gritmoneymarketmodule: 'gritmoneymarketmodule@http://localhost:3004/moneyMarketModule.js',
+                // grittrademodule: 'grittrademodule@http://localhost:3007/tradeModule.js',
+                gritsignaturemodule: 'gritsignaturemodule@http://localhost:3500/signatureModule.js',
               },
             shared: { // Mendefinisikan dependensi yang dibagi
                 react: { 

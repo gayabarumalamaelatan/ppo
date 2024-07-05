@@ -2,20 +2,24 @@ import React from 'react';
 import PageDown from '../content/PageDown';
 
 const dynamicImportMap = {
-  BifastDashboard: () => import('gritbifastmodule/BifastDashboard'),
-  RtgsDashboard: () => import('gritbifastmodule/RtgsDashboard'),
-  MicroFrontendComponent: () => import('gritswiftmodule/MicroFrontendComponent'),
-  AllServerDashboard: () => import('gritsmartinmodule/AllServerDashboard'),
-  SmartinEndpoints: () => import('gritsmartinmodule/SmartinEndpoints'),
-  SmartinUpload: () => import('gritsmartinmodule/SmartinUpload'),
-  SocketManager: () => import('gritsmartinmodule/SocketManager'),
-  Customers: () => import('gritmoneymarketmodule/Customers'),
-  MoneyMarketTransaction: () => import('gritmoneymarketmodule/MoneyMarketTransaction'),
-  CreateTransaction: () => import('grittrademodule/CreateTransaction'),
-  Settlement: () => import('gritmoneymarketmodule/Settlement'),
-  TransactionDetails: () => import('gritmoneymarketmodule/TransactionDetails'),
-  MmDashboard: () => import('gritmoneymarketmodule/MmDashboard'),
-  ExecuteEod: () => import('gritmoneymarketmodule/ExecuteEod'),
+  // BifastDashboard: () => import('gritbifastmodule/BifastDashboard'),
+  // RtgsDashboard: () => import('gritbifastmodule/RtgsDashboard'),
+  // MicroFrontendComponent: () => import('gritswiftmodule/MicroFrontendComponent'),
+  // AllServerDashboard: () => import('gritsmartinmodule/AllServerDashboard'),
+  // SmartinEndpoints: () => import('gritsmartinmodule/SmartinEndpoints'),
+  // SmartinUpload: () => import('gritsmartinmodule/SmartinUpload'),
+  // SocketManager: () => import('gritsmartinmodule/SocketManager'),
+  // Customers: () => import('gritmoneymarketmodule/Customers'),
+  // MoneyMarketTransaction: () => import('gritmoneymarketmodule/MoneyMarketTransaction'),
+  // CreateTransaction: () => import('grittrademodule/CreateTransaction'),
+  // Settlement: () => import('gritmoneymarketmodule/Settlement'),
+  // TransactionDetails: () => import('gritmoneymarketmodule/TransactionDetails'),
+  // DashboardMm: () => import('gritmoneymarketmodule/DashboardMm'),
+  // ExecuteEod: () => import('gritmoneymarketmodule/ExecuteEod'),
+  // ConfigPosting: () => import('gritmoneymarketmodule/ConfigPosting'),
+  ViewMemo: () => import('gritsignaturemodule/ViewMemo'),
+  CreateMemo: () => import('gritsignaturemodule/CreateMemo'),
+  MemoReport: () => import('gritsignaturemodule/MemoReport'),
   // Tambahkan lebih banyak mapping sesuai kebutuhan
 };
 

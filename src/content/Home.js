@@ -64,7 +64,8 @@ const Home = () => {
                         </div>
                     </div>
                 )}
-                <div className="container menu d-flex">
+                <div className='container d-flex'>
+                <div className="container menu">
                     {/* Displaying active parent menu or root menu */}
                     {activeParentMenu && (
                     <div className="row">
@@ -98,7 +99,7 @@ const Home = () => {
                             ))}
                         </div>
                     )}
-                    
+                    </div>
                     {/* Button to go back to root menu */}
                     <div className="container carousel" id='carousel'>
                         <CardCarousel/>

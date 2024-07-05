@@ -1,10 +1,10 @@
+import { faTimes, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import React, { Fragment, useEffect, useState } from "react";
-import { INTEGRATION_SERVICE_KAFKA_TOPIC_DELETE, INTEGRATION_SERVICE_KAFKA_TOPIC_LIST } from "../config/ConfigApi";
 import { Button, Modal, Pagination } from "react-bootstrap";
 import { useTable } from "react-table";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTimes, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { INTEGRATION_SERVICE_KAFKA_TOPIC_DELETE, INTEGRATION_SERVICE_KAFKA_TOPIC_LIST } from "../config/ConfigApi";
 import { showDynamicSweetAlert } from "../toast/Swal";
 
 const { getToken } = require('../config/Constants');
@@ -225,7 +225,7 @@ const KafkaTopicTable = ({deletePermission, refreshTableStatus, onRowClick}) => 
                     </select>
                 </div>
             </div>
-            <div className="table-container">
+            <div className="table-container">   
                 <table className='table table-bordered table-hover' {...getTableProps()}>
                     <thead>
                         {headerGroups.map(headerGroup => (

@@ -1,18 +1,19 @@
 import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { createStore } from 'redux'; // Import createStore
 import { Provider } from 'react-redux'; // Import Provider
-import './App.css';
-import Login from "./pages/Login";
-import Dashboard from './pages/dashboard';
-import SessionTimeout from "./config/SessionTimeout";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import ResetPasswordPage from "./pages/ResetPassword";
-import formDataReducer from "./store/reducers/FormReducer";
 import { RecoilRoot } from "recoil";
-import NotFound from "./content/NotFound";
-import Home from "./content/Home";
+import { createStore } from 'redux'; // Import createStore
+import './App.css';
+import SessionTimeout from "./config/SessionTimeout";
+import Login from "./pages/Login";
+import ResetPasswordPage from "./pages/ResetPassword";
+import Dashboard from './pages/dashboard';
+import formDataReducer from "./store/reducers/FormReducer";
+import 'primereact/resources/themes/lara-light-indigo/theme.css';
+import 'primereact/resources/primereact.min.css';
+import 'primeicons/primeicons.css';
 
 const store = createStore(formDataReducer); // Create Redux store
 

@@ -1,12 +1,11 @@
-import React, { Fragment, useState, useEffect, Suspense } from 'react';
-import { Routes, Route } from 'react-router-dom';
-import Home from '../content/Home'
-import NotFound from '../content/NotFound';
 import axios from 'axios';
+import React, { Fragment, Suspense, useEffect, useState } from 'react';
+import { Route, Routes } from 'react-router-dom';
 import { MENU_SERVICE_MODULES } from '../config/ConfigApi';
-import FormTemplate from '../content/FormTemplate';
-import PageDown from '../content/PageDown';
 import { DynamicLazyImport } from '../config/DynamicImport';
+import Home from '../content/Home';
+import NotFound from '../content/NotFound';
+import PageDown from '../content/PageDown';
 const { getToken } = require('../config/Constants');
 
 // const BifastDashboard = React.lazy(() => import("gritbifastmodule/BifastDashboard"));
@@ -77,63 +76,79 @@ export default function Content() {
   const componentConfig = {
     components: [
       // Array of objects mapping component names to their dynamic import paths
-      {
-        moduleName: 'gritbifastmodule',
-        componentName: 'BifastDashboard'
-      },
-      {
-        moduleName: 'gritbifastmodule',
-        componentName: 'RtgsDashboard'
-      },
-      {
-        moduleName: 'gritswiftmodule',
-        componentName: 'MicroFrontendComponent'
-      },
-      {
-        moduleName: 'gritsmartinmodule',
-        componentName: 'AllServerDashboard'
-      },
-      {
-        moduleName: 'gritsmartinmodule',
-        componentName: 'SmartinEndpoints'
-      },
-      {
-        moduleName: 'gritsmartinmodule',
-        componentName: 'SmartinUpload'
-      },
-      {
-        moduleName: 'gritsmartinmodule',
-        componentName: 'SocketManager'
-      },
-      {
-        moduleName: 'gritmoneymarketmodule',
-        componentName: 'Customers'
-      },
-      {
-        moduleName: 'gritmoneymarketmodule',
-        componentName: 'MoneyMarketTransaction'
+      // {
+      //   moduleName: 'gritbifastmodule',
+      //   componentName: 'BifastDashboard'
+      // },
+      // {
+      //   moduleName: 'gritbifastmodule',
+      //   componentName: 'RtgsDashboard'
+      // },
+      // {
+      //   moduleName: 'gritswiftmodule',
+      //   componentName: 'MicroFrontendComponent'
+      // },
+      // {
+      //   moduleName: 'gritsmartinmodule',
+      //   componentName: 'AllServerDashboard'
+      // },
+      // {
+      //   moduleName: 'gritsmartinmodule',
+      //   componentName: 'SmartinEndpoints'
+      // },
+      // {
+      //   moduleName: 'gritsmartinmodule',
+      //   componentName: 'SmartinUpload'
+      // },
+      // {
+      //   moduleName: 'gritsmartinmodule',
+      //   componentName: 'SocketManager'
+      // },
+      // {
+      //   moduleName: 'gritmoneymarketmodule',
+      //   componentName: 'Customers'
+      // },
+      // {
+      //   moduleName: 'gritmoneymarketmodule',
+      //   componentName: 'MoneyMarketTransaction'
         
+      // },
+      // {
+      //   moduleName: 'grittrademodule',
+      //   componentName: 'CreateTransaction'
+      // },
+      // {
+      //   moduleName : 'gritmoneymarketmodule',
+      //   componentName : 'Settlement'
+      // },
+      // {
+      //   moduleName : 'gritmoneymarketmodule',
+      //   componentName : 'TransactionDetails'
+      // },
+      // {
+      //   moduleName : 'gritmoneymarketmodule',
+      //   componentName : 'DashboardMm'
+      // },
+      // {
+      //   moduleName : 'gritmoneymarketmodule',
+      //   componentName : 'ExecuteEod'
+      // },
+      // {
+      //   moduleName : 'gritmoneymarketmodule',
+      //   componentName : 'ConfigPosting'
+      // },
+      {
+        moduleName : 'gritsignaturemodule',
+        componentName : 'CreateMemo'
       },
       {
-        moduleName: 'grittrademodule',
-        componentName: 'CreateTransaction'
+        moduleName : 'gritsignaturemodule',
+        componentName : 'ViewMemo'
       },
       {
-        moduleName : 'gritmoneymarketmodule',
-        componentName : 'Settlement'
+        moduleName : 'gritsignaturemodule',
+        componentName : 'MemoReport'
       },
-      {
-        moduleName : 'gritmoneymarketmodule',
-        componentName : 'TransactionDetails'
-      },
-      {
-        moduleName : 'gritmoneymarketmodule',
-        componentName : 'MmDashboard'
-      },
-      {
-        moduleName : 'gritmoneymarketmodule',
-        componentName : 'ExecuteEod'
-      }
       // ... other components SmartinEndpoints
     ]
   };

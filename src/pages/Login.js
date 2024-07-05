@@ -4,8 +4,9 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AUTH_SERVICE_LOGIN, LICENSE_SERVICE_CHECK } from '../config/ConfigApi';
 import { active, expiredPass, pendingDelete } from '../config/Constants';
-import '../css/designCIMB.css';
+import '../css/designDigitalSign.css';
 import { showDynamicSweetAlert } from '../toast/Swal';
+import Greetings from '../content/Greetings';
 
 
 function LoginPage() {
@@ -131,66 +132,71 @@ function LoginPage() {
   };
 
   return (
-    <div className="hold-transition login-page">
-      <div className="login-box">
-        {loginError && ( // Conditionally render the alert if loginError is true
-          <div className="alert alert-danger" role="alert">
-            {loginErrorMessage}
-          </div>
-        )}
-        <div className="card card-outline card-primary">
-          <div className="card-body">
-            <p className="login-box-msg">Welcome Back!</p>
-            <form onSubmit={handleLogin}>
-              <div className="input-group mb-3">
-                <input
-                  type="input"
-                  className="form-control"
-                  placeholder="User ID"
-                  value={userId}
-                  onChange={(e) => setUserId(e.target.value)}
-                />
-                <div className="input-group-append">
-                  <div className="input-group-text">
-                    <span className="fa-solid fa-user"></span>
+   <div className='con'>
+    <div className="lgn row">
+      
+      <div className="col-lg-5 col-md-5 lgn">
+        <div className='login-box'>
+          {loginError && ( // Conditionally render the alert if loginError is true
+            <div className="alert alert-danger" role="alert">
+              {loginErrorMessage}
+            </div>
+          )}
+          
+              <p className="login-box-msg text-start"><Greetings/></p>
+              <form onSubmit={handleLogin}>
+                <div className="input-group mb-3">
+                  <input
+                    type="input"
+                    className="form-control"
+                    placeholder="User ID"
+                    value={userId}
+                    onChange={(e) => setUserId(e.target.value)}
+                  />
+                  <div className="input-group-append">
+                    <div className="input-group-text">
+                      <span className="fa-solid fa-user"></span>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div className="input-group mb-3">
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  className="form-control"
-                  placeholder="Password"
-                  value={userPass}
-                  onChange={(e) => setUserPass(e.target.value)}
-                />
-                <div className="input-group-append">
-                  <div className="input-group-text">
-                    <span
-                      className={`fas ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`}
-                      onClick={() => setShowPassword(!showPassword)}
-                      style={{ cursor: 'pointer' }}
-                    ></span>
+                <div className="input-group mb-3">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    className="form-control"
+                    placeholder="Password"
+                    value={userPass}
+                    onChange={(e) => setUserPass(e.target.value)}
+                  />
+                  <div className="input-group-append">
+                    <div className="input-group-text">
+                      <span
+                        className={`fas ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`}
+                        onClick={() => setShowPassword(!showPassword)}
+                        style={{ cursor: 'pointer' }}
+                      ></span>
+                    </div>
                   </div>
-                </div>
-              </div>
-              <hr></hr>
-              <div className="row">
-                <div className="col-3">
-                </div>
-
-                <div className="col-6">
-                  <button type="submit" className="btn btn-primary btn-block">
-                    Log in
-                  </button>
                 </div>
                 <hr></hr>
-              </div>
-            </form>
-          </div>
-        </div>
+
+
+                  
+                    <button type="submit" className="btn btn-primary btn-block">
+                      Log in
+                    </button>
+                  
+                  <hr></hr>
+                
+              </form>
+            </div>
+         
+            </div>
+            <div className='col-6 image-container'></div>
       </div>
     </div>
+
+    
+  
   );
 }
 
