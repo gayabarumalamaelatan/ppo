@@ -115,10 +115,10 @@ export default function Nav() {
 
   return (
     <Fragment>
-      <nav className="main-header navbar navbar-expand navbar-white navbar-light">
+      <nav className="main-header navbar navbar-expand navbar-white navbar-light" style={{padding: "8px"}}>
         <ul className="navbar-nav">
           <li className="nav-item">
-            <a className="nav-link" data-widget="pushmenu" href="#" role="button">
+            <a className="nav-link" data-widget="pushmenu" href="#" role="button" style={{paddingLeft: "1em", paddingRight: "1em"}}>
               <i className="fas fa-bars"></i>
             </a>
           </li>
@@ -130,7 +130,7 @@ export default function Nav() {
             </span>
           </li>
           <li className="nav-item">
-            <a className="nav-link" href="#" role="button" onClick={showLogoutConfirmation}>
+            <a className="nav-link" href="#" role="button" onClick={showLogoutConfirmation} style={{paddingRight: "1em", paddingLeft: "1em"}}>
               <FontAwesomeIcon icon={faSignOutAlt} />
             </a>
           </li>

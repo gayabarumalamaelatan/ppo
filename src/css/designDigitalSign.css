@@ -1539,7 +1539,7 @@ section.content-header>.container.my-5{
 
 /* carousel */
 .container.carousel{
-    width: 500px;
+    width: 525px;
 }
 .container.menu{
     gap: 5px;
@@ -1719,6 +1719,9 @@ section.content-header>.d-flex>.container.menu>.row>.col-lg-3.mb-2 p{
 }
 .d-flex>.container.menu>.row{
     width: 100%!important;
+}
+section.content-header>.d-flex>.container.menu>.row>.col-lg-3.mb-2{
+    width: 30%;
 }
 section.content-header>.d-flex>.container.menu>.row>.col-lg-3.mb-2>.card{
     height: 160px;
@@ -1999,4 +2002,15 @@ ul.navbar-nav.ml-auto>li.nav-item>span.nav-link{
 }
 textarea.form-control:disabled{
     background: transparent;
+}
+
+/* Fix bug */
+.navbar-expand.navbar-nav.nav-link{
+    padding-right: 16px !important;
+    padding-left: 16px !important;
+}
+@media (min-width: 1200px) {
+    .container{
+        max-width: 1140px !important;
+    }
 }
