@@ -2014,3 +2014,14 @@ textarea.form-control:disabled{
         max-width: 1140px !important;
     }
 }
+
+button.btn.btn-secondary.me-2{
+    background-color: #009fe3;
+    border-radius: 15px;
+    border: 1px solid #009fe3;
+}
+button.btn.btn-secondary.me-2:hover{
+    background: transparent;
+    color: #009fe3;
+    border: 1px solid #009fe3;
+}

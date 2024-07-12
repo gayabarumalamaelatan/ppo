@@ -149,6 +149,10 @@ export default function Content() {
         moduleName : 'gritsignaturemodule',
         componentName : 'MemoReport'
       },
+      {
+        moduleName : 'gritsignaturemodule',
+        componentName : 'VerifyMemo'
+      },
       // ... other components SmartinEndpoints
     ]
   };

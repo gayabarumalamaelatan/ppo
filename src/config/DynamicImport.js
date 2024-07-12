@@ -20,6 +20,7 @@ const dynamicImportMap = {
   ViewMemo: () => import('gritsignaturemodule/ViewMemo'),
   CreateMemo: () => import('gritsignaturemodule/CreateMemo'),
   MemoReport: () => import('gritsignaturemodule/MemoReport'),
+  VerifyMemo: () => import('gritsignaturemodule/VerifyMemo')
   // Tambahkan lebih banyak mapping sesuai kebutuhan
 };
 
