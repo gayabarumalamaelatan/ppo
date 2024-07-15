@@ -2025,3 +2025,13 @@ button.btn.btn-secondary.me-2:hover{
     color: #009fe3;
     border: 1px solid #009fe3;
 }
+button.btn.btn-default.dropdown-toggle{
+    border-color: #009fe3;
+    background: transparent;
+}
+.dropdown.show>.dropdown-menu.show>button.dropdown-item{
+    color:#009fe3;
+}
+.dropdown.show>.dropdown-menu.show>button.dropdown-item:hover{
+    color:#fff;
+}
