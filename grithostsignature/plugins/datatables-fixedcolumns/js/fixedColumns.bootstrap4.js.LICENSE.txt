@@ -1,0 +1,7 @@
+/*! Bootstrap 4 integration for DataTables' FixedColumns
+     * ©2016 SpryMedia Ltd - datatables.net/license
+     */
+
+/*! FixedColumns 4.0.1
+ * 2019-2021 SpryMedia Ltd - datatables.net/license
+ */

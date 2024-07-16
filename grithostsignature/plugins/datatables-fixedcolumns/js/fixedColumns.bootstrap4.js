@@ -1,0 +1,2 @@
+/*! For license information please see fixedColumns.bootstrap4.js.LICENSE.txt */
+!function(){"use strict";var e;e=function(e){return e.fn.dataTable.fixedColumns},"function"==typeof define&&define.amd?define(["jquery","datatables.net-bs4","datatables.net-fixedcolumns"],(function(t){return e(t)})):"object"==typeof exports?module.exports=function(t,n){return t||(t=window),n&&n.fn.dataTable||(n=require("datatables.net-bs4")(t,n).$),n.fn.dataTable.SearchPanes||require("datatables.net-fixedcolumns")(t,n),e(n)}:e(jQuery)}();

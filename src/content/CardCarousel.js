@@ -47,7 +47,7 @@ const CardCarousel = () => {
                 {data.map((d) => (
                     <div className='card content carousel' style="width: 18rem">
                         <img src={d.img} alt=''/>
-                        <div className='card-body content carousel'>
+                        <div className='card-body content carousel' style={{marginLeft: "0.5rem"}}>
                             <p className='card-title'>{d.name}</p>
                             <p className='card-text'>{d.review}</p>
                             <button className='btn btn-primary'>Learn More</button>

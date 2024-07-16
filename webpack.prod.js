@@ -21,7 +21,7 @@ module.exports = {
     mode: "production",
     output: {
         //... existing output configuration
-        path: path.resolve(__dirname, 'gritcore'),
+        path: path.resolve(__dirname, 'grithostsignature'),
         filename: '[name].[contenthash].bundle.js',
         clean: true,
     },
@@ -82,11 +82,12 @@ module.exports = {
         new ModuleFederationPlugin({
             name: 'webeai-front', // Nama aplikasi host
             remotes: {
-                gritswiftmodule: 'gritswiftmodule@http://10.8.135.84:3001/remoteSwiftModule.js',
-                gritbifastmodule: 'gritbifastmodule@http://10.8.135.84:3002/bifastModule.js',
-                gritsmartinmodule: 'gritsmartinmodule@http://10.8.135.84:3003/smartinModule.js',
-                gritmoneymarketmodule: 'gritmoneymarketmodule@http://10.8.135.84:3004/moneyMarketModule.js',
-                grittrademodule: 'grittrademodule@http://10.8.135.84:3007/tradeModule.js'
+                // gritswiftmodule: 'gritswiftmodule@http://10.8.135.84:3001/remoteSwiftModule.js',
+                // gritbifastmodule: 'gritbifastmodule@http://10.8.135.84:3002/bifastModule.js',
+                // gritsmartinmodule: 'gritsmartinmodule@http://10.8.135.84:3003/smartinModule.js',
+                // gritmoneymarketmodule: 'gritmoneymarketmodule@http://10.8.135.84:3004/moneyMarketModule.js',
+                // grittrademodule: 'grittrademodule@http://10.8.135.84:3007/tradeModule.js'
+                gritsignaturemodule: 'gritsignaturemodule@http://10.8.135.84:3500/signatureModule.js',
             },
             shared: { // Mendefinisikan dependensi yang dibagi
                 react: {
