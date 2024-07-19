@@ -2035,3 +2035,13 @@ button.btn.btn-default.dropdown-toggle{
 .dropdown.show>.dropdown-menu.show>button.dropdown-item:hover{
     color:#fff;
 }
+button.btn.btn.btn-secondary{
+    background-color: #009fe3;
+    border-color: #009fe3;
+    border-radius: 15px;
+}
+button.btn.btn.btn-secondary:hover{
+    background: transparent;
+    border-color: #009fe3;
+    color: #009fe3;
+}

@@ -3,10 +3,11 @@ import axios from 'axios'; // Import axios
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AUTH_SERVICE_LOGIN, LICENSE_SERVICE_CHECK } from '../config/ConfigApi';
-import { active, expiredPass, pendingDelete } from '../config/Constants';
+import { active, expiredPass, getToken, pendingDelete } from '../config/Constants';
 import '../css/designDigitalSign.css';
 import { showDynamicSweetAlert } from '../toast/Swal';
 import Greetings from '../content/Greetings';
+import { event } from 'jquery';
 
 
 function LoginPage() {
