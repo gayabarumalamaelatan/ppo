@@ -36,6 +36,12 @@
     left: 50%;
 }
 
+@media screen {
+    .col-lg-5.col-md-5.lgn{
+        height: 100vh;
+    }
+}
+
 /* @keyframes gradient {
 	0% {
 		background-position: 0% 50%;

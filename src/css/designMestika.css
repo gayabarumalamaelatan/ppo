@@ -26,6 +26,12 @@
     /* border-top-right-radius: 35px;
     border-bottom-right-radius: 35px; */
 }
+@media screen {
+    .col-lg-5.col-md-5.lgn{
+       height: 100vh; 
+    }
+}
+
 .login-box{
     margin: 0;
     top: 50%;
@@ -1987,3 +1993,4 @@ ul.navbar-nav.ml-auto>li.nav-item>span.nav-link{
 /* .btn.btn-danger{
     background-color: #bd2130;
 } */
+

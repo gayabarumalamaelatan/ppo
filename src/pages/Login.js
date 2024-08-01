@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { AUTH_SERVICE_LOGIN, LICENSE_SERVICE_CHECK } from '../config/ConfigApi';
 import { active, expiredPass, getToken, pendingDelete } from '../config/Constants';
 import '../css/designDigitalSign.css';
+//import '../css/designMestika.css';
 import { showDynamicSweetAlert } from '../toast/Swal';
 import Greetings from '../content/Greetings';
 import { event } from 'jquery';
