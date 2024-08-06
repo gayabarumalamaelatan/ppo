@@ -2051,3 +2051,7 @@ button.btn.btn.btn-secondary:hover{
     border-color: #009fe3;
     color: #009fe3;
 }
+tbody>tr>td>div>button.btn.btn-outline-success.me-2:hover{
+    background: transparent!important;
+    color: #198754;
+}
