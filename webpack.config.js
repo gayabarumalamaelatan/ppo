@@ -88,6 +88,7 @@ module.exports = {
                 // gritmoneymarketmodule: 'gritmoneymarketmodule@http://localhost:3004/moneyMarketModule.js',
                 // grittrademodule: 'grittrademodule@http://localhost:3007/tradeModule.js',
                 gritsignaturemodule: 'gritsignaturemodule@http://localhost:3500/signatureModule.js',
+                //gritfinancemodule: 'gritfinancemodule@http://localhost:3011/financeModule.js',
               },
             shared: { // Mendefinisikan dependensi yang dibagi
                 react: { 

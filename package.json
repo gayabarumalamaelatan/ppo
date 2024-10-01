@@ -27,6 +27,7 @@
     "html-webpack-plugin": "^5.5.3",
     "jquery": "^3.7.0",
     "jsgrid": "^1.5.3",
+    "lottie-react": "^2.4.0",
     "popper.js": "^1.16.1",
     "primeicons": "^7.0.0",
     "primereact": "^10.7.0",

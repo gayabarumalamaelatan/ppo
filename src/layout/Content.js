@@ -7,6 +7,8 @@ import Home from '../content/Home';
 import NotFound from '../content/NotFound';
 import PageDown from '../content/PageDown';
 const { getToken } = require('../config/Constants');
+import loadingscreen from '../animations/loading.json'
+import Lottie from 'lottie-react';
 
 // const BifastDashboard = React.lazy(() => import("gritbifastmodule/BifastDashboard"));
 //  const Smendpoint = React.lazy(() => import("gritsmartinmodule/SmartinEndpoints"));
@@ -153,6 +155,14 @@ export default function Content() {
         moduleName : 'gritsignaturemodule',
         componentName : 'VerifyMemo'
       },
+      // {
+      //   moduleName : 'gritfinancemodule',
+      //   componentName : 'Coa'
+      // },
+      // {
+      //   moduleName : 'gritfinancemodule',
+      //   componentName : 'PurchaseRequest'
+      // },
       // ... other components SmartinEndpoints
     ]
   };
@@ -165,7 +175,20 @@ export default function Content() {
       // If found, use dynamic import with React.lazy
       const LazyComponent = DynamicLazyImport(configEntry.moduleName, configEntry.componentName);
       return (
-        <Suspense fallback={<div>Loading {elementString}...</div>}>
+        // <Suspense fallback={<div>Loading {elementString}...</div>}>
+        //   <LazyComponent />
+        // </Suspense>
+
+        <Suspense fallback={
+          <>
+            <div className='d-flex justify-content-center align-items-center vh-100'>
+              <div className='text-center'>
+                <Lottie animationData={loadingscreen}/>
+                {/* <p>Loading {elementString}...</p> */}
+              </div>
+            </div>
+          </>
+        }>
           <LazyComponent />
         </Suspense>
       );

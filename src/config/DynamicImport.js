@@ -17,10 +17,14 @@ const dynamicImportMap = {
   // DashboardMm: () => import('gritmoneymarketmodule/DashboardMm'),
   // ExecuteEod: () => import('gritmoneymarketmodule/ExecuteEod'),
   // ConfigPosting: () => import('gritmoneymarketmodule/ConfigPosting'),
+
   ViewMemo: () => import('gritsignaturemodule/ViewMemo'),
   CreateMemo: () => import('gritsignaturemodule/CreateMemo'),
   MemoReport: () => import('gritsignaturemodule/MemoReport'),
-  VerifyMemo: () => import('gritsignaturemodule/VerifyMemo')
+  VerifyMemo: () => import('gritsignaturemodule/VerifyMemo'),
+
+  // Coa: () => import('gritfinancemodule/Coa'),
+  // PurchaseRequest: () => import('gritfinancemodule/PurchaseRequest')
   // Tambahkan lebih banyak mapping sesuai kebutuhan
 };
 

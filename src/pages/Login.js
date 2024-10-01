@@ -19,6 +19,7 @@ function LoginPage() {
   const navigate = useNavigate();
   const [hashedPassword, setHashedPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
 
 
   useEffect(() => {
@@ -64,6 +65,7 @@ function LoginPage() {
   }
   const handleLogin = async (event) => {
     event.preventDefault();
+    setIsLoggingIn(true);
 
     try {
       const response = await axios.post(`${AUTH_SERVICE_LOGIN}`, {
@@ -125,6 +127,7 @@ function LoginPage() {
       }
 
     }
+    setIsLoggingIn(false);
   };
 
 
@@ -136,7 +139,6 @@ function LoginPage() {
   return (
    <div className='con'>
     <div className="lgn row">
-      
       <div className="col-lg-5 col-md-5 lgn">
         <div className='login-box'>
           {loginError && ( // Conditionally render the alert if loginError is true
@@ -144,8 +146,7 @@ function LoginPage() {
               {loginErrorMessage}
             </div>
           )}
-          
-              <p className="login-box-msg text-start"><Greetings/></p>
+            <p className="login-box-msg text-start"><Greetings/></p>
               <form onSubmit={handleLogin}>
                 <div className="input-group mb-3">
                   <input
@@ -180,20 +181,14 @@ function LoginPage() {
                   </div>
                 </div>
                 <hr></hr>
-
-
-                  
-                    <button type="submit" className="btn btn-primary btn-block">
-                      Log in
-                    </button>
-                  
-                  <hr></hr>
-                
+                  <button type="submit" className="btn btn-primary btn-block">
+                    {isLoggingIn ? 'Logging In...' : 'Log in'}
+                  </button>
+                <hr></hr>
               </form>
             </div>
-         
-            </div>
-            <div className='col-6 image-container'></div>
+          </div>
+        <div className='col-6 image-container'></div>
       </div>
     </div>
 
